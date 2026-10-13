@@ -1,0 +1,479 @@
+\documentclass[11pt]{article}
+\usepackage[letterpaper,margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern,microtype}
+\usepackage{amsmath,amssymb,mathtools,bm,slashed}
+\usepackage{xcolor,enumitem,booktabs,array,needspace}
+\usepackage[most]{tcolorbox}
+\usepackage{fancyhdr,titlesec,parskip,hyperref}
+\definecolor{qftblue}{HTML}{245A8D}
+\definecolor{qftgreen}{HTML}{2F6B4F}
+\definecolor{qftgray}{HTML}{F4F6F8}
+\hypersetup{colorlinks=true,linkcolor=qftblue,urlcolor=qftblue,pdfauthor={Nima Lashkari}}
+\pagestyle{fancy}\fancyhf{}
+\lhead{PHYS 662: Quantum Field Theory I}\cfoot{\thepage}
+\setlength{\headheight}{14pt}
+\titleformat{\section}{\Large\bfseries\color{qftblue}}{\thesection.}{0.6em}{}
+\titleformat{\subsection}{\large\bfseries\color{qftgreen}}{\thesubsection}{0.6em}{}
+\setlist[enumerate]{leftmargin=2em,itemsep=0.25em,topsep=0.35em}
+\setlist[itemize]{leftmargin=2em,itemsep=0.2em,topsep=0.35em}
+\newcommand{\dd}{\mathrm d}
+\newcommand{\ii}{\mathrm i}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\tr}{\operatorname{tr}}
+\newcommand{\Tr}{\operatorname{Tr}}
+\newcommand{\diag}{\operatorname{diag}}
+\newcommand{\Lag}{\mathcal L}
+\newcommand{\D}{\mathcal D}
+\newcommand{\vac}{\lvert0\rangle}
+\newcommand{\vbra}{\langle0\rvert}
+\newcommand{\Tord}{\mathrm T}
+\newcommand{\ket}[1]{\lvert#1\rangle}
+\newcommand{\bra}[1]{\langle#1\rvert}
+\newtcolorbox{keyidea}[1][]{enhanced,breakable,colback=qftgray,colframe=qftblue,
+ boxrule=0.7pt,arc=1.5mm,title={#1},fonttitle=\bfseries,coltitle=white}
+\newtcolorbox{remarkbox}[1][]{enhanced,breakable,colback=white,colframe=qftgreen,
+ boxrule=0.6pt,arc=1.5mm,title={#1},fonttitle=\bfseries,coltitle=white}
+\newcommand{\intp}{\int\!\frac{\dd^4p}{(2\pi)^4}}
+\newcommand{\MSbar}{\overline{\mathrm{MS}}}
+\newcommand{\module}[1]{\clearpage\section{#1}}
+\newcommand{\braket}[2]{\langle#1\mid#2\rangle}
+\newcommand{\dPi}{\dd\Pi}
+\newcommand{\cM}{\mathcal M}
+\newcommand{\cH}{\mathcal H}
+\newcommand{\cS}{\mathcal S}
+\newcommand{\Zp}{Z_{\rm pole}}
+\newcommand{\Kallen}{\mathcal K}
+\newcommand{\lecturefront}[4]{%
+\rhead{Lecture #1}\hypersetup{pdftitle={PHYS 662 Lecture #1: #2}}
+\begin{document}\pagenumbering{gobble}
+\begin{titlepage}\centering\vspace*{1.05in}
+{\scshape\Large PHYS 662 --- Quantum Field Theory I\par}
+\vspace{0.35in}{\Huge\bfseries\color{qftblue}Lecture #1\par}
+\vspace{0.2in}{\LARGE\bfseries #2\par}
+\vspace{0.2in}{\large\color{qftgreen}#3\par}
+\vspace{0.6in}{\large Nima Lashkari\par}{\large Fall 2026\par}
+\vfill\begin{minipage}{0.86\textwidth}\small #4\par\medskip
+Course page: \url{https://nimalashkari.com/quantum-field-theory-2026-part-i/}
+\end{minipage}\vspace{0.5in}\end{titlepage}
+\pagenumbering{roman}\setcounter{tocdepth}{1}\tableofcontents
+\vfill\begin{remarkbox}[Place in the course]
+Lecture 26 constructs the physical photon Hilbert space and its propagators.
+Lecture 27 develops QED amplitudes. Lecture 28 computes the photon and
+fermion self-energies. Lecture 29 relates the vertex to charge
+renormalization and the magnetic moment. Homework 9 closes this sequence.
+\end{remarkbox}
+\small\textbf{Reading and conventions.} The uploaded course slides are the
+primary starting point. D.~Tong,
+\href{https://www.damtp.cam.ac.uk/user/tong/qft/qfthtml/S6.html}{\textit{Quantum Field Theory}, Chapter 6},
+is a companion for photon quantization and QED. For the vertex calculation,
+see V.~Kaplunovsky,
+\href{https://web2.ph.utexas.edu/~vadim/Classes/2020f/vertex.pdf}{\textit{QED Vertex Correction}},
+especially the parameter integral for the Pauli form factor.
+For further textbook study, see Peskin--Schroeder, \textit{An Introduction
+to QFT}, Chapters 5--7 and 10.
+All formulas here use the mostly-minus metric and propagators that include
+\(\ii\). Dimensional regularization uses \(d=4-2\eps\), which differs from
+some of the slides. The accompanying editorial memo records corrections
+and the scope of the supplementary reading.
+\normalsize\clearpage\pagenumbering{arabic}}
+\lecturefront{26}{Quantization of the Electromagnetic Field}
+{Constraints, physical photons, and covariant propagators}
+{The electromagnetic potential has four components, but a photon has only
+two physical polarizations. We follow this mismatch from the classical
+constraint equations through canonical quantization and the path integral,
+and explain why gauge-dependent intermediate expressions give consistent
+physical amplitudes.}
+
+\section{Maxwell theory is a constrained system}
+We use \(\eta_{\mu\nu}=\diag(1,-1,-1,-1)\), \(\hbar=c=1\), and
+\(A^\mu=(A^0,\bm A)\). With a prescribed conserved current
+\(j^\mu=(\rho,\bm J)\),
+\begin{equation}
+ \Lag=-\frac14 F_{\mu\nu}F^{\mu\nu}-j^\mu A_\mu,
+ \qquad F_{\mu\nu}=\partial_\mu A_\nu-\partial_\nu A_\mu.
+\end{equation}
+Thus \(\bm E=-\dot{\bm A}-\bm\nabla A^0\),
+\(\bm B=\bm\nabla\times\bm A\), and the kinetic term is
+\((\bm E^2-\bm B^2)/2\). Varying \(A_\nu\) gives
+\begin{equation}
+ \partial_\mu F^{\mu\nu}=j^\nu.
+ \label{eq:maxwell}
+\end{equation}
+Its divergence requires \(\partial_\nu j^\nu=0\). The same condition makes
+the source action invariant under \(A_\mu\mapsto A_\mu+\partial_\mu\chi\),
+up to a boundary term. Gauge-related potentials describe the same field
+strength; the redundancy is local in spacetime.
+
+The Lagrangian contains no \(\dot A_0\). Using the covariant components
+\(A_\mu\) as coordinates, the momenta are
+\begin{equation}
+ \pi^\mu=F^{\mu0},\qquad \pi^0=0,\qquad \pi^i=E^i.
+\end{equation}
+The relation \(\pi^0=0\) is a primary constraint. The \(\nu=0\) equation
+in \eqref{eq:maxwell} is Gauss's law,
+\begin{equation}
+ \bm\nabla\cdot\bm E=\rho.
+\end{equation}
+It constrains the initial data rather than furnishing a second-order
+evolution equation for \(A^0\). In a Hamiltonian description, preserving
+the primary constraint in time produces this secondary constraint.
+
+\begin{keyidea}[Why four oscillators would be too many]
+The two first-class constraints and their gauge freedom remove four
+phase-space coordinates from the eight associated with \(A_\mu,\pi^\mu\).
+The remaining four phase-space coordinates describe two propagating
+configuration degrees of freedom. This count assumes the usual boundary
+conditions and omits possible global zero modes.
+\end{keyidea}
+Setting \(A^0=0\) before varying the action would hide Gauss's law.
+Temporal gauge can be used, but Gauss's law must then be imposed separately.
+We instead begin with Coulomb gauge, where its solution is explicit.
+
+\module{Coulomb gauge and the instantaneous interaction}
+Choose \(\bm\nabla\cdot\bm A=0\), with fields and gauge transformations
+vanishing suitably at spatial infinity. Write \(\bm A=\bm A_T\).
+Gauss's law becomes a Poisson equation,
+\begin{equation}
+ -\nabla^2 A^0(t,\bm x)=\rho(t,\bm x),\qquad
+ A^0(t,\bm x)=\int\dd^3y\,
+ \frac{\rho(t,\bm y)}{4\pi|\bm x-\bm y|}.
+\end{equation}
+The cross term \(\int\dot{\bm A}_T\cdot\bm\nabla A^0\) vanishes by
+integration by parts. Substituting the solution into the action gives
+\begin{align}
+ L_{\rm red}={}&\int\dd^3x\left[
+ \frac12\dot{\bm A}_T^2-\frac12(\bm\nabla\times\bm A_T)^2
+ +\bm J_T\cdot\bm A_T\right]-E_C,\\
+ E_C={}&\frac12\int\dd^3x\,\dd^3y\,
+ \frac{\rho(t,\bm x)\rho(t,\bm y)}{4\pi|\bm x-\bm y|}.
+ \label{eq:coulombenergy}
+\end{align}
+The factor \(1/2\) avoids counting each pair twice. For two point sources,
+the cross term is \(q_1q_2/(4\pi r)\); individual point-charge self-energies
+require regulation. The sign in the reduced Lagrangian is \(-E_C\), while
+the Hamiltonian contains \(+E_C\).
+
+The transverse projection is
+\begin{equation}
+ P_T^{ij}(\bm k)=\delta^{ij}-\frac{k^ik^j}{|\bm k|^2},\qquad
+ J_T^i=P_T^{ij}J^j.
+\end{equation}
+For the physical spatial coordinates \(A_T^i\), the conjugate momentum is
+\(\Pi_T^i=\dot A_T^i=-E_T^i\). This sign differs from \(\pi^i\) above
+because \(A_i=-A^i\). The canonical commutator on the reduced space is
+\begin{equation}
+ [A_T^i(t,\bm x),\Pi_T^j(t,\bm y)]
+ =\ii\delta_T^{ij}(\bm x-\bm y),\quad
+ \delta_T^{ij}(\bm r)=\int\frac{\dd^3k}{(2\pi)^3}
+ P_T^{ij}(\bm k)e^{\ii\bm k\cdot\bm r}.
+\end{equation}
+An unrestricted \(\delta^{ij}\delta^{(3)}\) would contradict
+\(\partial_iA_T^i=0\). Projection therefore changes the commutator as well
+as the equations of motion.
+
+\begin{remarkbox}[Instantaneous does not mean acausal]
+The Coulomb term is an interaction of constrained variables, not a new
+propagating mode. The transverse field supplies the remaining pieces of
+electromagnetic response. Their combination gives causal gauge-invariant
+field strengths; an isolated gauge-dependent potential need not have a
+manifestly causal representation.
+\end{remarkbox}
+
+\module{Two transverse photon oscillators}
+For the free field choose spatial polarization vectors obeying
+\begin{equation}
+ \bm k\cdot\bm\epsilon_\lambda=0,\quad
+ \bm\epsilon_\lambda^*\cdot\bm\epsilon_{\lambda'}=\delta_{\lambda\lambda'},
+ \quad \sum_{\lambda=1}^2\epsilon_\lambda^i\epsilon_\lambda^{j*}
+ =P_T^{ij}(\bm k).
+\end{equation}
+Let \(\omega_k=|\bm k|\) and
+\(\dd\Pi_k=\dd^3k/[(2\pi)^3 2\omega_k]\). A normalization consistent
+with our earlier particle states is
+\begin{equation}
+ A_T^i(x)=\sum_{\lambda=1}^2\int\dd\Pi_k
+ \left[\epsilon_\lambda^i(\bm k)a_\lambda(\bm k)e^{-\ii kx}
+ +\epsilon_\lambda^{i*}(\bm k)a_\lambda^\dagger(\bm k)e^{\ii kx}\right],
+ \quad k^0=\omega_k,
+\end{equation}
+with
+\begin{equation}
+ [a_\lambda(\bm k),a_{\lambda'}^\dagger(\bm q)]
+ =2\omega_k(2\pi)^3\delta_{\lambda\lambda'}\delta^{(3)}(\bm k-\bm q).
+\end{equation}
+Differentiating the mode expansion and using completeness reproduces the
+transverse canonical commutator. This is a useful normalization check:
+one power of \(2\omega_k\) comes from the commutator and the other from
+the time derivatives and the two frequency contributions.
+
+Substitution into the free energy, followed by normal ordering, yields
+\begin{equation}
+ :H_\gamma:=\sum_\lambda\int\dd\Pi_k\,
+ \omega_k a_\lambda^\dagger(\bm k)a_\lambda(\bm k),\qquad
+ :\bm P_\gamma:=\sum_\lambda\int\dd\Pi_k\,
+ \bm k a_\lambda^\dagger(\bm k)a_\lambda(\bm k).
+\end{equation}
+The \(aa\) and \(a^\dagger a^\dagger\) terms cancel between electric and
+magnetic energy. A state \(\ket{k,\lambda}=a_\lambda^\dagger(\bm k)\vac\)
+has positive norm, energy \(\omega_k\), and the desired covariant
+normalization. There is no longitudinal photon oscillator in this construction.
+
+For momentum in the \(z\) direction, the two linear polarizations can be
+combined into circular polarizations
+\(\bm\epsilon_\pm=(\bm e_x\pm\ii\bm e_y)/\sqrt2\).
+They transform by opposite phases under rotations about \(\bm k\), and
+give the two helicities \(\pm1\). The association of the labels \(+,-\)
+with a chosen phase convention is secondary; the two rotation eigenvalues
+are physical. A massless photon has no rest frame and no third spin
+projection obtained by boosting a rest-frame vector.
+
+\begin{keyidea}[What has been quantized]
+The free photon Fock space is the symmetric Fock space over the two
+helicity states. The Coulomb interaction will reappear when charged
+matter is present, but it does not add an independent polarization.
+\end{keyidea}
+
+\module{Polarization vectors and gauge equivalence}
+A covariant polarization representative satisfies
+\begin{equation}
+ k^2=0,\qquad k\cdot\epsilon=0,\qquad
+ \epsilon^\mu\sim\epsilon^\mu+c\,k^\mu.
+ \label{eq:polquotient}
+\end{equation}
+The last equivalence follows because adding a plane-wave gradient to
+\(A_\mu\) leaves \(F_{\mu\nu}\) unchanged. The space orthogonal to a null
+vector is three-dimensional, but it contains that null vector itself.
+The quotient in \eqref{eq:polquotient} is therefore two-dimensional.
+This is the covariant version of our transverse oscillator count.
+
+To choose representatives, introduce a vector \(n\) with \(k\cdot n\ne0\)
+and impose \(n\cdot\epsilon=0\). With
+\(\epsilon_\lambda\cdot\epsilon_{\lambda'}^*=-\delta_{\lambda\lambda'}\),
+\begin{equation}
+ \sum_{\lambda=1}^2\epsilon_\lambda^\mu\epsilon_\lambda^{\nu*}
+ =-\eta^{\mu\nu}
+ +\frac{k^\mu n^\nu+n^\mu k^\nu}{k\cdot n}
+ -\frac{n^2 k^\mu k^\nu}{(k\cdot n)^2}.
+ \label{eq:polsum}
+\end{equation}
+Contracting either index with \(k\) or \(n\) gives zero. Setting
+\(n=(1,\bm0)\) makes the time components vanish and reduces the spatial
+components to \(P_T^{ij}\).
+
+Suppose an amplitude with one external photon is
+\(\cM=\epsilon_\mu\mathcal A^\mu\). Independence of the representative
+requires the on-shell Ward identity
+\begin{equation}
+ k_\mu\mathcal A^\mu=0.
+\end{equation}
+Only after this identity is established may we replace the physical
+polarization sum by \(-\eta^{\mu\nu}\) in the squared amplitude:
+all other terms in \eqref{eq:polsum} then vanish. This shortcut sums two
+physical states by an algebraic identity; it does not assert the existence
+of four physical photon polarizations.
+
+\begin{remarkbox}[An off-shell projector is a different object]
+For \(k^2\ne0\), \(\eta^{\mu\nu}-k^\mu k^\nu/k^2\) has rank three.
+It is useful for inverting quadratic operators and decomposing loop
+corrections. It is singular at a null momentum and is not the sum over
+on-shell photon polarizations.
+\end{remarkbox}
+A Lorentz transformation of a Coulomb-gauge polarization need not stay in
+Coulomb gauge. A compensating gauge transformation restores the chosen
+representative, while its physical helicity state transforms consistently.
+
+\module{Gauge fixing in the path integral}
+The Maxwell quadratic action is
+\begin{equation}
+ S_0=\frac12\int\dd^4x\, A_\mu
+ (\eta^{\mu\nu}\Box-\partial^\mu\partial^\nu)A_\nu.
+\end{equation}
+The kinetic operator annihilates every gradient \(\partial_\nu\chi\).
+Consequently its determinant vanishes and it has no inverse on the full
+space of potentials. The naive Gaussian functional integral counts each
+gauge orbit infinitely many times.
+
+Choose the gauge condition \(G[A]=\partial\cdot A=f\). Along an orbit,
+\(G[A+\partial\chi]=G[A]+\Box\chi\). Formally inserting
+\begin{equation}
+ 1=\det(\Box)\int\D\chi\,
+ \delta\bigl(\partial\cdot A+\Box\chi-f\bigr)
+\end{equation}
+selects one representative, with the gauge-group volume subsequently
+removed. Boundary conditions must eliminate residual transformations
+with \(\Box\chi=0\), or their zero modes must be treated separately.
+This qualification is part of the definition of the determinant.
+
+Average over \(f\) with weight
+\(\exp[-\ii\int f^2/(2\xi)]\). The result is the gauge-fixed action
+\begin{equation}
+ \Lag_\xi=-\frac14F^2-\frac1{2\xi}(\partial\cdot A)^2.
+ \label{eq:gaugefix}
+\end{equation}
+The determinant \(\det\Box\) is independent of \(A\). In normalized Abelian
+correlators it cancels between numerator and denominator. If represented
+by Grassmann ghost fields, those fields are free and decouple. There are
+therefore no interacting Faddeev--Popov ghost loops in ordinary QED.
+This statement will change for non-Abelian gauge fields.
+
+\begin{keyidea}[A gauge choice defines intermediate Green functions]
+The parameter \(\xi\) changes \(\langle\Tord A_\mu A_\nu\rangle\).
+Gauge-invariant quantities are independent of it when the calculation
+and regulator respect the Ward identities. Gauge fixing makes a redundant
+Gaussian invertible; it does not give the photon a mass.
+\end{keyidea}
+The Landau limit is \(\xi\to0\), which enforces the Lorenz condition
+\(\partial\cdot A=0\). Feynman gauge is \(\xi=1\). The phrase
+``Lorenz gauge'' alone should not be used to identify a unique member of
+this covariant gauge family.
+
+\module{Inverting the covariant quadratic operator}
+For \(k^2\ne0\), define
+\(P_L^{\mu\nu}=k^\mu k^\nu/k^2\) and
+\(P_T^{\mu\nu}=\eta^{\mu\nu}-P_L^{\mu\nu}\).
+They are orthogonal projectors as mixed-index matrices. Fourier
+transformation of \eqref{eq:gaugefix} gives
+\begin{equation}
+ K^{\mu\nu}(k)=-k^2P_T^{\mu\nu}-\frac{k^2}{\xi}P_L^{\mu\nu}.
+\end{equation}
+The Gaussian contraction is \(\ii K^{-1}\), with the Feynman boundary
+prescription. Thus, with that prescription understood at each pole,
+\begin{equation}
+ D_{\mu\nu}^{(\xi)}(k)
+ =\frac{-\ii}{k^2+\ii0}
+ \left[\eta_{\mu\nu}-(1-\xi)\frac{k_\mu k_\nu}{k^2}\right].
+ \label{eq:photonprop}
+\end{equation}
+The longitudinal double pole is itself a distribution defined by the
+same prescription, not a reason to discard the term. Away from the pole,
+\(k^\mu D_{\mu\nu}^{(\xi)}=-\ii\xi k_\nu/k^2\).
+Only Landau gauge is transverse as a propagator.
+
+In particular,
+\begin{equation}
+ D_{\mu\nu}^{(1)}(k)=\frac{-\ii\eta_{\mu\nu}}{k^2+\ii0}.
+\end{equation}
+The minus sign relative to the scalar propagator follows from the
+Maxwell kinetic operator with our metric. Its spatial transverse
+components have the same positive oscillator contraction as two free
+massless scalar degrees of freedom.
+
+For comparison, the Coulomb-gauge contractions are
+\begin{equation}
+ D_C^{00}(k)=\frac{\ii}{|\bm k|^2},\quad D_C^{0i}=0,\quad
+ D_C^{ij}(k)=\frac{\ii P_T^{ij}(\bm k)}{(k^0)^2-|\bm k|^2+\ii0}.
+ \label{eq:coulombprop}
+\end{equation}
+The \(00\) component has no energy pole: Fourier transformation in
+\(k^0\) produces \(\delta(t-t')\), the instantaneous Coulomb kernel.
+The spatial propagator contains the two radiation modes.
+
+\begin{remarkbox}[Two different uses of transversality]
+Physical external photons have transverse polarization representatives.
+The photon self-energy will be transverse in every covariant gauge.
+Neither statement implies that the full gauge-fixed photon propagator is
+transverse for arbitrary \(\xi\). Keeping these objects distinct prevents
+sign and gauge errors in the Dyson series of Lecture 28.
+\end{remarkbox}
+
+\module{Covariant quantization and the physical space}
+Covariant quantization retains four components of \(A^\mu\) temporarily.
+In Feynman gauge the free mode algebra can be written
+\begin{equation}
+ [a^\mu(\bm k),a^{\nu\dagger}(\bm q)]
+ =-\eta^{\mu\nu}2\omega_k(2\pi)^3\delta^{(3)}(\bm k-\bm q).
+\end{equation}
+The timelike oscillator has a negative one-particle norm. This enlarged
+space is an auxiliary indefinite-metric space, not the physical photon
+Hilbert space. The sign of one propagator component alone would not be
+an adequate definition of the physical space.
+
+Imposing \(\partial\cdot A=0\) as a strong operator equation conflicts
+with the covariant canonical algebra. Even the condition
+\((\partial\cdot A)\ket{\Psi}=0\) is too strong: its creation part does
+not annihilate the vacuum. Instead impose the Gupta--Bleuler condition
+\begin{equation}
+ (\partial\cdot A)^{(+)}\ket{\Psi}=0,
+ \quad\hbox{equivalently}\quad k_\mu a^\mu(\bm k)\ket{\Psi}=0.
+\end{equation}
+Here \((+)\) denotes the positive-frequency, annihilation part.
+For momentum along \(z\) this is proportional to
+\((a^0-a^3)\ket{\Psi}=0\).
+
+For example, \((a^{0\dagger}-a^{3\dagger})\vac\) obeys the condition
+and has zero norm: the negative timelike and positive longitudinal
+contributions cancel. The constrained space is positive semidefinite,
+with such null states still present. The actual Hilbert space is
+\begin{equation}
+ \cH_{\rm phys}=
+ \frac{\ker(\partial\cdot A)^{(+)}}{\text{null states}}.
+\end{equation}
+Its positive-norm excitations are precisely the two transverse photons.
+Gauge-invariant observables act consistently on this quotient, and matrix
+elements of \(\partial\cdot A\) between physical states vanish.
+
+\begin{keyidea}[The two quantizations agree]
+Coulomb gauge solves the constraints before quantizing and displays
+positivity directly. Covariant quantization makes Lorentz covariance
+simple, then removes the auxiliary states by a subsidiary condition and
+a quotient. Both describe the same free physical photon states.
+\end{keyidea}
+With interactions, current conservation and the Ward identities ensure
+that unphysical polarizations decouple from physical amplitudes.
+For Abelian QED this provides the bridge from the free construction to
+the scattering rules; it does not license arbitrary off-shell
+polarization replacements.
+
+\module{Conserved sources and the bridge to QED}
+A simple check of gauge independence is exchange between conserved
+currents. If \(k_\mu J^\mu=k_\mu J'^\mu=0\), then
+\begin{equation}
+ J_\mu D_{(\xi)}^{\mu\nu}J'_\nu
+ =\frac{-\ii J\cdot J'}{k^2+\ii0},
+\end{equation}
+independent of \(\xi\). This cancellation uses current conservation,
+not regularity of longitudinal terms at the photon pole.
+
+The same identity follows less manifestly in Coulomb gauge. Let
+\(K=|\bm k|\), and decompose the spatial current into its transverse
+part and its component parallel to \(\bm k\). Conservation gives
+\(\bm k\cdot\bm J=k^0J^0\). Away from poles,
+\begin{align}
+ J_\mu D_C^{\mu\nu}J'_\nu
+ &=\frac{\ii J^0J'^0}{K^2}
+   +\frac{\ii\bm J_T\cdot\bm J'_T}{k^2},\\
+ J\cdot J'&=-\frac{k^2}{K^2}J^0J'^0
+             -\bm J_T\cdot\bm J'_T.
+\end{align}
+The two expressions reproduce the covariant result, with the appropriate
+boundary prescription. The instantaneous and radiation contributions
+have combined into a Lorentz-covariant answer.
+
+Now make the current dynamical by introducing a Dirac field. Denote its
+\emph{signed} charge by \(e\), negative for the electron, and set
+\begin{equation}
+ D_\mu\psi=(\partial_\mu+\ii e A_\mu)\psi,\qquad
+ \Lag_{\rm QED}=-\frac14F^2+\bar\psi(\ii\gamma^\mu D_\mu-m)\psi.
+\end{equation}
+The local transformations
+\begin{equation}
+ A_\mu\mapsto A_\mu+\partial_\mu\chi,\qquad
+ \psi\mapsto e^{-\ii e\chi}\psi
+\end{equation}
+make \(D_\mu\psi\) transform like \(\psi\). The interaction is
+\(-e\bar\psi\gamma^\mu\psi A_\mu\), and
+\(j^\mu=e\bar\psi\gamma^\mu\psi\).
+
+\begin{keyidea}[Ready for amplitudes]
+An internal photon uses the gauge-fixed propagator. An incoming physical
+photon contributes \(\epsilon_\mu(k,\lambda)\); an outgoing photon
+contributes \(\epsilon_\mu^*(k,\lambda)\). Matter couples through
+\(-\ii e\gamma^\mu\). Physical polarization sums may be simplified only
+after checking the Ward identity for the complete amplitude.
+\end{keyidea}
+Lecture 27 applies these rules to exchange, annihilation, and Compton
+scattering. Homework 9, Problem 1, tests their common origin in the
+constraint structure of Maxwell theory.
+\end{document}

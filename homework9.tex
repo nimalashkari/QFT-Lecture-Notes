@@ -1,0 +1,330 @@
+\documentclass[11pt]{article}
+\usepackage[letterpaper,margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern,microtype}
+\usepackage{amsmath,amssymb,mathtools,bm,slashed,mathrsfs}
+\usepackage{xcolor,enumitem,booktabs,array,needspace}
+\usepackage[most]{tcolorbox}
+\usepackage{fancyhdr,titlesec,parskip,hyperref}
+\definecolor{qftblue}{HTML}{245A8D}
+\definecolor{qftgreen}{HTML}{2F6B4F}
+\definecolor{qftgray}{HTML}{F4F6F8}
+\hypersetup{colorlinks=true,linkcolor=qftblue,urlcolor=qftblue,pdfauthor={Nima Lashkari}}
+\pagestyle{fancy}\fancyhf{}
+\lhead{PHYS 662: Quantum Field Theory I}\cfoot{\thepage}
+\setlength{\headheight}{14pt}
+\titleformat{\section}{\Large\bfseries\color{qftblue}}{\thesection.}{0.6em}{}
+\titleformat{\subsection}{\large\bfseries\color{qftgreen}}{\thesubsection}{0.6em}{}
+\setlist[enumerate]{leftmargin=2em,itemsep=0.25em,topsep=0.35em}
+\setlist[itemize]{leftmargin=2em,itemsep=0.2em,topsep=0.35em}
+\newcommand{\dd}{\mathrm d}
+\newcommand{\ii}{\mathrm i}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\tr}{\operatorname{tr}}
+\newcommand{\Tr}{\operatorname{Tr}}
+\newcommand{\diag}{\operatorname{diag}}
+\newcommand{\Lag}{\mathcal L}
+\newcommand{\D}{\mathcal D}
+\newcommand{\vac}{\lvert0\rangle}
+\newcommand{\vbra}{\langle0\rvert}
+\newcommand{\Tord}{\mathrm T}
+\newcommand{\ket}[1]{\lvert#1\rangle}
+\newcommand{\bra}[1]{\langle#1\rvert}
+\newtcolorbox{keyidea}[1][]{enhanced,breakable,colback=qftgray,colframe=qftblue,
+ boxrule=0.7pt,arc=1.5mm,title={#1},fonttitle=\bfseries,coltitle=white}
+\newtcolorbox{remarkbox}[1][]{enhanced,breakable,colback=white,colframe=qftgreen,
+ boxrule=0.6pt,arc=1.5mm,title={#1},fonttitle=\bfseries,coltitle=white}
+\newcommand{\intp}{\int\!\frac{\dd^4p}{(2\pi)^4}}
+\newcommand{\MSbar}{\overline{\mathrm{MS}}}
+\newcommand{\module}[1]{\clearpage\section{#1}}
+\newcommand{\braket}[2]{\langle#1\mid#2\rangle}
+\newcommand{\dPi}{\dd\Pi}
+\newcommand{\cM}{\mathcal M}
+\newcommand{\cH}{\mathcal H}
+\newcommand{\cS}{\mathcal S}
+\newcommand{\Zp}{Z_{\rm pole}}
+\newcommand{\Kallen}{\mathcal K}
+\rhead{Homework Set 9}
+\hypersetup{pdftitle={PHYS 662 Homework Set 9: Quantum Electrodynamics}}
+\newlist{parts}{enumerate}{1}
+\setlist[parts]{label=\textbf{(\alph*)},leftmargin=2.3em,itemsep=0.55em,topsep=0.4em}
+\newcommand{\problem}[2]{\clearpage\section*{\color{qftblue}Problem #1: #2}}
+\newcommand{\connection}[1]{{\small\textit{Lecture connection: #1}\par}\medskip}
+\begin{document}
+\begin{center}
+{\scshape\Large PHYS 662 --- Quantum Field Theory I\par}
+\vspace{0.3em}{\Huge\bfseries\color{qftblue}Homework Set 9\par}
+\vspace{0.3em}{\large Quantum Electrodynamics: Photons, Amplitudes, and Loops\par}
+\vspace{0.3em}{\large Lectures 26--29 \quad Fall 2026\par}
+\end{center}\medskip
+\textbf{Name:} \rule{0.43\textwidth}{0.4pt}\hfill
+\textbf{Due:} \rule{0.24\textwidth}{0.4pt}
+
+\textbf{Instructions.} Complete all four problems, worth 25 points each.
+Show the steps behind gauge cancellations and normalization factors.
+Distinguish ultraviolet subtraction from infrared regulation, and state
+where on-shell conditions are used. You may use a supplied intermediate
+result even if you have not derived it. No full evaluation of the
+off-shell vertex or long Compton gamma trace is required.
+
+\begin{keyidea}[Common conventions]
+Use \(\hbar=c=1\), \(\eta=\diag(1,-1,-1,-1)\),
+\(\alpha=e^2/(4\pi)\), and signed charge \(e<0\) for an electron.
+\[
+ \Lag_{\rm int}=-e\bar\psi\gamma^\mu\psi A_\mu,\qquad
+ S_F(p)=\frac{\ii(\slashed p+m)}{p^2-m^2+\ii0},\qquad
+ D_{\mu\nu}^{(1)}(k)=\frac{-\ii\eta_{\mu\nu}}{k^2+\ii0}.
+\]
+Feynman rules compute \(\ii\cM\), where
+\(\langle f|S-1|i\rangle_c=\ii(2\pi)^4\delta^{(4)}(P_f-P_i)\cM\).
+Use covariant one-particle normalization and
+\(\dd\Pi_p=\dd^3p/[(2\pi)^3 2E_p]\). The loop conventions are
+\[
+ d=4-2\eps,\quad \frac1{\bar\eps}=\frac1\eps-\gamma_E+\ln4\pi,
+ \quad a=\frac{\alpha}{4\pi},
+\]
+\[
+ \ii\Pi^{\mu\nu}=\ii(q^2\eta^{\mu\nu}-q^\mu q^\nu)\Pi(q^2),\qquad
+ S_R=\frac{\ii}{\slashed p-m-\Sigma_R(p)}.
+\]
+The photon Dyson denominator is \(1-\Pi_R\). The vertex is
+\(-\ii e\Gamma_R^\mu\), with photon momentum \(q=p'-p\).
+For on-shell spinors, \(\bar u u=2M\),
+\(\sum_su_s\bar u_s=\slashed p+M\), and
+\(\sigma^{\mu\nu}=\ii[\gamma^\mu,\gamma^\nu]/2\).
+\end{keyidea}
+
+\textbf{Coverage.} Problem 1 connects Maxwell constraints to physical
+photon states. Problem 2 turns a gauge-invariant QED amplitude into an
+observable. Problem 3 treats the two propagator corrections. Problem 4
+connects the vertex identity, magnetic moment, and soft radiation.
+
+\textbf{Useful integrals.}
+\[
+ \int_0^1x(1-x)\,\dd x=\frac16,\quad
+ \int_0^1x^2(1-x)^2\dd x=\frac1{30},\quad
+ \int_0^1x(1-x)\ln[x(1-x)]\dd x=-\frac5{18}.
+\]
+All charged-particle masses are nonzero. Where a pole residue or on-shell
+vertex requires an infrared regulator, keep it until the indicated
+physical combination is formed.
+
+\problem{1}{Why a photon has two polarizations}
+\connection{Lecture 26, Sections 1--8.}
+Consider Maxwell theory with \(\Lag=-F^2/4-j^\mu A_\mu\),
+\(j^\mu=(\rho,\bm J)\), and \(\partial_\mu j^\mu=0\). Fields and gauge
+transformations vanish suitably at spatial infinity.
+\begin{parts}
+\item \textbf{(4 points)} Compute the momentum conjugate to \(A_0\) and
+derive Gauss's law by varying \(A_0\). Explain why \(A_0\) is not an
+independent oscillator. What equation would be lost if one set \(A_0=0\)
+before variation and imposed no further constraint?
+
+\item \textbf{(5 points)} In Coulomb gauge,
+\(\bm\nabla\cdot\bm A=0\), solve for \(A^0\). Substitute it into the
+action to derive the Coulomb term in the reduced Lagrangian, including
+its sign and factor \(1/2\). Check that two static charges have interaction
+energy \(q_1q_2/(4\pi r)\) after omitting their separate self-energies.
+
+\item \textbf{(4 points)} With
+\(P_T^{ij}=\delta^{ij}-k^ik^j/|\bm k|^2\), show that the two-polarization
+mode expansion and
+\([a_\lambda(\bm k),a_{\lambda'}^\dagger(\bm q)]
+=2|\bm k|(2\pi)^3\delta_{\lambda\lambda'}\delta^{(3)}(\bm k-\bm q)\)
+imply \([A_T^i(\bm x),\dot A_T^j(\bm y)]=\ii\delta_T^{ij}(\bm x-\bm y)\).
+Why would an unrestricted spatial delta function be inconsistent?
+
+\item \textbf{(4 points)} For a null \(k\), count the independent
+polarizations satisfying \(k\cdot\epsilon=0\), with
+\(\epsilon\sim\epsilon+ck\). Using a reference vector \(n\) with
+\(n\cdot k\ne0\), verify that
+\[
+ P^{\mu\nu}=-\eta^{\mu\nu}
+ +\frac{k^\mu n^\nu+n^\mu k^\nu}{k\cdot n}
+ -\frac{n^2k^\mu k^\nu}{(k\cdot n)^2}
+\]
+is transverse to both \(k\) and \(n\), and reduces to the spatial
+polarization sum for \(n=(1,\bm0)\).
+
+\item \textbf{(4 points)} Add \(-(\partial\cdot A)^2/(2\xi)\), invert
+the quadratic operator using \(P_T=\eta-kk/k^2\) and \(P_L=kk/k^2\),
+and derive \(D_{\mu\nu}^{(\xi)}\). Show that exchange between conserved
+currents is independent of \(\xi\). Why is \(P_T\) here not an on-shell
+polarization sum?
+
+\item \textbf{(4 points)} In covariant quantization, explain why
+\((\partial\cdot A)^{(+)}|\mathrm{phys}\rangle=0\) is imposed instead
+of a strong operator condition. Identify a null timelike--longitudinal
+one-photon combination for momentum along \(z\), and explain why the
+physical Hilbert space requires a quotient by null states.
+\end{parts}
+
+\problem{2}{Compton scattering: gauge invariance and recoil}
+\connection{Lecture 27, Sections 2, 4, and 5.}
+Study \(e^-(p)+\gamma(k)\to e^-(p')+\gamma(k')\), with
+\(p^2=p'^2=m^2\), \(k^2=k'^2=0\), and \(p+k=p'+k'\).
+\begin{parts}
+\item \textbf{(5 points)} Draw the two tree diagrams and derive
+\[
+ \cM=-e^2\bar u(p')\left[
+ \slashed\epsilon'^{\,*}\frac{\slashed p+\slashed k+m}{2p\cdot k}
+ \slashed\epsilon+
+ \slashed\epsilon\frac{\slashed p-\slashed k'+m}{-2p\cdot k'}
+ \slashed\epsilon'^{\,*}\right]u(p).
+\]
+Explain the relative sign and why minimal Dirac QED has no extra
+contact diagram with two photons on the same vertex.
+
+\item \textbf{(4 points)} Replace \(\epsilon\) by \(k\) and demonstrate
+explicit cancellation between the two diagrams using the external
+Dirac equations. Explain how to obtain the outgoing-photon Ward identity.
+Does either individual diagram obey these identities?
+
+\item \textbf{(4 points)} Write the spin-averaged squared amplitude as
+a Dirac trace and specify the initial-state average. Explain why the
+physical photon sums may now be replaced by \(-\eta_{\mu\nu}\).
+Would this replacement be justified on one diagram considered alone?
+You do not need to evaluate the long trace.
+
+\item \textbf{(5 points)} In the electron rest frame set
+\(p=(m,\bm0)\), \(k^0=\omega\), \(k'^0=\omega'\), with angle
+\(\theta\) between \(\bm k\) and \(\bm k'\). Derive
+\[
+ \omega'=\frac{\omega}{1+(\omega/m)(1-\cos\theta)}.
+\]
+Starting from invariant two-body phase space and incoming flux
+\(4m\omega\), show that
+\[
+ \frac{\dd\sigma}{\dd\Omega}
+ =\frac{\overline{|\cM|^2}}{64\pi^2m^2}
+ \left(\frac{\omega'}{\omega}\right)^2.
+\]
+Display the energy-delta-function Jacobian rather than quoting a
+center-of-momentum formula in the laboratory frame.
+
+\item \textbf{(4 points)} You may use
+\(\overline{|\cM|^2}=2e^4[\omega/\omega'+\omega'/\omega-\sin^2\theta]\).
+Obtain the unpolarized differential cross section and its limit for
+\(\omega\ll m\). Integrate that limit over the full solid angle to find
+the total Thomson cross section.
+
+\item \textbf{(3 points)} At fixed nonzero scattering angle, determine
+the leading dependence of \(\dd\sigma/\dd\Omega\) on \(\omega\) for
+\(\omega\gg m\). Explain why this approximation is not uniform in the
+forward direction and cannot be integrated over all angles without care.
+\end{parts}
+
+\problem{3}{What the two propagator corrections measure}
+\connection{Lecture 28, Sections 1--5 and 7--9.}
+For one Dirac species, the zero-momentum-subtracted photon loop is
+\[
+ \widehat\Pi(q^2)=\frac{2\alpha}{\pi}\int_0^1\dd x\,x(1-x)
+ \ln\frac{m^2-x(1-x)q^2-\ii0}{m^2}.
+\]
+\begin{parts}
+\item \textbf{(4 points)} Starting with the trace integral in Lecture 28,
+contract \(q_\mu\) into the photon 1PI insertion and show that it vanishes
+by a shift of regulated loop momentum. State the property the regulator
+must have. Explain why this transversality does not imply
+\(q^\mu D_{\mu\nu}=0\) in Feynman gauge.
+
+\item \textbf{(5 points)} Sum the transverse Dyson series, then derive
+the leading small-\(Q\) and large-\(Q\) limits of \(\widehat\Pi(-Q^2)\).
+Use them to discuss screening, decoupling of a heavy fermion, and the
+sign of the one-loop running of
+\(\alpha_{\rm eff}(Q^2)=\alpha(0)/[1-\widehat\Pi(-Q^2)]\).
+Keep the constant accompanying the large logarithm.
+
+\item \textbf{(4 points)} Determine the first branch point in timelike
+\(q^2=s\). Find the parameter interval on which the logarithm has an
+imaginary part and calculate \(\operatorname{Im}\widehat\Pi(s+\ii0)\).
+Relate its mass-dependent factor to the tree-level pair-production
+cross section in Lecture 27. Explain the sign in our tensor convention.
+
+\item \textbf{(4 points)} For the electron self-energy take the supplied
+ultraviolet result
+\[
+ \Sigma_{\rm UV}^{(\xi)}(p)
+ =\frac{a}{\bar\eps}[-\xi\slashed p+(3+\xi)m].
+\]
+With \(\Sigma_R=\Sigma_{\rm loop}-\delta_2(\slashed p-m)+m\delta Z_m\),
+find the \(\MSbar\) constants \(\delta_2\) and \(\delta Z_m\).
+Which depends on the covariant gauge parameter, and why is a vanishing
+field ultraviolet pole insufficient to make the self-energy vanish?
+
+\item \textbf{(4 points)} The finite on-shell mass shift in Feynman gauge
+can be written
+\[
+ \frac{M-m(\mu)}{m(\mu)}
+ =a\int_0^1\dd x\left[(2+2x)
+ \left(\ln\frac{\mu^2}{m(\mu)^2}-2\ln x\right)-2x\right].
+\]
+Evaluate it. Determine \(\mu\,\dd m/\dd\mu\) to order \(\alpha\) by
+requiring the pole mass \(M\) to be independent of \(\mu\).
+
+\item \textbf{(4 points)} For
+\(\Sigma_R=A(p^2)\slashed p+B(p^2)m\), derive the mass condition and
+regulated pole residue by differentiating the positive-energy inverse
+propagator at rest. Explain why the on-shell residue can be infrared
+singular even though the one-loop mass shift is finite, and why it is
+not generally identical to the \(\MSbar\) field constant.
+\end{parts}
+
+\problem{4}{The vertex identity and a finite magnetic moment}
+\connection{Lecture 29, Sections 1--8.}
+Define \(\mathcal S_R^{-1}(p)=\slashed p-m-\Sigma_R(p)\) and
+\(\Gamma_R^\mu=\gamma^\mu+\Lambda^\mu+\delta_1\gamma^\mu\).
+\begin{parts}
+\item \textbf{(4 points)} Explain the origin of contact terms when a
+current divergence acts on the time-ordered product of \(j^\mu(x)\), \(\psi(y)\), and \(\bar\psi(z)\).
+Use the resulting Ward--Takahashi identity
+\[q_\mu\Gamma_R^\mu=\mathcal S_R^{-1}(p')-\mathcal S_R^{-1}(p)\]
+to derive the zero-transfer derivative identity. Why is the off-shell
+contraction not generally zero?
+
+\item \textbf{(4 points)} Use Problem 3's ultraviolet self-energy to
+predict the vertex pole in a general covariant gauge. Determine
+\(\delta_1\), verify \(Z_1=Z_2\) at this order, and explain how this
+reduces \(e_0=\mu^\eps eZ_1/(Z_2\sqrt{Z_3})\). Does the absence of the
+one-loop vertex ultraviolet pole in Landau gauge imply \(F_2=0\)?
+
+\item \textbf{(4 points)} Derive the Gordon identity and apply it to
+\[
+ \bar u'\left[\gamma^\mu F_1(q^2)
+ +\frac{\ii\sigma^{\mu\nu}q_\nu}{2M}F_2(q^2)\right]u.
+\]
+Show that \(g=2[F_1(0)+F_2(0)]\) and hence
+\(a_e=F_2(0)\) when the physical charge is defined by \(F_1(0)=1\).
+Why does the Ward contraction leave the Pauli term unconstrained?
+
+\item \textbf{(5 points)} Combine the three denominators of the vertex
+loop with parameters \(x,y\) on the electrons and \(z\) on the photon.
+For \(x+y+z=1\), \(p^2=p'^2=M^2\), show that shifting
+\(\ell=k-xp-yp'\) gives
+\(\Delta=M^2(1-z)^2-xyq^2\). You may use the finite projection
+\[
+ F_2(q^2)=\frac{\alpha}{\pi}\int_0^1\dd x\,\dd y\,\dd z\,
+ \delta(1-x-y-z)\frac{M^2z(1-z)}{\Delta-\ii0}.
+\]
+Evaluate \(F_2(0)\), explicitly accounting for the parameter-triangle
+measure, and give the leading correction to \(g\).
+
+\item \textbf{(4 points)} As an infrared check, replace
+\(\Delta\) by \(\Delta+z\lambda^2\) in this finite integral. Reduce
+\(F_2(0;\lambda)\) to one dimension and justify the limit
+\(\lambda\to0\), including the endpoint \(z=1\).
+State the dimension and coefficient of the local Pauli operator that
+reproduces this response at small transfer.
+
+\item \textbf{(4 points)} For massive charged external particles, the
+soft-emission factor is
+\(\sum_i\eta_i e_i p_i\cdot\epsilon^*/(p_i\cdot k)\), with
+\(\eta_i=+1\) outgoing and \(-1\) incoming.
+Show that charge conservation makes it gauge invariant and that its
+phase-space integral behaves as \(\int\dd\omega/\omega\).
+State which measured combination cancels the corresponding virtual
+infrared singularity and which detector-dependent scale remains.
+Why does ultraviolet renormalization alone not perform this cancellation?
+\end{parts}
+\end{document}

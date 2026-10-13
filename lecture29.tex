@@ -1,0 +1,494 @@
+\documentclass[11pt]{article}
+\usepackage[letterpaper,margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern,microtype}
+\usepackage{amsmath,amssymb,mathtools,bm,slashed}
+\usepackage{xcolor,enumitem,booktabs,array,needspace}
+\usepackage[most]{tcolorbox}
+\usepackage{fancyhdr,titlesec,parskip,hyperref}
+\definecolor{qftblue}{HTML}{245A8D}
+\definecolor{qftgreen}{HTML}{2F6B4F}
+\definecolor{qftgray}{HTML}{F4F6F8}
+\hypersetup{colorlinks=true,linkcolor=qftblue,urlcolor=qftblue,pdfauthor={Nima Lashkari}}
+\pagestyle{fancy}\fancyhf{}
+\lhead{PHYS 662: Quantum Field Theory I}\cfoot{\thepage}
+\setlength{\headheight}{14pt}
+\titleformat{\section}{\Large\bfseries\color{qftblue}}{\thesection.}{0.6em}{}
+\titleformat{\subsection}{\large\bfseries\color{qftgreen}}{\thesubsection}{0.6em}{}
+\setlist[enumerate]{leftmargin=2em,itemsep=0.25em,topsep=0.35em}
+\setlist[itemize]{leftmargin=2em,itemsep=0.2em,topsep=0.35em}
+\newcommand{\dd}{\mathrm d}
+\newcommand{\ii}{\mathrm i}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\tr}{\operatorname{tr}}
+\newcommand{\Tr}{\operatorname{Tr}}
+\newcommand{\diag}{\operatorname{diag}}
+\newcommand{\Lag}{\mathcal L}
+\newcommand{\D}{\mathcal D}
+\newcommand{\vac}{\lvert0\rangle}
+\newcommand{\vbra}{\langle0\rvert}
+\newcommand{\Tord}{\mathrm T}
+\newcommand{\ket}[1]{\lvert#1\rangle}
+\newcommand{\bra}[1]{\langle#1\rvert}
+\newtcolorbox{keyidea}[1][]{enhanced,breakable,colback=qftgray,colframe=qftblue,
+ boxrule=0.7pt,arc=1.5mm,title={#1},fonttitle=\bfseries,coltitle=white}
+\newtcolorbox{remarkbox}[1][]{enhanced,breakable,colback=white,colframe=qftgreen,
+ boxrule=0.6pt,arc=1.5mm,title={#1},fonttitle=\bfseries,coltitle=white}
+\newcommand{\intp}{\int\!\frac{\dd^4p}{(2\pi)^4}}
+\newcommand{\MSbar}{\overline{\mathrm{MS}}}
+\newcommand{\module}[1]{\clearpage\section{#1}}
+\newcommand{\braket}[2]{\langle#1\mid#2\rangle}
+\newcommand{\dPi}{\dd\Pi}
+\newcommand{\cM}{\mathcal M}
+\newcommand{\cH}{\mathcal H}
+\newcommand{\cS}{\mathcal S}
+\newcommand{\Zp}{Z_{\rm pole}}
+\newcommand{\Kallen}{\mathcal K}
+\newcommand{\lecturefront}[4]{%
+\rhead{Lecture #1}\hypersetup{pdftitle={PHYS 662 Lecture #1: #2}}
+\begin{document}\pagenumbering{gobble}
+\begin{titlepage}\centering\vspace*{1.05in}
+{\scshape\Large PHYS 662 --- Quantum Field Theory I\par}
+\vspace{0.35in}{\Huge\bfseries\color{qftblue}Lecture #1\par}
+\vspace{0.2in}{\LARGE\bfseries #2\par}
+\vspace{0.2in}{\large\color{qftgreen}#3\par}
+\vspace{0.6in}{\large Nima Lashkari\par}{\large Fall 2026\par}
+\vfill\begin{minipage}{0.86\textwidth}\small #4\par\medskip
+Course page: \url{https://nimalashkari.com/quantum-field-theory-2026-part-i/}
+\end{minipage}\vspace{0.5in}\end{titlepage}
+\pagenumbering{roman}\setcounter{tocdepth}{1}\tableofcontents
+\vfill\begin{remarkbox}[Place in the course]
+Lecture 26 constructs the physical photon Hilbert space and its propagators.
+Lecture 27 develops QED amplitudes. Lecture 28 computes the photon and
+fermion self-energies. Lecture 29 relates the vertex to charge
+renormalization and the magnetic moment. Homework 9 closes this sequence.
+\end{remarkbox}
+\small\textbf{Reading and conventions.} The uploaded course slides are the
+primary starting point. D.~Tong,
+\href{https://www.damtp.cam.ac.uk/user/tong/qft/qfthtml/S6.html}{\textit{Quantum Field Theory}, Chapter 6},
+is a companion for photon quantization and QED. For the vertex calculation,
+see V.~Kaplunovsky,
+\href{https://web2.ph.utexas.edu/~vadim/Classes/2020f/vertex.pdf}{\textit{QED Vertex Correction}},
+especially the parameter integral for the Pauli form factor.
+For further textbook study, see Peskin--Schroeder, \textit{An Introduction
+to QFT}, Chapters 5--7 and 10.
+All formulas here use the mostly-minus metric and propagators that include
+\(\ii\). Dimensional regularization uses \(d=4-2\eps\), which differs from
+some of the slides. The accompanying editorial memo records corrections
+and the scope of the supplementary reading.
+\normalsize\clearpage\pagenumbering{arabic}}
+\lecturefront{29}{Loop Corrections to a Vertex}
+{The Ward--Takahashi identity and the anomalous magnetic moment}
+{The photon--electron vertex contains both a divergent correction related
+to field normalization and a finite spin-dependent response. We separate
+these pieces, derive the relation between charge and field
+renormalization, and calculate the leading anomalous magnetic moment.
+The final step explains why finite measured probabilities require
+inclusive treatment of soft photons.}
+
+\section{The vertex and the inverse propagator}
+Let an electron of momentum \(p\) absorb a photon of momentum
+\(q=p'-p\) and emerge with momentum \(p'\). Define the renormalized
+amputated 1PI vertex by
+\begin{equation}
+ -\ii e\Gamma_R^\mu(p',p),\qquad
+ \Gamma_R^\mu=\gamma^\mu+\Lambda^\mu_{\rm loop}+\delta_1\gamma^\mu.
+\end{equation}
+The factor \(-\ii e\) is removed in the definition of \(\Gamma_R\).
+The loop correction \(\Lambda\) starts at order \(e^2\).
+An amputated 1PI vertex is not by itself a scattering amplitude: physical
+external-leg normalization and the rest of the process are still needed.
+
+It is useful to remove the overall \(\ii\) from the full electron
+propagator and define
+\begin{equation}
+ S_R(p)=\ii\mathcal S_R(p),\qquad
+ \mathcal S_R^{-1}(p)=\slashed p-m-\Sigma_R(p).
+\end{equation}
+Gauge invariance then takes the particularly simple form
+\begin{equation}
+ \boxed{q_\mu\Gamma_R^\mu(p',p)
+ =\mathcal S_R^{-1}(p')-\mathcal S_R^{-1}(p).}
+ \label{eq:WT}
+\end{equation}
+At tree level this says \(\slashed q=\slashed p'-\slashed p\).
+At one loop it relates the longitudinal vertex correction to the
+momentum dependence of the self-energy computed in Lecture 28.
+
+\begin{keyidea}[Longitudinal information does not determine the whole vertex]
+The Ward--Takahashi identity constrains \(q_\mu\Gamma^\mu\).
+A term proportional to \(\sigma^{\mu\nu}q_\nu\) is transverse because
+\(\sigma^{\mu\nu}\) is antisymmetric. It is therefore unconstrained by
+this contraction. That finite term carries the anomalous magnetic moment.
+\end{keyidea}
+The identity is off shell. Between external on-shell spinors, after
+consistent leg normalization, its right side vanishes and it reduces to
+the physical-photon Ward identity used for Compton scattering.
+For loop calculations we keep momenta off shell when extracting
+ultraviolet poles, so that soft singularities do not masquerade as
+ultraviolet ones.
+
+Throughout, \(\eta=(+---)\), \(\alpha=e^2/(4\pi)\),
+\(d=4-2\eps\), and \(1/\bar\eps=1/\eps-\gamma_E+\ln4\pi\).
+The symbol \(e\) is a signed charge. We use \(M\) for the physical
+perturbative electron mass in on-shell form factors.
+
+\module{Contact terms and charge renormalization}
+Current conservation inside a time-ordered product is not simply zero:
+derivatives also act on the ordering step functions. The equal-time
+charge commutators are
+\begin{equation}
+ [Q,\psi]=-e\psi,\qquad [Q,\bar\psi]=e\bar\psi.
+\end{equation}
+Consequently, with the same renormalization prescription for the current,
+\begin{align}
+ \partial_\mu^x\langle\Tord j^\mu(x)\psi(y)\bar\psi(z)\rangle
+ ={}&-e\delta^{(4)}(x-y)\langle\Tord\psi(y)\bar\psi(z)\rangle
+ \nonumber\\
+ &+e\delta^{(4)}(x-z)\langle\Tord\psi(y)\bar\psi(z)\rangle.
+\end{align}
+These endpoint terms are the operator counterpart of the diagrammatic
+cancellations in Lecture 27. Fourier transforming and amputating the
+external electron propagators gives \eqref{eq:WT}. A gauge-preserving
+regulator and counterterms are understood; vector QED has no anomaly
+that obstructs this identity.
+
+Taking \(p'\to p\), with a regulator in place, gives
+\begin{equation}
+ \Gamma_R^\mu(p,p)=\gamma^\mu-\frac{\partial\Sigma_R(p)}{\partial p_\mu}.
+ \label{eq:wardzero}
+\end{equation}
+Thus a change in the normalization of the propagator is accompanied by
+a corresponding change in the zero-momentum vertex. The bare version
+of this statement, expressed in renormalized fields, requires
+\begin{equation}
+ Z_1=Z_2,\qquad
+ e_0=\mu^\eps e\frac{Z_1}{Z_2\sqrt{Z_3}}
+     =\mu^\eps eZ_3^{-1/2}.
+ \label{eq:Zrelation}
+\end{equation}
+The equality includes finite terms when a compatible normalization
+scheme is used. The electron factors do not independently renormalize
+the measured electric charge; their effect is tied together by the identity.
+
+For example, the \(\MSbar\) ultraviolet self-energy is
+\(\Sigma_{\rm UV}=a[-\xi\slashed p+(3+\xi)m]/\bar\eps\), where
+\(a=\alpha/(4\pi)\). Differentiation predicts
+\begin{equation}
+ \Lambda^\mu_{\rm UV}=\frac{\xi a}{\bar\eps}\gamma^\mu,
+ \qquad \delta_1=\delta_2=-\frac{\xi a}{\bar\eps}.
+\end{equation}
+The prediction provides a stringent check on the direct vertex integral.
+It also shows why subtracting an arbitrary vertex pole without checking
+the self-energy would be inconsistent with charge conservation.
+
+\module{The one-loop integral and its ultraviolet part}
+In Feynman gauge the vertex correction is
+\begin{equation}
+ \Lambda^\mu=-\ii e^2\mu^{2\eps}\int\frac{\dd^dk}{(2\pi)^d}
+ \frac{\gamma^\alpha(\slashed p'-\slashed k+m)\gamma^\mu
+ (\slashed p-\slashed k+m)\gamma_\alpha}
+ {(k^2+\ii0)[(p'-k)^2-m^2+\ii0][(p-k)^2-m^2+\ii0]}.
+ \label{eq:vertexloop}
+\end{equation}
+There is no closed-fermion-loop sign. For large \(k\), the numerator is
+quadratic in \(k\) and the denominator scales as \(k^6\); the four-dimensional
+integral is logarithmically divergent. The divergent part is independent
+of external momenta and must be a local multiple of \(\gamma^\mu\).
+
+To extract it, retain the leading numerator and use regulated angular
+averaging:
+\begin{equation}
+ \gamma^\alpha\slashed k\gamma^\mu\slashed k\gamma_\alpha
+ \ \longrightarrow\ 
+ \frac{k^2}{d}\gamma^\alpha\gamma^\rho\gamma^\mu\gamma_\rho\gamma_\alpha
+ =\frac{(d-2)^2}{d}k^2\gamma^\mu.
+\end{equation}
+After introducing Feynman parameters, the same term gives
+\(\int_\ell\ell^2/(\ell^2-\Delta)^3\), whose ultraviolet pole is
+\(\ii/(16\pi^2\bar\eps)\). The parameter triangle has area \(1/2\),
+which cancels the factor two from combining three denominators. Thus
+\begin{equation}
+ \Lambda_{\rm UV}^\mu=\frac{\alpha}{4\pi\bar\eps}\gamma^\mu
+ \quad(\xi=1).
+\end{equation}
+Do not set every scale to zero in the original integral: a scaleless
+integral in dimensional regularization vanishes because ultraviolet and
+infrared poles cancel, obscuring the ultraviolet coefficient being sought.
+
+In a general covariant gauge, the longitudinal photon term adds
+\((\xi-1)\alpha\gamma^\mu/(4\pi\bar\eps)\), agreeing with
+\eqref{eq:wardzero}. In Landau gauge \(\xi=0\), this ultraviolet pole is
+absent at one loop; the finite vertex correction is still present.
+
+\begin{remarkbox}[What has and has not been made finite]
+The local counterterm \(\delta_1\gamma^\mu\) removes the ultraviolet
+pole. On-shell vertex functions at nonzero momentum transfer can still
+contain infrared singularities. Ultraviolet subtraction and the removal
+of a soft-photon regulator are different operations.
+\end{remarkbox}
+The remaining calculation extracts the finite transverse spin response.
+It is simpler than evaluating every scalar coefficient of the general
+off-shell vertex, which has many more tensor structures.
+
+\module{On-shell form factors and the magnetic moment}
+For \(p^2=p'^2=M^2\), Lorentz covariance, parity, and current conservation
+reduce the electron current matrix element to two form factors:
+\begin{equation}
+ \bar u(p')\Gamma^\mu_{\rm phys}u(p)
+ =\bar u(p')\left[\gamma^\mu F_1(q^2)
+ +\frac{\ii\sigma^{\mu\nu}q_\nu}{2M}F_2(q^2)\right]u(p),
+ \quad \sigma^{\mu\nu}=\frac{\ii}{2}[\gamma^\mu,\gamma^\nu].
+ \label{eq:formfactors}
+\end{equation}
+Here \(\Gamma_{\rm phys}\) includes external-leg normalization, or is
+evaluated in a scheme with unit regulated pole residue. An on-shell
+charge condition imposes \(F_1(0)=1\). At tree level
+\(F_1=1\) and \(F_2=0\).
+A term \(q^\mu F_3\) is excluded by current conservation for generic
+\(q^2\), with the smooth zero-transfer limit understood. Parity-violating
+or electric-dipole structures are absent in the QED theory considered here.
+
+The Gordon identity follows by inserting the on-shell Dirac equations
+on the two sides of \(\gamma^\mu\):
+\begin{equation}
+ \bar u'\gamma^\mu u
+ =\frac1{2M}\bar u'[(p'+p)^\mu+\ii\sigma^{\mu\nu}q_\nu]u.
+\end{equation}
+It separates a convection current from a spin current. The coefficient
+of the latter in \eqref{eq:formfactors} is \(F_1+F_2\). In the slowly
+varying magnetic-field limit, the spin interaction is
+\begin{equation}
+ H_{\rm spin}=-\bm\mu\cdot\bm B,\qquad
+ \bm\mu=\frac{e}{2M}[F_1(0)+F_2(0)]\bm\sigma.
+\end{equation}
+Since \(\bm S=\bm\sigma/2\), define
+\begin{equation}
+ g=2[F_1(0)+F_2(0)],\qquad
+ a_e\equiv\frac{g-2}{2}=F_2(0).
+\end{equation}
+For an electron \(e<0\), so the magnetic moment points opposite to the
+spin even though \(g\) is positive in this convention.
+
+\begin{keyidea}[Why the Pauli form factor is a prediction]
+A local Pauli interaction would have dimension five. Minimal
+renormalizable QED has no independent coefficient for it. The one-loop
+\(F_2\) is ultraviolet finite and determined by the measured charge and
+mass, rather than by a new ultraviolet counterterm.
+\end{keyidea}
+At order \(\alpha\), external-leg factors multiplying a Pauli term would
+contribute only at order \(\alpha^2\), since that term vanishes at tree
+level. The one-loop \(F_2\) can therefore be extracted directly from
+\eqref{eq:vertexloop} between on-shell spinors.
+
+\module{Isolating the finite Pauli coefficient}
+Assign parameters \(x,y\) to the two electron denominators and \(z\) to
+the photon denominator, with \(x+y+z=1\). Write
+\begin{equation}
+ \int_\triangle\equiv\int_0^1\dd x\,\dd y\,\dd z\,
+ \delta(1-x-y-z),\qquad
+ \frac1{ABC}=2\int_\triangle\frac1{(xA+yB+zC)^3}.
+\end{equation}
+Choose \(A=(p-k)^2-M^2\), \(B=(p'-k)^2-M^2\), \(C=k^2\), and shift
+\(\ell=k-xp-yp'\). On shell,
+\begin{equation}
+ xA+yB+zC=\ell^2-\Delta,\qquad
+ \Delta=M^2(1-z)^2-xyq^2.
+ \label{eq:vertexdelta}
+\end{equation}
+This denominator retains the full momentum-transfer dependence.
+
+Here is an economical way to organize the numerator algebra. Discard
+terms odd in \(\ell\) under the regulated integral, use the external
+Dirac equations only when slashed momenta reach the appropriate spinor,
+and use the Gordon identity to eliminate \((p+p')^\mu\). Terms odd under
+\(x\leftrightarrow y\) integrate to zero. For the finite Pauli coefficient
+we may then set \(d=4\). The numerator becomes, in this integrated
+on-shell sense,
+\begin{align}
+ N^\mu\doteq{}&
+ [\ell^2-2M^2(1-4z+z^2)-2q^2(z+xy)]\gamma^\mu
+ \nonumber\\
+ &-4M^2z(1-z)\frac{\ii\sigma^{\mu\nu}q_\nu}{2M}.
+ \label{eq:projectedN}
+\end{align}
+For checks on the reduction, use
+\(\slashed q\gamma^\mu\slashed q=2q^\mu\slashed q-q^2\gamma^\mu\)
+and \(\bar u'\slashed q u=0\). The angular average of
+\(-2\slashed\ell\gamma^\mu\slashed\ell\) is \(\ell^2\gamma^\mu\).
+The \(\doteq\) symbol is not an off-shell matrix identity.
+
+The Pauli term has no \(\ell^2\) numerator and hence no ultraviolet pole.
+Using
+\begin{equation}
+ \int\frac{\dd^4\ell}{(2\pi)^4}
+ \frac1{(\ell^2-\Delta+\ii0)^3}
+ =-\frac{\ii}{32\pi^2(\Delta-\ii0)},
+\end{equation}
+including the factor \(-2\ii e^2\) from the loop and parameterization,
+gives
+\begin{equation}
+ \boxed{\displaystyle
+ F_2(q^2)=\frac{\alpha}{\pi}\int_\triangle
+ \frac{M^2z(1-z)}{M^2(1-z)^2-xyq^2-\ii0}+O(\alpha^2).}
+ \label{eq:F2}
+\end{equation}
+The ultraviolet-divergent \(\gamma^\mu\) coefficient must instead be
+computed with its full \(d\)-dependence; \eqref{eq:projectedN} is not a
+shortcut for its finite part.
+
+\module{Schwinger's result and its low-energy meaning}
+At zero momentum transfer, the integrand in \eqref{eq:F2} depends only
+on \(z\). At fixed \(z\), the allowed \(x\) interval has length \(1-z\).
+Therefore
+\begin{equation}
+ F_2(0)=\frac{\alpha}{\pi}\int_0^1\dd z\,(1-z)
+ \frac{z(1-z)}{(1-z)^2}
+ =\frac{\alpha}{\pi}\int_0^1z\,\dd z
+ =\frac{\alpha}{2\pi}.
+\end{equation}
+The apparent endpoint singularity of the triangle integrand is
+integrable after its measure is included. Thus
+\begin{equation}
+ a_e=\frac{\alpha}{2\pi}+O(\alpha^2),\qquad
+ g=2\left[1+\frac{\alpha}{2\pi}+O(\alpha^2)\right].
+\end{equation}
+This is the leading QED anomalous magnetic moment. It is independent of
+the mass because the mass factors cancel in the dimensionless ratio;
+the magnetic moment itself still scales as \(1/M\).
+
+One may check infrared finiteness by introducing a small photon mass
+\(\lambda\) solely as an auxiliary regulator in this finite integral.
+Then \(\Delta\) becomes \(\Delta+z\lambda^2\), and
+\begin{equation}
+ F_2(0;\lambda)=\frac{\alpha}{\pi}\int_0^1\dd z\,
+ \frac{z(1-z)^2}{(1-z)^2+z(\lambda/M)^2}
+ \longrightarrow\frac{\alpha}{2\pi}.
+\end{equation}
+The integrand is bounded by \(z\), so its limit may be taken under the
+integral. This auxiliary test does not replace the gauge-preserving
+regulator used to establish the Ward identity and ultraviolet counterterms.
+
+For slowly varying external fields, the result can be encoded by
+\begin{equation}
+ \Lag_{\rm Pauli}=-\frac{e\kappa}{4M}
+ \bar\psi\sigma^{\mu\nu}\psi F_{\mu\nu},\qquad
+ \kappa=F_2(0).
+\end{equation}
+With \(q=p'-p\), this produces the extra vertex
+\(-\ii e[\ii\sigma^{\mu\nu}q_\nu\kappa/(2M)]\).
+It is a low-energy matching coefficient of QED. At larger transfer the
+full function \(F_2(q^2)\), together with \(F_1(q^2)\), is required.
+
+\begin{remarkbox}[Finite magnetic response, infrared-sensitive charge response]
+\(F_2(0)\) has a finite soft limit at this order. The ultraviolet-renormalized
+\(F_1(q^2)\) at nonzero transfer generally retains soft-photon singularities.
+The normalization \(F_1(0)=1\) is a charge condition; it does not assert
+that the entire vertex is free of infrared effects.
+\end{remarkbox}
+
+\module{Soft photons and what an experiment measures}
+A detector cannot distinguish a final state with no extra photon from
+one accompanied by sufficiently low-energy radiation. The exclusive
+Fock-state probability for exactly no soft radiation is therefore not
+the quantity to compare with a finite-resolution measurement.
+
+The leading soft-emission factor can be derived from an external
+fermion line. If a photon of momentum \(k\) is emitted from an outgoing
+line of momentum \(p\), its adjacent propagator has
+\((p+k)^2-M^2\simeq2p\cdot k\). The Dirac equation reduces the numerator
+to \(2p^\mu\). Summing attachments to all charged external lines gives
+\begin{equation}
+ \cM_{n+\gamma}(k,\epsilon)
+ \simeq\left[\sum_i\eta_i e_i
+ \frac{p_i\cdot\epsilon^*}{p_i\cdot k}\right]\cM_n,
+ \quad
+ \eta_i=\begin{cases}+1&\text{outgoing},\\-1&\text{incoming}.
+ \end{cases}
+\end{equation}
+Here \(e_i\) is the signed physical charge of each particle, including
+antiparticles. A gauge change \(\epsilon\mapsto\epsilon+ck\) gives a
+factor \(c\sum_i\eta_i e_i=0\), precisely charge conservation.
+
+For massive external particles, integrating unresolved real photons
+with \(\omega<\Delta E\) produces the factor
+\begin{equation}
+ \int_{\omega<\Delta E}\frac{\dd^3k}{(2\pi)^3\,2\omega}
+ \sum_{\lambda=1}^2
+ \left|\sum_i\eta_i e_i
+ \frac{p_i\cdot\epsilon_\lambda^*(k)}{p_i\cdot k}\right|^2.
+\end{equation}
+The soft behavior is \(\int\dd\omega/\omega\). A virtual photon
+connecting charged lines gives the same infrared logarithm with the
+opposite contribution to the probability. Consequently the inclusive
+combination
+\begin{equation}
+ \dd\sigma_{\rm incl}(\Delta E)
+ =\dd\sigma_{\rm Born}+\dd\sigma_{\rm virtual}
+ +\dd\sigma_{\rm real,\,\omega<\Delta E}
+\end{equation}
+is finite as the soft regulator is removed, to the stated perturbative
+order. Physical logarithms of the resolution \(\Delta E\) remain.
+
+The cancellation requires the complete virtual correction, including
+external legs and other diagrams of the process, not the vertex alone.
+We assumed nonzero charged-particle masses; a massless limit introduces
+additional collinear singularities and requires a suitable inclusive
+observable. These statements explain the infrared qualification to LSZ
+in Lectures 23 and 28 while preserving the usefulness of perturbative
+amplitudes for measured rates.
+
+\module{The QED renormalization pattern}
+Collect the one-loop ultraviolet constants for one Dirac species in a
+covariant gauge. With \(a=\alpha/(4\pi)\),
+\begin{equation}
+ Z_3=1-\frac{4a}{3\bar\eps},\quad
+ Z_2=Z_1=1-\frac{\xi a}{\bar\eps},\quad
+ Z_m=1-\frac{3a}{\bar\eps}.
+\end{equation}
+These are \(\MSbar\) constants, not physical pole residues. All ultraviolet
+poles in the two-point functions and vertex are absorbed by the original
+QED operators. The equality \(Z_1=Z_2\) is the consistency condition
+linking the calculations, and a photon mass is not generated.
+
+One can read off the running charge directly. From \eqref{eq:Zrelation},
+\begin{equation}
+ e_0=\mu^\eps e\left[1+\frac{e^2}{24\pi^2\bar\eps}+O(e^4)\right].
+\end{equation}
+Hold \(e_0\) fixed and differentiate with respect to \(\ln\mu\).
+The leading \(d\)-dimensional running is \(-\eps e\); retaining its
+product with the pole term gives
+\begin{equation}
+ \beta_e=-\eps e+\frac{e^3}{12\pi^2}+O(e^5),\qquad
+ \beta_\alpha\big|_{d=4}=\frac{2\alpha^2}{3\pi}+O(\alpha^3).
+\end{equation}
+This agrees with the logarithm of the polarization function in Lecture
+28. For multiple active species, multiply the one-loop coefficient by
+\(\sum_f Q_f^2\), where their charges are \(Q_f e\); threshold matching
+is needed when a species becomes heavy compared with the process scale.
+
+\begin{center}
+\begin{tabular}{p{0.27\textwidth}p{0.61\textwidth}}
+\toprule
+Quantity & Main physical information \\
+\midrule
+Transverse photon two-point function & Charge screening, running, and pair thresholds \\
+Electron self-energy & Mass relation and regulated external-leg normalization \\
+Longitudinal vertex identity & Equality of vertex and electron field renormalization \\
+Pauli form factor & Finite spin response, \(a_e=\alpha/(2\pi)+\cdots\) \\
+Inclusive probability & Cancellation of unobservable soft-regulator dependence \\
+\bottomrule
+\end{tabular}
+\end{center}
+Renormalization has not removed the momentum dependence of QED. It has
+separated unphysical ultraviolet parameters from finite predictions
+expressed in measured quantities. Gauge identities coordinate that
+separation, while unitarity and inclusiveness determine how the resulting
+amplitudes enter observable probabilities.
+
+Homework 9 follows the same chain: photon constraints and polarizations,
+a gauge-invariant scattering amplitude, propagator corrections, and the
+vertex identity with the magnetic moment. Together these are the basic
+tools needed for systematic perturbative calculations in QED.
+\end{document}

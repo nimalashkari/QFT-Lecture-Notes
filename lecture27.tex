@@ -1,0 +1,518 @@
+\documentclass[11pt]{article}
+\usepackage[letterpaper,margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern,microtype}
+\usepackage{amsmath,amssymb,mathtools,bm,slashed}
+\usepackage{xcolor,enumitem,booktabs,array,needspace}
+\usepackage[most]{tcolorbox}
+\usetikzlibrary{decorations.pathmorphing,arrows.meta}
+\tikzset{electron/.style={thick,-{Stealth[length=2mm]}},
+ photon/.style={thick,decorate,decoration={snake,amplitude=1pt,segment length=4pt}}}
+\usepackage{fancyhdr,titlesec,parskip,hyperref}
+\definecolor{qftblue}{HTML}{245A8D}
+\definecolor{qftgreen}{HTML}{2F6B4F}
+\definecolor{qftgray}{HTML}{F4F6F8}
+\hypersetup{colorlinks=true,linkcolor=qftblue,urlcolor=qftblue,pdfauthor={Nima Lashkari}}
+\pagestyle{fancy}\fancyhf{}
+\lhead{PHYS 662: Quantum Field Theory I}\cfoot{\thepage}
+\setlength{\headheight}{14pt}
+\titleformat{\section}{\Large\bfseries\color{qftblue}}{\thesection.}{0.6em}{}
+\titleformat{\subsection}{\large\bfseries\color{qftgreen}}{\thesubsection}{0.6em}{}
+\setlist[enumerate]{leftmargin=2em,itemsep=0.25em,topsep=0.35em}
+\setlist[itemize]{leftmargin=2em,itemsep=0.2em,topsep=0.35em}
+\newcommand{\dd}{\mathrm d}
+\newcommand{\ii}{\mathrm i}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\tr}{\operatorname{tr}}
+\newcommand{\Tr}{\operatorname{Tr}}
+\newcommand{\diag}{\operatorname{diag}}
+\newcommand{\Lag}{\mathcal L}
+\newcommand{\D}{\mathcal D}
+\newcommand{\vac}{\lvert0\rangle}
+\newcommand{\vbra}{\langle0\rvert}
+\newcommand{\Tord}{\mathrm T}
+\newcommand{\ket}[1]{\lvert#1\rangle}
+\newcommand{\bra}[1]{\langle#1\rvert}
+\newtcolorbox{keyidea}[1][]{enhanced,breakable,colback=qftgray,colframe=qftblue,
+ boxrule=0.7pt,arc=1.5mm,title={#1},fonttitle=\bfseries,coltitle=white}
+\newtcolorbox{remarkbox}[1][]{enhanced,breakable,colback=white,colframe=qftgreen,
+ boxrule=0.6pt,arc=1.5mm,title={#1},fonttitle=\bfseries,coltitle=white}
+\newcommand{\intp}{\int\!\frac{\dd^4p}{(2\pi)^4}}
+\newcommand{\MSbar}{\overline{\mathrm{MS}}}
+\newcommand{\module}[1]{\clearpage\section{#1}}
+\newcommand{\braket}[2]{\langle#1\mid#2\rangle}
+\newcommand{\dPi}{\dd\Pi}
+\newcommand{\cM}{\mathcal M}
+\newcommand{\cH}{\mathcal H}
+\newcommand{\cS}{\mathcal S}
+\newcommand{\Zp}{Z_{\rm pole}}
+\newcommand{\Kallen}{\mathcal K}
+\newcommand{\lecturefront}[4]{%
+\rhead{Lecture #1}\hypersetup{pdftitle={PHYS 662 Lecture #1: #2}}
+\begin{document}\pagenumbering{gobble}
+\begin{titlepage}\centering\vspace*{1.05in}
+{\scshape\Large PHYS 662 --- Quantum Field Theory I\par}
+\vspace{0.35in}{\Huge\bfseries\color{qftblue}Lecture #1\par}
+\vspace{0.2in}{\LARGE\bfseries #2\par}
+\vspace{0.2in}{\large\color{qftgreen}#3\par}
+\vspace{0.6in}{\large Nima Lashkari\par}{\large Fall 2026\par}
+\vfill\begin{minipage}{0.86\textwidth}\small #4\par\medskip
+Course page: \url{https://nimalashkari.com/quantum-field-theory-2026-part-i/}
+\end{minipage}\vspace{0.5in}\end{titlepage}
+\pagenumbering{roman}\setcounter{tocdepth}{1}\tableofcontents
+\vfill\begin{remarkbox}[Place in the course]
+Lecture 26 constructs the physical photon Hilbert space and its propagators.
+Lecture 27 develops QED amplitudes. Lecture 28 computes the photon and
+fermion self-energies. Lecture 29 relates the vertex to charge
+renormalization and the magnetic moment. Homework 9 closes this sequence.
+\end{remarkbox}
+\small\textbf{Reading and conventions.} The uploaded course slides are the
+primary starting point. D.~Tong,
+\href{https://www.damtp.cam.ac.uk/user/tong/qft/qfthtml/S6.html}{\textit{Quantum Field Theory}, Chapter 6},
+is a companion for photon quantization and QED. For the vertex calculation,
+see V.~Kaplunovsky,
+\href{https://web2.ph.utexas.edu/~vadim/Classes/2020f/vertex.pdf}{\textit{QED Vertex Correction}},
+especially the parameter integral for the Pauli form factor.
+For further textbook study, see Peskin--Schroeder, \textit{An Introduction
+to QFT}, Chapters 5--7 and 10.
+All formulas here use the mostly-minus metric and propagators that include
+\(\ii\). Dimensional regularization uses \(d=4-2\eps\), which differs from
+some of the slides. The accompanying editorial memo records corrections
+and the scope of the supplementary reading.
+\normalsize\clearpage\pagenumbering{arabic}}
+\lecturefront{27}{Quantum Electrodynamics}
+{Gauge invariance, scattering amplitudes, and the organization of loops}
+{We couple the quantized electromagnetic field to Dirac matter and turn
+the resulting action into measurable scattering probabilities. Worked
+examples make the roles of spin, identical particles, and the Ward
+identity explicit, before we organize the loop corrections studied in
+the final two lectures.}
+
+\section{Minimal coupling and the conserved current}
+Continue with \(\eta=\diag(1,-1,-1,-1)\), and let \(e\) be the signed
+charge of the Dirac particle. Thus \(e<0\) for an electron, while
+\(\alpha=e^2/(4\pi)>0\). The gauge-fixed QED Lagrangian is
+\begin{equation}
+ \Lag=-\frac14F_{\mu\nu}F^{\mu\nu}
+ -\frac{(\partial\cdot A)^2}{2\xi}
+ +\bar\psi(\ii\slashed\partial-m)\psi
+ -e\bar\psi\gamma^\mu\psi A_\mu.
+ \label{eq:qed}
+\end{equation}
+Its gauge-invariant part follows by replacing \(\partial_\mu\) with
+\(D_\mu=\partial_\mu+\ii e A_\mu\). Indeed,
+\begin{equation}
+ A_\mu\longmapsto A_\mu+\partial_\mu\chi,\qquad
+ \psi\longmapsto e^{-\ii e\chi}\psi,
+ \qquad D_\mu\psi\longmapsto e^{-\ii e\chi}D_\mu\psi.
+\end{equation}
+The term involving \(\partial_\mu\chi\) from the ordinary derivative
+cancels the new gauge-potential term. This local cancellation fixes the
+relative coefficient of the kinetic and interaction terms.
+
+The global phase transformation has current
+\begin{equation}
+ j^\mu=e\bar\psi\gamma^\mu\psi,\qquad \partial_\mu j^\mu=0.
+\end{equation}
+The interacting Dirac equation and its adjoint prove the second relation;
+the terms containing \(A_\mu\) cancel. The Maxwell equation is
+\(\partial_\mu F^{\mu\nu}=j^\nu\) before gauge fixing. An antiparticle
+carries charge \(-e\), as follows from the normal-ordered charge operator.
+
+In four dimensions, \([A]=1\), \([\psi]=3/2\), and \([e]=0\).
+The interaction is dimension four. A photon mass term would violate the
+gauge redundancy, and a Pauli term \(\bar\psi\sigma^{\mu\nu}\psi F_{\mu\nu}\)
+has dimension five. Neither is an independent term in minimal
+renormalizable QED, although the latter will arise as a finite
+low-energy description of a loop effect.
+
+\begin{keyidea}[Symmetry relates computations]
+Gauge invariance constrains amplitudes, the ultraviolet counterterms,
+and charge renormalization. We will first see it as cancellation between
+Compton diagrams; Lecture 29 derives the corresponding identity for
+full propagators and the vertex.
+\end{keyidea}
+There is no elementary three- or four-photon vertex in \eqref{eq:qed}.
+Photons nevertheless interact through charged-particle loops. Free
+Abelian ghosts decouple, as shown in Lecture 26.
+
+\module{Feynman rules and fermion bookkeeping}
+Our convention is \(S=1+\ii T\), with connected matrix element
+\(\ii(2\pi)^4\delta^{(4)}(P_f-P_i)\cM\). The following rules therefore
+produce \(\ii\cM\), not \(\cM\). In Feynman gauge,
+\begin{center}
+\renewcommand{\arraystretch}{1.35}
+\begin{tabular}{ll}
+\toprule
+Object & Factor \\
+\midrule
+Internal fermion & \(\displaystyle S_F(p)=\frac{\ii(\slashed p+m)}{p^2-m^2+\ii0}\) \\
+Internal photon & \(\displaystyle D_{\mu\nu}(k)=\frac{-\ii\eta_{\mu\nu}}{k^2+\ii0}\) \\
+Photon--fermion vertex & \(-\ii e\gamma^\mu\) \\
+Incoming / outgoing fermion & \(u_s(p)\ /\ \bar u_s(p)\) \\
+Incoming / outgoing antifermion & \(\bar v_s(p)\ /\ v_s(p)\) \\
+Incoming / outgoing photon & \(\epsilon_\mu(k)\ /\ \epsilon_\mu^*(k)\) \\
+\bottomrule
+\end{tabular}
+\end{center}
+Momentum is conserved at every vertex. Follow each fermion line to form
+an ordered matrix product between its external spinors. A closed line
+produces a trace and an additional factor \(-1\), originating from the
+cyclic rearrangement of Grassmann fields. Exchange of identical external
+fermions gives a relative minus sign between the corresponding diagrams.
+These are distinct bookkeeping rules.
+
+Integrate each independent loop momentum using
+\(\int\dd^4\ell/(2\pi)^4\), regulate before shifting a divergent integral,
+and include the usual graph symmetry factor. Divide out vacuum bubbles.
+For unpolarized probabilities, sum final spins and polarizations and
+average over the initial states actually populated.
+
+The useful completeness relations are
+\begin{equation}
+ \sum_su_s(p)\bar u_s(p)=\slashed p+m,\qquad
+ \sum_sv_s(p)\bar v_s(p)=\slashed p-m.
+\end{equation}
+For a matrix \(X\), define \(\bar X=\gamma^0X^\dagger\gamma^0\). Then
+\begin{equation}
+ \sum_{s,s'}|\bar u_{s'}(p')Xu_s(p)|^2
+ =\tr[(\slashed p'+m)X(\slashed p+m)\bar X].
+ \label{eq:spintrace}
+\end{equation}
+This follows by multiplying the amplitude by its complex conjugate and
+inserting both completeness relations. It is more reliable than expanding
+individual spinors. At tree level we use four-dimensional gamma algebra;
+in ultraviolet-divergent loops the dimension-dependent identities must
+be retained until the pole expansion is complete.
+
+\module{Exchange of identical fermions}
+Consider M\o ller scattering,
+\(e^-(p_1,s_1)e^-(p_2,s_2)\to e^-(p_3,s_3)e^-(p_4,s_4)\).
+There are two ways to connect the external fermion lines. With
+\(t=(p_1-p_3)^2\) and \(u=(p_1-p_4)^2\), the rules give
+\begin{equation}
+ \cM=e^2\left[
+ \frac{[\bar u_3\gamma^\mu u_1][\bar u_4\gamma_\mu u_2]}{t}
+ -\frac{[\bar u_4\gamma^\mu u_1][\bar u_3\gamma_\mu u_2]}{u}
+ \right].
+ \label{eq:moller}
+\end{equation}
+The relative minus sign enforces antisymmetry under exchange of the
+complete outgoing one-particle labels. If momentum \emph{and spin} labels
+coincide, the amplitude vanishes. Equal momenta alone do not require
+vanishing when the spin states differ.
+
+Each current is conserved on shell. For example,
+\begin{equation}
+ (p_1-p_3)_\mu\bar u_3\gamma^\mu u_1
+ =\bar u_3(\slashed p_1-\slashed p_3)u_1
+ =m\bar u_3u_1-m\bar u_3u_1=0.
+\end{equation}
+The longitudinal part of an arbitrary covariant photon propagator
+therefore drops out of each exchange term separately. This particularly
+simple diagram-by-diagram cancellation will not hold in every process.
+
+For reference, a basic trace needed in spin sums is
+\begin{equation}
+ \tr[(\slashed a+m)\gamma^\mu(\slashed b+m)\gamma^\nu]
+ =4\left[a^\mu b^\nu+a^\nu b^\mu
+ -\eta^{\mu\nu}(a\cdot b-m^2)\right].
+\end{equation}
+It follows from the vanishing of odd traces and
+\(\tr(\gamma^\alpha\gamma^\mu\gamma^\beta\gamma^\nu)
+=4(\eta^{\alpha\mu}\eta^{\beta\nu}-\eta^{\alpha\beta}\eta^{\mu\nu}
++\eta^{\alpha\nu}\eta^{\mu\beta})\).
+The interference of the two exchange terms is a single longer trace;
+it must be kept before any spin average.
+
+\begin{remarkbox}[Statistics and phase space are separate]
+Antisymmetrizing \(\cM\) does not remove the identical-particle phase-space
+factor. Integrating over all labeled final electron momenta requires
+\(1/2!\). Equivalently, integrate over one nonredundant final-state region
+without that factor. The initial beam flux is not divided by \(2!\).
+\end{remarkbox}
+At small momentum transfer, the \(t\)-channel singularity reflects the
+long-range Coulomb interaction. It is not a massive resonance; finite
+angular acceptance matters when quoting an integrated cross section.
+
+\module{Compton scattering and a diagrammatic Ward identity}
+For \(e^-(p)+\gamma(k)\to e^-(p')+\gamma(k')\), let
+\(p+k=p'+k'\), \(s=(p+k)^2\), and \(u=(p-k')^2\).
+There are two orderings of the photon vertices along the electron line:
+\begin{center}
+\begin{tikzpicture}[scale=.78,font=\small]
+\foreach \shift/\channel/\internal/\leftph/\rightph in
+ {0/s/{p+k}/{k\ \mathrm{in}}/{k'\ \mathrm{out}},
+  7/u/{p-k'}/{k'\ \mathrm{out}}/{k\ \mathrm{in}}}{
+ \begin{scope}[xshift=\shift cm]
+ \draw[electron](-2.3,0)--(-.65,0) node[midway,below]{$p$};
+ \draw[electron](-.65,0)--(.65,0) node[midway,below]{$\internal$};
+ \draw[electron](.65,0)--(2.3,0) node[midway,below]{$p'$};
+ \draw[photon](-1.35,1.15)--(-.65,0);
+ \draw[photon](.65,0)--(1.35,1.15);
+ \node[above] at(-1.35,1.15){$\leftph$};
+ \node[above] at(1.35,1.15){$\rightph$};
+ \fill(-.65,0)circle(2pt);\fill(.65,0)circle(2pt);
+ \node at(0,-.8){$\channel$ channel};
+ \end{scope}}
+\end{tikzpicture}
+\end{center}
+\begin{align}
+ \cM=-e^2\bar u(p')\left[
+ \slashed\epsilon'^{\,*}\frac{\slashed p+\slashed k+m}{s-m^2}
+ \slashed\epsilon
+ +\slashed\epsilon\frac{\slashed p-\slashed k'+m}{u-m^2}
+ \slashed\epsilon'^{\,*}\right]u(p).
+ \label{eq:compton}
+\end{align}
+Here \(\slashed\epsilon'^{\,*}\) means the slash of the complex-conjugate
+outgoing polarization. The diagrams have a relative plus sign: no
+identical external fermions have been exchanged. Minimal Dirac QED has
+no additional two-photon contact vertex.
+
+The gauge test is to replace the incoming polarization by \(k\).
+Set \(Q=p+k\), \(R=p-k'\), and use the stripped free propagator
+\(\mathcal S_0(r)=(\slashed r-m)^{-1}\). The first term becomes
+\begin{equation}
+ \bar u'\slashed\epsilon'^{\,*}\mathcal S_0(Q)\slashed k u
+ =\bar u'\slashed\epsilon'^{\,*}u,
+ \qquad \slashed k u=(\slashed Q-m)u.
+\end{equation}
+For the second term, momentum conservation gives \(k=p'-R\), so
+\begin{equation}
+ \bar u'\slashed k\mathcal S_0(R)\slashed\epsilon'^{\,*}u
+ =-\bar u'\slashed\epsilon'^{\,*}u.
+\end{equation}
+The two terms cancel exactly. Replacing the outgoing polarization by
+\(k'\) gives the second Ward identity in the same way.
+
+\begin{keyidea}[Test the sum before summing polarizations]
+Each Compton diagram fails the external-photon Ward test. Their sum
+passes. Consequently the physical polarization sum may be replaced by
+\(-\eta_{\mu\nu}\) only for the complete amplitude.
+\end{keyidea}
+This cancellation is the elementary form of a general telescoping
+identity: contracting a photon momentum into a fermion vertex gives the
+difference of the inverse propagators on its two sides. Adjacent
+attachments cancel, leaving endpoint terms that vanish for external
+on-shell states. Off shell the endpoint terms survive and become the
+Ward--Takahashi identity, rather than zero.
+
+\module{From Compton amplitudes to the Klein--Nishina formula}
+In the laboratory take \(p=(m,\bm0)\), incoming photon energy \(\omega\),
+and outgoing energy \(\omega'\), with angle \(\theta\) between photons.
+The condition \((p+k-k')^2=m^2\) gives
+\begin{equation}
+ \omega'=\frac{\omega}{1+(\omega/m)(1-\cos\theta)}.
+ \label{eq:recoil}
+\end{equation}
+The recoil is essential except in the low-energy limit.
+
+Write the bracket of \eqref{eq:compton} as
+\(\epsilon'^*_\nu\epsilon_\mu X^{\nu\mu}\), where
+\begin{equation}
+ X^{\nu\mu}=\gamma^\nu\frac{\slashed p+\slashed k+m}{2p\cdot k}\gamma^\mu
+ +\gamma^\mu\frac{\slashed p-\slashed k'+m}{-2p\cdot k'}\gamma^\nu.
+\end{equation}
+The spin and polarization average is
+\begin{equation}
+ \overline{|\cM|^2}=\frac{e^4}{4}
+ \eta_{\mu\rho}\eta_{\nu\sigma}
+ \tr[(\slashed p'+m)X^{\nu\mu}(\slashed p+m)\bar X^{\sigma\rho}].
+\end{equation}
+The factor \(1/4\) averages two electron spins and two photon helicities.
+Expanding the two squares and their interference, reducing the gamma
+traces, and using \(p\cdot k=m\omega\), \(p\cdot k'=m\omega'\), gives
+\begin{equation}
+ \overline{|\cM|^2}=2e^4\left[
+ \frac{\omega}{\omega'}+\frac{\omega'}{\omega}-\sin^2\theta\right].
+\end{equation}
+For example, before inserting laboratory variables the bracket is
+\(a/b+b/a+2m^2(1/a-1/b)+m^4(1/a-1/b)^2\), with
+\(a=p\cdot k\), \(b=p\cdot k'\). The recoil relation turns its last two
+terms into \(-\sin^2\theta\).
+
+Integrating the two-body phase space with flux \(4m\omega\) yields
+\begin{equation}
+ \frac{\dd\sigma}{\dd\Omega}
+ =\frac{\overline{|\cM|^2}}{64\pi^2m^2}
+ \left(\frac{\omega'}{\omega}\right)^2
+ =\frac{\alpha^2}{2m^2}\left(\frac{\omega'}{\omega}\right)^2
+ \left[\frac{\omega}{\omega'}+\frac{\omega'}{\omega}-\sin^2\theta\right].
+\end{equation}
+One recoil factor arises from final-state phase space, and another from
+the energy-delta-function Jacobian. The expression is the unpolarized
+Klein--Nishina formula.
+
+When \(\omega\ll m\), \(\omega'\simeq\omega\), giving the Thomson results
+\begin{equation}
+ \frac{\dd\sigma_T}{\dd\Omega}=\frac{\alpha^2}{2m^2}(1+\cos^2\theta),
+ \qquad \sigma_T=\frac{8\pi\alpha^2}{3m^2}.
+\end{equation}
+The dimensions, positivity, and low-energy limit independently check the
+normalization of the relativistic calculation.
+
+\module{Annihilation into a charged fermion pair}
+Consider \(e^-(p_1)e^+(p_2)\to\mu^-(p_3)\mu^+(p_4)\), with muon mass
+\(M\). Neglect the incoming electron mass but retain \(M\). At tree level
+there is one annihilation diagram,
+\begin{equation}
+ \cM=\frac{e^2}{s}
+ [\bar v(p_2)\gamma^\mu u(p_1)]
+ [\bar u(p_3)\gamma_\mu v(p_4)],\qquad s=(p_1+p_2)^2.
+\end{equation}
+The spin average factorizes into two traces:
+\begin{equation}
+ \overline{|\cM|^2}=\frac{e^4}{4s^2}
+ \tr[\slashed p_2\gamma^\mu\slashed p_1\gamma^\nu]
+ \tr[(\slashed p_3+M)\gamma_\mu(\slashed p_4-M)\gamma_\nu].
+\end{equation}
+The second trace has the mass term with the opposite sign to a
+fermion--fermion trace because the outgoing antiparticle completeness
+relation is \(\slashed p_4-M\). Contracting gives
+\begin{equation}
+ \overline{|\cM|^2}
+ =\frac{2e^4}{s^2}\left[(M^2-t)^2+(M^2-u)^2+2M^2s\right].
+\end{equation}
+In the center-of-momentum frame define
+\(\beta=\sqrt{1-4M^2/s}\). With \(\theta\) the angle of the outgoing
+negative muon relative to the incoming electron,
+\begin{equation}
+ M^2-t=\frac{s}{2}(1-\beta\cos\theta),\qquad
+ M^2-u=\frac{s}{2}(1+\beta\cos\theta).
+\end{equation}
+The two-body phase-space formula of Lecture 24 now gives
+\begin{align}
+ \frac{\dd\sigma}{\dd\Omega}
+ &=\frac{\alpha^2\beta}{4s}
+ \left[1+\cos^2\theta+(1-\beta^2)\sin^2\theta\right],\\
+ \sigma(s)&=\frac{4\pi\alpha^2}{3s}\,
+ \beta\left(1+\frac{2M^2}{s}\right).
+ \label{eq:paircross}
+\end{align}
+There is no identical-final-particle divisor. At high energy the angular
+distribution approaches \(1+\cos^2\theta\), and the total cross section
+scales as \(1/s\). At threshold the phase-space factor \(\beta\) suppresses
+the rate even though the matrix element remains finite.
+
+\begin{remarkbox}[A bridge to the next lecture]
+The factor \(\beta(1+2M^2/s)\) will reappear in the imaginary part of
+photon vacuum polarization. Cutting the two fermion lines places the
+same pair on shell; unitarity relates the cut loop to the probability
+for producing that intermediate state.
+\end{remarkbox}
+
+\module{Why the basic loop corrections have their form}
+The one-loop photon self-energy is a closed fermion loop with two photon
+attachments. The electron self-energy contains one internal photon and
+one internal electron. The vertex correction contains one photon and two
+electron segments. All three carry two more powers of \(e\) than their
+tree-level counterparts.
+\begin{center}
+\begin{tikzpicture}[scale=.68,font=\small]
+\begin{scope}
+ \draw[photon](-2,0)--(-.8,0);\draw[photon](.8,0)--(2,0);
+ \draw[electron](-.8,0)arc[start angle=180,end angle=0,x radius=.8,y radius=.65];
+ \draw[electron](.8,0)arc[start angle=0,end angle=-180,x radius=.8,y radius=.65];
+ \node at(0,-1.15){photon self-energy};
+\end{scope}
+\begin{scope}[xshift=5.7cm]
+ \draw[electron](-2,0)--(-.9,0);\draw[electron](-.9,0)--(.9,0);
+ \draw[electron](.9,0)--(2,0);
+ \draw[photon](-.9,0)to[out=70,in=110](.9,0);
+ \node at(0,-1.15){electron self-energy};
+\end{scope}
+\begin{scope}[xshift=11.4cm]
+ \draw[electron](-2,0)--(-1,0);\draw[electron](-1,0)--(0,0);
+ \draw[electron](0,0)--(1,0);\draw[electron](1,0)--(2,0);
+ \draw[photon](-1,0)to[out=-65,in=-115](1,0);
+ \draw[photon](0,0)--(0,1.15);
+ \node at(0,-1.15){vertex correction};
+\end{scope}
+\end{tikzpicture}
+\end{center}
+
+For a connected QED graph, let \(I_A,I_\psi,V,L\) count internal photons,
+internal fermions, vertices, and loops, and let \(E_A,E_\psi\) count
+external lines. At large generic loop momenta the superficial degree of
+divergence is
+\begin{equation}
+ \mathcal D=4L-2I_A-I_\psi.
+\end{equation}
+Using \(L=I_A+I_\psi-V+1\),
+\(2I_\psi+E_\psi=2V\), and \(2I_A+E_A=V\), obtain
+\begin{equation}
+ \mathcal D=4-E_A-\frac32E_\psi.
+\end{equation}
+Thus the photon two-point function is superficially quadratic, the
+fermion two-point function linear, and the vertex logarithmic.
+This is an upper bound, before symmetry constraints. The Ward identity
+forces the photon self-energy to contain
+\(q^2\eta^{\mu\nu}-q^\mu q^\nu\), leaving only a logarithmic scalar
+coefficient and forbidding a photon-mass counterterm.
+
+Charge conjugation supplies another constraint. Reversing a closed
+fermion loop with \(n\) photon insertions changes its sign by \((-1)^n\).
+After pairing the two orientations, every odd-photon loop vanishes
+(Furry's theorem). The statement assumes the charge-conjugation-invariant
+vacuum, with no external medium or background that breaks that symmetry.
+
+\begin{keyidea}[Counterterm structures do not exhaust amplitudes]
+The photon two-point function, fermion two-point function, and vertex
+control the independent QED ultraviolet renormalizations. They do not
+generate every scattering diagram. For example, light-by-light scattering
+has genuine four-photon box diagrams. Their complete one-loop sum is
+ultraviolet finite by the gauge identities.
+\end{keyidea}
+At higher orders, divergent subgraphs must also be subtracted. Power
+counting is therefore a guide to possible local counterterms, not a
+replacement for the subtraction of subdivergences or for Ward identities.
+
+\module{Preparing a consistent loop expansion}
+Use dimensional regularization with \(d=4-2\eps\), and write
+\begin{equation}
+ \frac1{\bar\eps}=\frac1\eps-\gamma_E+\ln4\pi.
+\end{equation}
+Keep \(\tr\mathbf1=4\) as the Dirac trace convention while continuing
+contracted Lorentz indices to \(d\). In particular,
+\(\gamma^\mu\gamma_\mu=d\) and
+\(\gamma^\mu\slashed a\gamma_\mu=(2-d)\slashed a\).
+Terms proportional to \(\eps\) can multiply \(1/\eps\) poles and give
+finite contributions. They must not be discarded prematurely.
+
+Introduce \(A_0=\sqrt{Z_3}A\), \(\psi_0=\sqrt{Z_2}\psi\),
+\(m_0=Z_m m\), and
+\(e_0=\mu^\eps eZ_1/(Z_2\sqrt{Z_3})\). Writing
+\(Z_i=1+\delta_i\), \(Z_m=1+\delta Z_m\), the one-loop counterterms are
+\begin{equation}
+ \Lag_{\rm ct}=-\frac{\delta_3}{4}F^2
+ +\delta_2\bar\psi(\ii\slashed\partial-m)\psi
+ -m\delta Z_m\bar\psi\psi
+ -\mu^\eps e\delta_1\bar\psi\gamma^\mu\psi A_\mu.
+ \label{eq:ct}
+\end{equation}
+Products of counterterms enter only at higher orders. Choosing
+\(\xi_0=Z_3\xi\) leaves the displayed gauge-fixing term in renormalized
+form. A gauge-preserving subtraction will imply \(Z_1=Z_2\).
+
+The loop program is now concrete. First regulate and evaluate a 1PI
+function. Next cancel its local ultraviolet pole using \eqref{eq:ct}.
+Finally impose a subtraction condition, such as \(\MSbar\) or a physical
+on-shell condition, and combine the result with the other contributions
+to an observable. A subtraction prescription changes parameter labels,
+not predictions expressed in the same measured inputs.
+
+\begin{remarkbox}[Ultraviolet and infrared limits answer different questions]
+A divergence from large loop momentum fixes local counterterms. A
+divergence from a photon with vanishing energy reflects the impossibility
+of resolving arbitrarily soft radiation. The latter is handled in
+inclusive observables or suitably dressed charged states, not by a new
+ultraviolet counterterm. Keep the two regulators conceptually distinct,
+even when dimensional regularization represents both by poles.
+\end{remarkbox}
+Lecture 28 computes the propagator corrections and their physical
+interpretation. Lecture 29 completes the vertex, explains why the same
+charge appears in propagation and interaction, and extracts the finite
+anomalous magnetic moment. Homework 9 ties these calculations together.
+\end{document}
