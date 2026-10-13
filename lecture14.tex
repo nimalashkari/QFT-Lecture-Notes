@@ -1,0 +1,786 @@
+\documentclass[11pt]{article}
+
+\usepackage[letterpaper,margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb,mathtools,bm}
+\usepackage{slashed}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{hyperref}
+\usepackage[most]{tcolorbox}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{parskip}
+\usepackage{needspace}
+
+\definecolor{qftblue}{HTML}{245A8D}
+\definecolor{qftgreen}{HTML}{2F6B4F}
+\definecolor{qftred}{HTML}{A23B3B}
+\definecolor{qftgray}{HTML}{F4F6F8}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=qftblue,
+  urlcolor=qftblue,
+  citecolor=qftgreen,
+  pdftitle={PHYS 662 Lecture 14: One-Particle States and Free Spinor Solutions},
+  pdfauthor={Nima Lashkari}
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{PHYS 662: Quantum Field Theory I}
+\rhead{Lecture 14}
+\cfoot{\thepage}
+\setlength{\headheight}{14pt}
+
+\titleformat{\section}{\Large\bfseries\color{qftblue}}{\thesection.}{0.6em}{}
+\titleformat{\subsection}{\large\bfseries\color{qftgreen}}{\thesubsection}{0.6em}{}
+\titleformat{\subsubsection}{\normalsize\bfseries\color{qftred}}{\thesubsubsection}{0.6em}{}
+
+\setlist[itemize]{leftmargin=2em,itemsep=0.25em,topsep=0.4em}
+\setlist[enumerate]{leftmargin=2em,itemsep=0.25em,topsep=0.4em}
+
+\newcommand{\dd}{\mathrm{d}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Lag}{\mathcal{L}}
+\newcommand{\cM}{\mathcal{M}}
+\newcommand{\SO}{\mathrm{SO}}
+\newcommand{\OO}{\mathrm{O}}
+
+\newtcolorbox{keyidea}[1][]{
+  enhanced, breakable, colback=qftgray, colframe=qftblue,
+  boxrule=0.8pt, arc=1.5mm, title={#1}, fonttitle=\bfseries,
+  coltitle=white
+}
+\newtcolorbox{remarkbox}[1][]{
+  enhanced, breakable, colback=white, colframe=qftgreen,
+  boxrule=0.7pt, arc=1.5mm, title={#1}, fonttitle=\bfseries,
+  coltitle=white
+}
+\newtcolorbox{warningbox}[1][]{
+  enhanced, breakable, colback=white, colframe=qftred,
+  boxrule=0.7pt, arc=1.5mm, title={#1}, fonttitle=\bfseries,
+  coltitle=white
+}
+
+
+\newcommand{\Th}{\Theta}
+\newcommand{\Eul}{\mathcal E}
+\newcommand{\Lie}{\mathscr L}
+
+\newcommand{\C}{\mathbb C}
+\newcommand{\Z}{\mathbb Z}
+\newcommand{\SU}{\mathrm{SU}}
+\newcommand{\UU}{\mathrm{U}}
+\newcommand{\GL}{\mathrm{GL}}
+\newcommand{\SL}{\mathrm{SL}}
+\newcommand{\Sp}{\mathrm{Sp}}
+\newcommand{\tr}{\operatorname{tr}}
+\newcommand{\Ad}{\operatorname{Ad}}
+\newcommand{\ad}{\operatorname{ad}}
+\newcommand{\lieg}{\mathfrak g}
+\newcommand{\lieh}{\mathfrak h}
+\newcommand{\su}{\mathfrak{su}}
+\newcommand{\so}{\mathfrak{so}}
+\newcommand{\slie}{\mathfrak{sl}}
+
+
+\newcommand{\cH}{\mathcal H}
+\newcommand{\Spin}{\operatorname{Spin}}
+\newcommand{\id}{\mathrm{id}}
+\newcommand{\Lor}{\SO^+(1,3)}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\one}{\mathbf 1}
+
+\newcommand{\smu}{s}
+\newcommand{\tmu}{\widetilde s}
+\newcommand{\Eps}{E}
+\newcommand{\pslash}{\slashed p}
+\newcommand{\ISO}{\mathrm{ISO}}
+\newcommand{\pL}{P_L}
+\newcommand{\pR}{P_R}
+\newcommand{\hc}{\mathrm{h.c.}}
+\newcommand{\diag}{\operatorname{diag}}
+\newcommand{\vol}{\mathrm{vol}}
+\newcommand{\supp}{\operatorname{supp}}
+\begin{document}
+\pagenumbering{gobble}
+\begin{titlepage}
+\centering
+\vspace*{1.2in}
+{\scshape\Large PHYS 662 --- Quantum Field Theory I\par}
+\vspace{0.35in}
+{\Huge\bfseries\color{qftblue} Lecture 14\par}
+\vspace{0.15in}
+{\LARGE\bfseries One-Particle States\par}
+\vspace{0.06in}
+{\LARGE\bfseries and Free Spinor Solutions\par}
+\vspace{0.16in}
+{\large\color{qftgreen} Little Groups, Spin, and the Dirac Equation\par}
+\vspace{0.6in}
+{\large Nima Lashkari\par}
+{\large Fall 2026\par}
+\vfill
+\begin{minipage}{0.86\textwidth}\small
+The Lorentz matrices acting on field components are finite dimensional
+and usually nonunitary. Physical one-particle states, by contrast,
+belong to a unitary representation of the Poincar\'e group. Momentum
+orbits and their stabilizers explain how these statements fit together.
+We derive the massive and massless spin labels, then construct the
+Dirac wavefunctions that connect covariant fields to particle states.
+
+\medskip
+Course page: \url{https://nimalashkari.com/quantum-field-theory-2026-part-i/}
+\end{minipage}
+\vspace{0.5in}
+\end{titlepage}
+\pagenumbering{roman}
+\begingroup\small\tableofcontents\endgroup
+\newpage
+\pagenumbering{arabic}
+
+\section*{Roadmap}
+\addcontentsline{toc}{section}{Roadmap}
+Lecture 11 classified Lorentz representations, Lecture 12 constructed
+their spinor bilinears, and Lecture 13 derived the local free actions. We now ask what the observers in different inertial
+frames agree to call the same particle.
+\begin{enumerate}
+\item Construct one-particle Hilbert spaces from momentum orbits.
+\item Derive the little group and the Wigner transformation of spin labels.
+\item Classify ordinary massive spin and massless helicity representations.
+\item Solve, normalize, and sum the free Dirac plane-wave spinors.
+\end{enumerate}
+The first part concerns quantum states, independently of a particular
+field equation. The second shows how the Dirac equation realizes a
+massive spin-\(1/2\) representation. We only preview canonical field
+quantization to explain the meaning of the negative-frequency modes.
+
+\begin{keyidea}[Conventions and the distinction of spaces]
+We use \(\eta=\diag(1,-1,-1,-1)\),
+\(p\cdot x=E t-\bm p\cdot\bm x\), and
+\(E_{\bm p}=\sqrt{\bm p^2+m^2}>0\).
+The matrices of Lecture 13 are
+\[
+ \gamma^\mu=\begin{pmatrix}0&\widetilde s^\mu\\s^\mu&0\end{pmatrix},
+ \quad s^\mu=(\one,\bm\sigma),\quad
+ \widetilde s^\mu=(\one,-\bm\sigma),\quad
+ \bar u=u^\dagger\gamma^0.
+\]
+Write \(U\) for a unitary operator on states and \(\mathcal S\) for
+a finite-dimensional matrix on spinor components. They act on
+different spaces. We use \(U(a)=e^{-ia_\mu P^\mu}\) for translations
+of states; reversing the convention for \(a\) changes only this phase.
+\end{keyidea}
+
+\section{What is the representation-theoretic definition of a particle?}
+\subsection{States form a representation space}
+In a relativistic quantum theory, spacetime symmetries act on the
+Hilbert space by unitary operators for the connected Poincar\'e group,
+or, more precisely, its covering group when half-integer spin is
+allowed. A stable elementary one-particle sector is modeled by a
+positive-energy irreducible unitary representation of that group.
+If there are internal multiplets or several species, the total
+one-particle space may contain several such representations.
+
+\emph{Irreducible} means that the representation space has no nontrivial
+closed invariant subspace. A particular state vector is not itself
+``an irreducible representation.'' A localized wavepacket, a momentum
+eigenstate, and a spin superposition can all be states of the same
+particle species. Momentum eigenstates are generalized states; their
+delta-function normalization does not make them normalizable
+Hilbert-space vectors.
+
+The translation generators commute:
+\begin{equation}
+ [P^\mu,P^\nu]=0,\qquad
+ P^\mu|p,a\rangle=p^\mu|p,a\rangle,
+ \qquad U(b)|p,a\rangle=e^{-ib\cdot p}|p,a\rangle.
+ \label{eq:translation}
+\end{equation}
+Here \(a\) is a residual polarization label. Lorentz transformations
+move the eigenvalue from \(p\) to \(\Lambda p\). For example, with
+our convention,
+\begin{equation}
+ U(\Lambda)^{-1}P^\mu U(\Lambda)
+    =\Lambda^\mu{}_{\nu}P^\nu
+ \quad\Longrightarrow\quad
+ P^\mu U(\Lambda)|p,a\rangle
+    =(\Lambda p)^\mu U(\Lambda)|p,a\rangle.
+ \label{eq:momentumcov}
+\end{equation}
+The polarization label can also change. Determining that change is
+the role of the little group.
+
+\subsection{A nonrelativistic comparison}
+For a free nonrelativistic particle,
+\(H=\bm P^2/(2m)\). A momentum eigenstate is a character of the
+translation group, but it is not an invariant sector of the full
+Galilei group: boosts shift \(\bm p\) by a quantity proportional to
+\(m\bm v\). At rest, all rotations preserve the momentum, so spin
+is a representation of the rotation group, with cover \(\SU(2)\).
+
+At a nonzero momentum, rotations about \(\bm p\) are only the
+rotation-only stabilizer. They are not the full group controlling
+massive spin: a general rotation can be accompanied by a boost that
+returns the momentum to its original value. The relativistic little
+group makes this distinction precise. Inspecting only rotations
+about a generic momentum would incorrectly discard most of a massive
+spin multiplet.
+
+\section{Momentum orbits and the invariant inner product}
+\subsection{Mass shells}
+Lorentz transformations preserve \(p^2\) and, on timelike or null
+orbits, the sign of the nonzero energy. For a massive positive-energy
+particle, the orbit is
+\begin{equation}
+ \mathcal O_m^+=\{p:p^2=m^2,\ p^0>0\},\qquad m>0.
+ \label{eq:massshell}
+\end{equation}
+Every point on it is a boost of \(k=(m,0,0,0)\). For a massless
+particle, the positive light cone with its tip removed is the orbit;
+we may choose \(k=(\kappa,0,0,\kappa)\), where \(\kappa>0\) is
+an arbitrary reference energy, not a mass or an additional particle label.
+
+The operator \(P_\mu P^\mu\) commutes with the Poincar\'e action and
+is constant on an irreducible sector. Its value is \(m^2\).
+Our physical classification restricts the spectrum to the future
+timelike or null cone. Spacelike orbits cannot maintain an energy
+bounded below under all boosts. The zero-momentum orbit, which
+contains the invariant vacuum representation, is separate from the
+nonzero massless particle orbit.
+
+\subsection{Deriving the measure}
+Start with a manifestly invariant measure on the positive mass shell:
+\begin{align}
+ \dd^4p\,\delta(p^2-m^2)\theta(p^0)
+ &=\dd^3\bm p\,\dd p^0\,
+   \delta\big((p^0)^2-E_{\bm p}^2\big)\theta(p^0)\nonumber\\
+ &=\frac{\dd^3\bm p}{2E_{\bm p}}.
+ \label{eq:measurederive}
+\end{align}
+The factor \(2E_{\bm p}\) is the derivative of the delta-function
+argument at its positive root. Recall that for a function $f(x)$ with simple poles at $x_i$ we have
+\begin{align}
+    \delta(f(x))=\sum_i \frac{\delta(x-x_i)}{|f'(x_i)|}
+\end{align}
+In our case, we have
+\begin{align}
+    \delta(p^2-m^2)\Theta(p^0)=\frac{\delta(p^0-E_p)+\delta(p^0+E_p)}{2E_p}\Theta(p^0)=\frac{\delta(p^0-E_p)}{2E_p}\Theta(p^0)
+\end{align}
+
+
+
+We include Fourier factors by defining
+\begin{equation}
+ \dd\Pi_p=\frac{\dd^3\bm p}{(2\pi)^3\,2E_{\bm p}}.
+ \label{eq:measure}
+\end{equation}
+The factor \((2\pi)^3\) is conventional; the factor \(E_{\bm p}\)
+is required by Lorentz invariance.
+
+Choose covariant normalization,
+\begin{equation}
+ \langle p,a|q,b\rangle
+   =(2\pi)^3\,2E_{\bm p}\,\delta^3(\bm p-\bm q)\delta_{ab}.
+ \label{eq:ketnorm}
+\end{equation}
+A one-particle wavepacket can then be expanded as
+\begin{equation}
+ |f\rangle=\sum_a\int\dd\Pi_p\,f_a(p)|p,a\rangle,
+ \qquad
+ \langle f|f\rangle=\sum_a\int\dd\Pi_p\,|f_a(p)|^2.
+ \label{eq:wavepacket}
+\end{equation}
+For a scalar particle there is one component. For spin, there is a
+fiber of polarization states at each momentum. Locally this looks
+like an \(L^2\) space of vector-valued functions; for massless helicity,
+choices of polarization basis over the momentum sphere may require
+more than one patch. The invariant content does not depend on that
+choice of basis.
+
+\section{The little group and the Wigner transformation}
+\subsection{Bring a momentum back to the reference momentum}
+Fix a reference point \(k\) on the orbit. For each \(p\), choose a
+standard Lorentz transformation \(L(p)\) such that
+\begin{equation}
+ L(p)k=p,\qquad |p,a\rangle=U(L(p))|k,a\rangle.
+ \label{eq:standardboost}
+\end{equation}
+For a massive particle we can choose rotation-free boosts. The
+\emph{little group} is the stabilizer
+\begin{equation}
+ G_k=\{W:Wk=k\}.
+ \label{eq:littledef}
+\end{equation}
+Apply a general \(\Lambda\) to a state produced from \(k\). The
+combination
+\begin{equation}
+ \boxed{W(\Lambda,p)=L(\Lambda p)^{-1}\Lambda L(p)}
+ \label{eq:wigner}
+\end{equation}
+returns \(k\) to itself, so it belongs to \(G_k\). This formula is
+the missing bridge between a Lorentz transformation and its action
+on a finite set of spin labels.
+
+If the reference polarization states carry a unitary irreducible
+representation \(D\) of \(G_k\), then
+\begin{equation}
+ \boxed{U(\Lambda)|p,a\rangle
+   =\sum_b|\Lambda p,b\rangle
+        D_{ba}\!\left(W(\Lambda,p)\right).}
+ \label{eq:ketwigner}
+\end{equation}
+There is no square-root energy factor with normalization
+\eqref{eq:ketnorm}. With states normalized instead to
+\(\delta^3(\bm p-\bm q)\), a compensating energy factor would
+appear. The two conventions should not be mixed.
+
+\subsection{Why the induced action is unitary}
+Changing variables to \(p'=\Lambda p\) in the wavepacket integral
+gives
+\begin{equation}
+ (U(\Lambda)f)_b(p')
+    =\sum_a D_{ba}\!\left(W(\Lambda,\Lambda^{-1}p')\right)
+                  f_a(\Lambda^{-1}p').
+ \label{eq:wffransform}
+\end{equation}
+The measure is invariant and \(D^\dagger D=\one\), so
+\(\|U(\Lambda)f\|^2=\|f\|^2\). The full representation is
+infinite dimensional because the momentum runs over an entire orbit,
+even when \(D\) has only finitely many polarization components.
+
+Composition is consistent because
+\begin{equation}
+ W(\Lambda_2\Lambda_1,p)
+  =W(\Lambda_2,\Lambda_1p)W(\Lambda_1,p).
+ \label{eq:cocycle}
+\end{equation}
+This follows by inserting
+\(L(\Lambda_1p)L(\Lambda_1p)^{-1}\) into \eqref{eq:wigner}.
+Changing the standard transformations by
+\(L(p)\mapsto L(p)R(p)\), with \(R(p)\in G_k\), merely changes
+the momentum-dependent polarization basis. It conjugates the Wigner
+matrices at the initial and final momenta without changing the
+particle representation.
+
+\begin{keyidea}[Field spin and particle spin answer different questions]
+The Lorentz labels \((j_L,j_R)\) classify finite-dimensional field
+components. The little-group labels classify physical polarizations
+at fixed momentum. Equations of motion and, for gauge fields, gauge
+equivalence connect the two. A four-component Dirac field does not
+describe four independent particle spin polarizations of one charge.
+\end{keyidea}
+
+\section{Massive particles: the full rotation group}
+\subsection{The rest-frame stabilizer}
+For \(k=(m,0,0,0)\), any transformation satisfying \(\Lambda k=k\)
+leaves the time direction fixed. The Lorentz condition then forces
+the spatial block to be an orthogonal three-by-three matrix; in the
+connected proper group it has determinant \(+1\). Thus
+\begin{equation}
+ G_k=\SO(3),\qquad \widetilde G_k=\SU(2).
+ \label{eq:massivelittle}
+\end{equation}
+Its irreducible unitary representations are labeled by
+\begin{equation}
+ j=0,\tfrac12,1,\tfrac32,\ldots,\qquad a=-j,-j+1,\ldots,j.
+ \label{eq:massivespin}
+\end{equation}
+There are \(2j+1\) spin states for each momentum and for each
+independent particle species. A Dirac particle has two, and its
+antiparticle has another two. A massive Majorana particle has two
+with no independent antiparticle species.
+
+The little group at a moving momentum is conjugate to the rest-frame
+group, \(G_p=L(p)G_kL(p)^{-1}\). Its elements generally combine
+boosts and rotations. It is therefore still a three-dimensional
+rotation group, not just the \(\SO(2)\) of rotations about \(\bm p\).
+Successive non-collinear boosts lead to a nontrivial Wigner rotation
+of the spin basis; this is why spin labels need not remain unchanged
+under a boost.
+
+\subsection{The second invariant}
+Besides \(P^2\), the Poincar\'e algebra has the Pauli--Lubanski
+invariant. With orientation chosen so that \(\epsilon^{0123}=1\),
+define
+\begin{equation}
+ \mathcal W^\mu=-\frac12\epsilon^{\mu\nu\rho\sigma}
+                        P_\nu M_{\rho\sigma}.
+ \label{eq:PL}
+\end{equation}
+Our overall sign makes \(\mathcal W^\mu=(0,m\bm J)\) in the rest
+frame when \(J_i=\tfrac12\eps_{ijk}M_{jk}\). It follows that
+\begin{equation}
+ P^2=m^2,\qquad
+ \mathcal W^2=-m^2j(j+1),\qquad P_\mu\mathcal W^\mu=0.
+ \label{eq:casimirs}
+\end{equation}
+The sign of \(\mathcal W\) itself is conventional; its square and
+the massive spin label are not. The two invariants summarize the
+massive spacetime classification, apart from additional internal
+quantum numbers.
+
+\section{Massless particles: helicity and the null little group}
+\subsection{The stabilizer is larger than rotations about momentum}
+Choose \(k=(\kappa,0,0,\kappa)\). Using the rotation--boost algebra
+of Lecture 11 and its boost sign convention, the infinitesimal
+generators preserving this vector are
+\begin{equation}
+ J=J_3,\qquad N_1=K_1+J_2,\qquad N_2=K_2-J_1.
+ \label{eq:nullgens}
+\end{equation}
+For example, a boost generated by \(K_1\) and a rotation generated
+by \(J_2\) change the transverse component of \(k\) in opposite
+ways. Their sum leaves \(k\) fixed. Direct use of the commutators gives
+\begin{equation}
+ [J,N_1]=iN_2,\qquad [J,N_2]=-iN_1,\qquad [N_1,N_2]=0.
+ \label{eq:iso2}
+\end{equation}
+This is the Lie algebra of the Euclidean group of the plane,
+\(\ISO(2)=\SO(2)\ltimes\R^2\), whose translations are the two
+null rotations. They are not ordinary spacetime translations;
+they are elements of the Lorentz stabilizer of a null momentum.
+For spinorial states one uses the corresponding little group inside
+the Lorentz covering group.
+
+\subsection{Why ordinary finite-polarization particles have helicity}
+In a finite-dimensional unitary little-group representation,
+\(N_1,N_2\) are commuting Hermitian matrices, so their joint
+eigenvalues form a finite set in \(\R^2\). Conjugation by
+\(e^{-i\theta J}\) rotates that set. A nonzero vector has a whole
+circle as its rotation orbit, which cannot fit into a finite set.
+Therefore
+\begin{equation}
+ N_1=N_2=0
+ \label{eq:trivialnull}
+\end{equation}
+for every finite-dimensional unitary representation of this type.
+The remaining irreducible rotation representation is one dimensional:
+\begin{equation}
+ D(\theta)=e^{-ih\theta},\qquad
+ h=\bm J\cdot\widehat{\bm p}.
+ \label{eq:helicity}
+\end{equation}
+The number \(h\) is the helicity. Rotations have period \(4\pi\)
+in the Lorentz double cover, so \(h\in\tfrac12\Z\). Requiring an
+ordinary representation of the Lorentz group itself would restrict
+\(h\) to integers. For helicity representations
+\(\mathcal W^\mu=hP^\mu\) with our sign choice, and
+\(\mathcal W^2=0\). Thus \(P^2\) and \(\mathcal W^2\) alone
+do not distinguish the different helicities at zero mass.
+
+If nontrivial null-rotation representations are allowed, unitary
+representations with infinitely many polarizations also exist:
+the continuous-spin representations. Lorentz symmetry alone does
+not rule them out. The usual photon and massless fermion discussion
+restricts attention to the finite-polarization helicity sectors.
+
+\subsection{Helicity pairs and the role of discrete symmetries}
+For the connected Poincar\'e group, a fixed helicity is already an
+irreducible representation. A photon with both \(h=+1\) and
+\(h=-1\) polarizations contains two such sectors. Parity reverses
+momentum while preserving the axial vector \(\bm J\), and therefore
+exchanges \(h\leftrightarrow-h\). A parity-invariant theory must
+include the appropriate partner; connected Lorentz symmetry alone
+does not require it. Particle--antiparticle assignments and CPT give
+further relations once a local quantum field theory is specified.
+
+Massive particles also admit helicity eigenstates, but helicity is
+not invariant under all boosts: an observer can overtake a massive
+particle and reverse its momentum. For a massless helicity
+representation, proper orthochronous transformations preserve the
+helicity label. Chirality is instead a property of the field's
+Lorentz representation. For massless on-shell Weyl solutions these
+notions are related; for massive Dirac solutions they must not be
+identified.
+
+In our explicit matrices a positive-frequency upper Weyl solution
+obeys \((E-\bm\sigma\cdot\bm p)u=0\) and has \(h=+1/2\).
+A lower Weyl solution has \(h=-1/2\). A convention that exchanges
+the two chiral names exchanges this verbal assignment. The actual
+helicity eigenvalue follows from the equation and the rotation
+generator \(\bm\sigma/2\).
+
+\section{Free Dirac solutions at fixed momentum}
+\subsection{Positive- and negative-frequency equations}
+Consider the free equation
+\begin{equation}
+ (i\gamma^\mu\partial_\mu-m)\Psi=0,\qquad m>0.
+ \label{eq:dirac}
+\end{equation}
+Since its coefficients are constant, Fourier modes diagonalize its
+spacetime dependence. Use the same future-directed on-shell momentum
+\(p=(E_{\bm p},\bm p)\) in both ans\"atze:
+\begin{align}
+ \Psi^{(+)}(x)&=u_s(p)e^{-ip\cdot x},
+       & (\slashed p-m)u_s(p)&=0,\nonumber\\
+ \Psi^{(-)}(x)&=v_s(p)e^{+ip\cdot x},
+       & (\slashed p+m)v_s(p)&=0,
+ \label{eq:uvdef}
+\end{align}
+where \(\slashed p=\gamma^\mu p_\mu\). The columns \(u_s,v_s\) are ordinary
+complex coefficient spinors, not Grassmann fields. In the quantum field
+expansion, the mode operators will carry the fermionic statistics.
+The negative-frequency mode
+has Fourier four-momentum \(-p\); \(p\) remains the positive-energy
+label used for its eventual antiparticle interpretation.
+The general solution is a superposition of these modes, not a single
+plane wave. Squaring the equation gives the mass shell, but one still
+has to solve the spinor constraints in \eqref{eq:uvdef}.
+
+\subsection{Rest-frame solutions and their spin labels}
+At \(k=(m,\bm0)\), the two equations reduce to
+\(\gamma^0u=u\) and \(\gamma^0v=-v\). Let
+\(\xi_s,\eta_s\), \(s=1,2\), each be an orthonormal basis of
+two-component columns. Then
+\begin{equation}
+ u_s(k)=\sqrt m\begin{pmatrix}\xi_s\\\xi_s\end{pmatrix},\qquad
+ v_s(k)=\sqrt m\begin{pmatrix}\eta_s\\-\eta_s\end{pmatrix}.
+ \label{eq:restspinors}
+\end{equation}
+The \(\sqrt m\) gives \(u^\dagger u=v^\dagger v=2m\) at rest.
+For example \(\xi_1=(1,0)^T\), \(\xi_2=(0,1)^T\) are spin-up
+and spin-down along \(z\). Spatial rotations act with the same
+\(\sigma_i/2\) on both blocks, displaying the two-dimensional
+massive little-group representation directly.
+
+The \(\eta_s\) basis can be chosen independently. If one wants
+\(v_s=C\bar u_s^T\), the compatible choice with Lecture 13 is
+\(\eta_s=E\xi_s^*\). This convention may relabel the spin of the
+two-component column relative to a basis with \(\eta_s=\xi_s\).
+Completeness sums are independent of this basis choice.
+
+\subsection{Boosting the rest spinors}
+Set
+\begin{equation}
+ A_p=\sqrt{E_{\bm p}\one+\bm p\cdot\bm\sigma},\qquad
+ B_p=\sqrt{E_{\bm p}\one-\bm p\cdot\bm\sigma},
+ \label{eq:AB}
+\end{equation}
+where the square roots are the positive Hermitian ones. For \(m>0\)
+the eigenvalues \(E_{\bm p}\pm|\bm p|\) are positive, so these
+matrices are well defined. They commute and obey
+\begin{equation}
+ A_p^2=E+\bm p\cdot\bm\sigma,\quad
+ B_p^2=E-\bm p\cdot\bm\sigma,\quad A_pB_p=m\one.
+ \label{eq:ABids}
+\end{equation}
+An explicit form, useful without diagonalization, is
+\begin{equation}
+ A_p=\frac{(E+m)\one+\bm p\cdot\bm\sigma}{\sqrt{2(E+m)}},\qquad
+ B_p=\frac{(E+m)\one-\bm p\cdot\bm\sigma}{\sqrt{2(E+m)}}.
+ \label{eq:ABexplicit}
+\end{equation}
+Squaring the numerator verifies these formulas using
+\((\bm p\cdot\bm\sigma)^2=\bm p^2\one\).
+
+Write \(E=m\cosh\eta\), \(\bm p=m\sinh\eta\,\bm n\), with
+\(|\bm n|=1\). Then
+\(A_p=\sqrt m\,e^{+\eta\bm n\cdot\bm\sigma/2}\) and
+\(B_p=\sqrt m\,e^{-\eta\bm n\cdot\bm\sigma/2}\).
+The standard boost taking rest to \(+\bm p\) has rapidity
+\(\bm\rho=-\eta\bm n\) in our active-boost convention. Thus the
+spinor boost is \(\diag(A_p/\sqrt m,B_p/\sqrt m)\), and
+\begin{equation}
+ \boxed{u_s(p)=\begin{pmatrix}A_p\xi_s\\B_p\xi_s\end{pmatrix},
+ \qquad v_s(p)=\begin{pmatrix}A_p\eta_s\\-B_p\eta_s\end{pmatrix}.}
+ \label{eq:uv}
+\end{equation}
+This also verifies the equations without appealing to the boost:
+\begin{equation}
+ \slashed p=\begin{pmatrix}0&A_p^2\\B_p^2&0\end{pmatrix},
+ \qquad A_p^2B_p=mA_p,\quad B_p^2A_p=mB_p.
+ \label{eq:slashblocks}
+\end{equation}
+
+\section{Normalization, orthogonality, and spin sums}
+\subsection{Dirac inner products and ordinary inner products}
+Because \(A_p,B_p\) are Hermitian,
+\begin{equation}
+ \bar u_s=(\xi_s^\dagger B_p,\xi_s^\dagger A_p),\qquad
+ \bar v_s=(-\eta_s^\dagger B_p,\eta_s^\dagger A_p).
+ \label{eq:adjointsuv}
+\end{equation}
+Their Lorentz-scalar inner products are
+\begin{equation}
+ \bar u_su_t=2m\delta_{st},\qquad
+ \bar v_sv_t=-2m\delta_{st},\qquad
+ \bar u_sv_t=\bar v_su_t=0.
+ \label{eq:uvbarnorm}
+\end{equation}
+For example \(\bar u_su_t=\xi_s^\dagger(B_pA_p+A_pB_p)\xi_t\).
+Their ordinary positive norms are instead
+\begin{equation}
+ u_s^\dagger u_t=2E\delta_{st},\qquad
+ v_s^\dagger v_t=2E\delta_{st}.
+ \label{eq:uvdagnorm}
+\end{equation}
+Both follow from \(A_p^2+B_p^2=2E\one\).
+
+It is important to specify the momentum when claiming orthogonality:
+\begin{equation}
+ u_s^\dagger(p)v_t(p)
+    =2\xi_s^\dagger(\bm p\cdot\bm\sigma)\eta_t
+ \label{eq:notorth}
+\end{equation}
+need not vanish. The negative-energy eigenvector of the
+\emph{same spatial-momentum Hamiltonian} \(h_D(\bm p)\) is
+\(v_t(-\bm p)\), not \(v_t(\bm p)\). Since
+\(A_{-\bm p}=B_{\bm p}\),
+\begin{equation}
+ u_s^\dagger(\bm p)v_t(-\bm p)=0.
+ \label{eq:trueorth}
+\end{equation}
+This agrees with Hermitian Hamiltonian eigenvectors of distinct
+eigenvalues being orthogonal.
+
+\subsection{Completeness sums}
+Use \(\sum_s\xi_s\xi_s^\dagger=\sum_s\eta_s\eta_s^\dagger=\one_2\).
+Block multiplication then gives
+\begin{align}
+ \sum_su_s(p)\bar u_s(p)
+  &=\begin{pmatrix}m\one&A_p^2\\B_p^2&m\one\end{pmatrix}
+    =\boxed{\slashed p+m},\label{eq:usum}\\
+ \sum_sv_s(p)\bar v_s(p)
+  &=\begin{pmatrix}-m\one&A_p^2\\B_p^2&-m\one\end{pmatrix}
+    =\boxed{\slashed p-m}.\label{eq:vsum}
+\end{align}
+These identities replace a sum over spin labels by a covariant
+matrix, which is why they are central to later scattering calculations.
+For a fixed future-directed on-shell \(p\), the projectors onto the
+\(\slashed p\) eigenspaces are
+\begin{equation}
+ \Pi_+(p)=\frac{\slashed p+m}{2m},\qquad
+ \Pi_-(p)=\frac{m-\slashed p}{2m}.
+ \label{eq:slashprojectors}
+\end{equation}
+They obey \(\Pi_\pm^2=\Pi_\pm\), \(\Pi_+\Pi_-=0\), and
+\(\Pi_++\Pi_-=1\). In particular \(\sum v\bar v/(2m)\) is
+\(-\Pi_-\), not \(\Pi_-\), because \(\bar vv=-2m\).
+These projectors need not be Hermitian in the ordinary Euclidean
+component inner product.
+
+For a fixed spatial-momentum Hamiltonian the corresponding orthogonal
+projectors are instead
+\begin{equation}
+ Q_\pm(\bm p)=\frac12\left(1\pm\frac{h_D(\bm p)}{E}\right),
+ \quad Q_+=\frac{1}{2E}\sum_su_s(\bm p)u_s^\dagger(\bm p),
+ \quad Q_-=\frac{1}{2E}\sum_sv_s(-\bm p)v_s^\dagger(-\bm p).
+ \label{eq:hamprojectors}
+\end{equation}
+The distinction resolves the apparent conflict between
+\eqref{eq:notorth} and Hamiltonian orthogonality.
+
+\section{How the wavefunctions connect fields to particles}
+\subsection{A preview of the quantum field expansion}
+With the normalization used above, the free Dirac field is expanded as
+\begin{equation}
+ \Psi(x)=\sum_s\int\dd\Pi_p\,
+ \left[b_s(p)u_s(p)e^{-ip\cdot x}
+          +d_s^\dagger(p)v_s(p)e^{+ip\cdot x}\right].
+ \label{eq:fieldexpansion}
+\end{equation}
+The operators \(b_s^\dagger(p)\) and \(d_s^\dagger(p)\) create
+particle and antiparticle states, respectively. For example,
+\(\{b_s(p),b_t^\dagger(q)\}=(2\pi)^3 2E_{\bm p}
+\delta_{st}\delta^3(\bm p-\bm q)\), with the same normalization
+for \(d\). The remaining independent anticommutators vanish.
+Thus the coefficient of a negative-frequency mode is an antiparticle
+\emph{creation} operator, rather than a negative-energy particle
+annihilation operator.
+
+After the vacuum contribution is removed by normal ordering, the
+free Hamiltonian takes the form
+\begin{equation}
+ :H:=\sum_s\int\dd\Pi_p\,E_{\bm p}
+          \left[b_s^\dagger(p)b_s(p)+d_s^\dagger(p)d_s(p)\right].
+ \label{eq:positiveH}
+\end{equation}
+The spectrum of excitations is positive. Deriving this formula and
+the equal-time canonical algebra in detail belongs to field
+quantization; its role here is to explain why both sets of solutions
+in \eqref{eq:uvdef} are needed. For a Majorana field the reality
+condition relates the two mode sectors, so there is no independent
+antiparticle creation operator.
+
+\subsection{The intertwiner between the two representations}
+The boosted columns \(u_s(p)\) are not just a list of solutions.
+They connect the little-group spin index \(s\) with the covariant
+Dirac component index. With the same standard boosts used to define
+the states,
+\begin{equation}
+ \mathcal S(\Lambda)u_s(p)
+   =\sum_tu_t(\Lambda p)
+      D^{(1/2)}_{ts}\!\left(W(\Lambda,p)\right).
+ \label{eq:intertwiner}
+\end{equation}
+To derive it, write
+\(u_s(p)=\mathcal S(L(p))u_s(k)\), insert
+\(\Lambda L(p)=L(\Lambda p)W(\Lambda,p)\), and use the
+ordinary spin-\(1/2\) action of the little group on the rest columns.
+This explains how a nonunitary matrix on four field components can
+coexist with a unitary transformation of the two particle spin states.
+The momentum dependence of the wavefunctions supplies the bridge.
+
+\section*{Summary}
+\addcontentsline{toc}{section}{Summary}
+A one-particle representation is assembled from a Lorentz momentum
+orbit and a unitary little-group representation. The invariant
+mass-shell measure and Wigner matrices make the full action unitary.
+For massive particles the little group is \(\SU(2)\), giving
+\(2j+1\) polarizations. For ordinary finite-polarization massless
+particles its null-rotation part acts trivially, leaving helicity.
+The boosted Dirac wavefunctions realize the massive spin-\(1/2\)
+case; their normalizations and spin sums follow from simple
+two-by-two matrix identities. Quantization turns their two frequency
+sectors into positive-energy particles and antiparticles.
+
+\newpage
+\section*{Questions for review}
+\addcontentsline{toc}{section}{Questions for review}
+\begin{enumerate}
+\item Why is a momentum eigenstate not by itself a Poincar\'e
+irreducible representation?
+\item Derive the mass-shell measure, including the factor \(2E\).
+\item Prove that \(W(\Lambda,p)\) fixes \(k\) and obeys
+\eqref{eq:cocycle}.
+\item Prove unitarity of \eqref{eq:wffransform} using the measure and
+the little-group inner product.
+\item Explain why the moving massive little group is not merely
+rotations about the momentum axis.
+\item Verify the algebra \eqref{eq:iso2}. Which assumption forces
+\(N_1=N_2=0\), and what happens when it is removed?
+\item Why can a theory contain both photon helicities while a fixed
+helicity is already irreducible under the connected group?
+\item Check the square-root matrices \eqref{eq:ABexplicit} and use
+them to verify both Dirac equations in \eqref{eq:uvdef}.
+\item Compare \(\bar u v\), \(u^\dagger(p)v(p)\), and
+\(u^\dagger(p)v(-\bm p)\). Why do they have different answers?
+\item Derive the two spin sums and explain the sign of the
+negative-eigenvalue projector.
+\item Explain which step replaces negative-frequency classical
+solutions with positive-energy antiparticle states.
+\item Derive \eqref{eq:intertwiner} from the rest-frame spinors and
+the definition of the Wigner transformation.
+\end{enumerate}
+
+\section*{Sources and reading}
+\addcontentsline{toc}{section}{Sources and reading}
+The main source is the supplied \emph{Lecture 13: Single Particle
+States}, pp.\ 8--21. Its introductory spinor review is incorporated
+in course Lectures 12 and 13. The standard-boost construction and the
+finite-polarization qualification make the particle-classification
+argument explicit. For a systematic account of momentum orbits and
+little groups, see X.~Bekaert and N.~Boulanger,
+\emph{The unitary representations of the Poincar\'e group in any
+spacetime dimension},
+\href{https://arxiv.org/abs/hep-th/0611263}{arXiv:hep-th/0611263}.
+For spinor conventions, compare H.~K.~Dreiner, H.~E.~Haber, and
+S.~P.~Martin, \href{https://arxiv.org/abs/0812.1594}{arXiv:0812.1594}.
+\end{document}

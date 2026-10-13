@@ -1,0 +1,812 @@
+\documentclass[11pt]{article}
+
+\usepackage[letterpaper,margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb,mathtools,bm}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{hyperref}
+\usepackage[most]{tcolorbox}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{parskip}
+\usepackage{needspace}
+
+\definecolor{qftblue}{HTML}{245A8D}
+\definecolor{qftgreen}{HTML}{2F6B4F}
+\definecolor{qftred}{HTML}{A23B3B}
+\definecolor{qftgray}{HTML}{F4F6F8}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=qftblue,
+  urlcolor=qftblue,
+  citecolor=qftgreen,
+  pdftitle={PHYS 662 Lecture 9: Spin, Tensor Products, and Quantum Symmetries},
+  pdfauthor={Nima Lashkari}
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{PHYS 662: Quantum Field Theory I}
+\rhead{Lecture 9}
+\cfoot{\thepage}
+\setlength{\headheight}{14pt}
+
+\titleformat{\section}{\Large\bfseries\color{qftblue}}{\thesection.}{0.6em}{}
+\titleformat{\subsection}{\large\bfseries\color{qftgreen}}{\thesubsection}{0.6em}{}
+\titleformat{\subsubsection}{\normalsize\bfseries\color{qftred}}{\thesubsubsection}{0.6em}{}
+
+\setlist[itemize]{leftmargin=2em,itemsep=0.25em,topsep=0.4em}
+\setlist[enumerate]{leftmargin=2em,itemsep=0.25em,topsep=0.4em}
+
+\newcommand{\dd}{\mathrm{d}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Lag}{\mathcal{L}}
+\newcommand{\cM}{\mathcal{M}}
+\newcommand{\SO}{\mathrm{SO}}
+\newcommand{\OO}{\mathrm{O}}
+
+\newtcolorbox{keyidea}[1][]{
+  enhanced, breakable, colback=qftgray, colframe=qftblue,
+  boxrule=0.8pt, arc=1.5mm, title={#1}, fonttitle=\bfseries,
+  coltitle=white
+}
+\newtcolorbox{remarkbox}[1][]{
+  enhanced, breakable, colback=white, colframe=qftgreen,
+  boxrule=0.7pt, arc=1.5mm, title={#1}, fonttitle=\bfseries,
+  coltitle=white
+}
+\newtcolorbox{warningbox}[1][]{
+  enhanced, breakable, colback=white, colframe=qftred,
+  boxrule=0.7pt, arc=1.5mm, title={#1}, fonttitle=\bfseries,
+  coltitle=white
+}
+
+
+\newcommand{\Th}{\Theta}
+\newcommand{\Eul}{\mathcal E}
+\newcommand{\Lie}{\mathscr L}
+
+\newcommand{\C}{\mathbb C}
+\newcommand{\Z}{\mathbb Z}
+\newcommand{\SU}{\mathrm{SU}}
+\newcommand{\UU}{\mathrm{U}}
+\newcommand{\GL}{\mathrm{GL}}
+\newcommand{\SL}{\mathrm{SL}}
+\newcommand{\Sp}{\mathrm{Sp}}
+\newcommand{\tr}{\operatorname{tr}}
+\newcommand{\Ad}{\operatorname{Ad}}
+\newcommand{\ad}{\operatorname{ad}}
+\newcommand{\lieg}{\mathfrak g}
+\newcommand{\lieh}{\mathfrak h}
+\newcommand{\su}{\mathfrak{su}}
+\newcommand{\so}{\mathfrak{so}}
+\newcommand{\slie}{\mathfrak{sl}}
+
+
+\newcommand{\cH}{\mathcal H}
+\newcommand{\Spin}{\operatorname{Spin}}
+\newcommand{\id}{\mathrm{id}}
+\begin{document}
+\pagenumbering{gobble}
+\begin{titlepage}
+\centering
+\vspace*{1.2in}
+{\scshape\Large PHYS 662 --- Quantum Field Theory I\par}
+\vspace{0.35in}
+{\Huge\bfseries\color{qftblue} Lecture 9\par}
+\vspace{0.15in}
+{\LARGE\bfseries Spin, Tensor Products,\par}
+\vspace{0.06in}
+{\LARGE\bfseries and Quantum Symmetries\par}
+\vspace{0.16in}
+{\large\color{qftgreen} Multiplets, Quantum Rays, and Covering Groups\par}
+\vspace{0.6in}
+{\large Nima Lashkari\par}
+{\large Fall 2026\par}
+\vfill
+\begin{minipage}{0.86\textwidth}
+\small
+Starting from the Lie algebra of rotations, we construct the spin
+multiplets and decompose tensor products into irreducible pieces. We then
+ask how these representations act on quantum states. Rays and covering
+groups explain why half-integer spin is compatible with spatial rotations,
+and prepare the projective-representation analysis of Lecture 10.
+
+\medskip
+Course page: \url{https://nimalashkari.com/quantum-field-theory-2026-part-i/}
+\end{minipage}
+\vspace{0.5in}
+\end{titlepage}
+\pagenumbering{roman}
+\begingroup\small
+\tableofcontents
+\endgroup
+\newpage
+\pagenumbering{arabic}
+
+\section*{Roadmap}
+\addcontentsline{toc}{section}{Roadmap}
+Lecture 8 gave us Lie brackets, invariant subspaces, complete reducibility,
+and Schur's lemma. We now use them to build representations and interpret
+their physical meaning. By the end, we should be able to:
+\begin{enumerate}
+\item construct a spin multiplet from a highest-weight state;
+\item decompose tensor products into multiplets with definite spin;
+\item explain how quantum rays and the cover \(\SU(2)\to\SO(3)\)
+allow half-integer spin.
+\end{enumerate}
+We first solve the finite-dimensional algebra problem, then ask which
+global group those matrices represent. Lecture 10 will study the general
+phase-multiplication law and the algebra of conserved charges.
+
+\begin{keyidea}[Tools carried forward from Lecture 8]
+We use \(U=e^{-i\theta^aT_a}\), \(\hbar=1\), and
+\([J_i,J_j]=i\epsilon_{ijk}J_k\), with \(\epsilon_{123}=+1\).
+Representation spaces are complex unless stated otherwise. Compactness
+allows a finite-dimensional representation to be made unitary, so its
+generators are Hermitian. In an irreducible complex representation,
+Schur's lemma makes every operator commuting with the whole action a
+scalar multiple of the identity.
+\end{keyidea}
+
+\section{Rotations and the spin multiplets}
+\label{sec:spin}
+\subsection{The two-dimensional representation of \texorpdfstring{\(\SU(2)\)}{SU(2)}}
+The Pauli matrices are
+\[
+ \sigma_1=\begin{pmatrix}0&1\\1&0\end{pmatrix},\qquad
+ \sigma_2=\begin{pmatrix}0&-i\\i&0\end{pmatrix},\qquad
+ \sigma_3=\begin{pmatrix}1&0\\0&-1\end{pmatrix}.
+\]
+Their multiplication law,
+\(\sigma_i\sigma_j=\delta_{ij}I+i\epsilon_{ijk}\sigma_k\), gives
+\begin{equation}
+ J_i=\frac{\sigma_i}{2},\qquad
+ [J_i,J_j]=i\epsilon_{ijk}J_k,\qquad
+ \tr(J_iJ_j)=\frac12\delta_{ij}.
+ \label{eq:pauli-generators}
+\end{equation}
+The factors of two are essential. The Pauli matrices themselves have
+commutator \([\sigma_i,\sigma_j]=2i\epsilon_{ijk}\sigma_k\).
+For a unit vector \(\bm n\), \((\bm n\cdot\bm\sigma)^2=I\), so
+\begin{equation}
+ U(\theta,\bm n)
+ =e^{-i\theta\bm n\cdot\bm\sigma/2}
+ =\cos\frac\theta2\,I-i\sin\frac\theta2\,\bm n\cdot\bm\sigma.
+ \label{eq:su2-exponential}
+\end{equation}
+These matrices are unitary with determinant one. They display the
+three real parameters of the group, while acting on a two-dimensional
+complex vector space. The group dimension and representation dimension
+are different quantities.
+
+\Needspace{9\baselineskip}
+\subsection{Deriving the spin representations}
+The aim is to find every possible finite spin multiplet without guessing
+matrices of each size. We diagonalize one generator and use the other two
+to move between its eigenvectors. Compactness lets us choose a unitary
+representation, so the generators are Hermitian. In an irreducible
+representation, define
+\[
+ J_\pm=J_1\pm iJ_2,\qquad
+ J^2=J_1^2+J_2^2+J_3^2.
+\]
+The commutation relations imply
+\begin{equation}
+ [J_3,J_\pm]=\pm J_\pm,\qquad
+ [J_+,J_-]=2J_3,\qquad [J^2,J_i]=0.
+ \label{eq:ladder-algebra}
+\end{equation}
+By Schur's lemma \(J^2=cI\). Since \(J_3\) is Hermitian, choose a
+normalized eigenvector with eigenvalue \(m\). The raising relation means
+\[
+ J_3(J_+|m\rangle)
+ =(J_+J_3+J_+)|m\rangle=(m+1)J_+|m\rangle.
+\]
+Thus \(J_+|m\rangle\) either vanishes or has eigenvalue \(m+1\);
+\(J_-\) similarly lowers m. A \emph{weight} is this eigenvalue, and a
+\emph{highest-weight vector} is the state at the top of the ladder.
+Since \(J_+^\dagger=J_-\), its norm is computed as
+\(\|J_+|m\rangle\|^2=\langle m|J_-J_+|m\rangle\). The identities
+\[
+ J_-J_+=J^2-J_3(J_3+1),\qquad
+ J_+J_-=J^2-J_3(J_3-1)
+\]
+therefore give the squared norms
+\begin{equation}
+ \|J_+|m\rangle\|^2=c-m(m+1),\qquad
+ \|J_-|m\rangle\|^2=c-m(m-1).
+ \label{eq:ladder-norms}
+\end{equation}
+Let the largest eigenvalue be \(j\). The raising operator must annihilate
+its eigenvector, so \(c=j(j+1)\). If \(m_{\min}\) is the smallest
+eigenvalue, the second norm gives
+\(m_{\min}(m_{\min}-1)=j(j+1)\). Its roots are \(-j\) and \(j+1\);
+the latter cannot be a lowest eigenvalue below \(j\). Hence
+\(m_{\min}=-j\). The number of lowering steps is the nonnegative
+integer \(2j\).
+
+Choosing phases consistently, we obtain
+\begin{align}
+ j&=0,\tfrac12,1,\tfrac32,\ldots,
+ & \dim V_j&=2j+1,\label{eq:spin-labels}\\
+ J_3|j,m\rangle&=m|j,m\rangle,
+ &m&=-j,-j+1,\ldots,j,\\
+ J^2|j,m\rangle&=j(j+1)|j,m\rangle,\\
+ J_\pm|j,m\rangle
+ &=\sqrt{(j\mp m)(j\pm m+1)}\,|j,m\pm1\rangle.
+ \label{eq:ladder-action}
+\end{align}
+The chain generated from the highest-weight vector is invariant under
+all three generators. Irreducibility makes it the entire representation;
+conversely, the displayed matrices construct an irreducible representation
+for each allowed \(j\). Thus this is the complete finite-dimensional
+complex irreducible list for \(\SU(2)\).
+
+For \(j=0\), the generators are zero and every group element acts as the
+one-by-one matrix \(1\). The trivial group representation is the identity,
+whereas its infinitesimal representation is zero. For \(j=\tfrac12\),
+Eq.~\eqref{eq:ladder-action} reproduces \(J_i=\sigma_i/2\).
+
+\Needspace{16\baselineskip}
+\subsection{Spin one in two bases}
+To turn the ladder formula into matrices, remember that the kth column
+contains the image of the kth basis vector. For j = 1,
+\(J_+|1,0\rangle=\sqrt2|1,1\rangle\) and
+\(J_+|1,-1\rangle=\sqrt2|1,0\rangle\), while
+\(J_+|1,1\rangle=0\). Then use
+\(J_1=(J_++J_-)/2\) and \(J_2=(J_+-J_-)/(2i)\).
+In the ordered basis \((|1,1\rangle,|1,0\rangle,|1,-1\rangle)\),
+\begin{equation}
+ \begin{split}
+ J_1&=\frac1{\sqrt2}
+ \begin{pmatrix}0&1&0\\1&0&1\\0&1&0\end{pmatrix},\qquad
+ J_2=\frac1{\sqrt2}
+ \begin{pmatrix}0&-i&0\\i&0&-i\\0&i&0\end{pmatrix},\\
+ J_3&=\begin{pmatrix}1&0&0\\0&0&0\\0&0&-1\end{pmatrix}.
+ \end{split}
+ \label{eq:spin-one-matrices}
+\end{equation}
+They obey \([J_i,J_j]=i\epsilon_{ijk}J_k\) and \(J^2=2I_3\).
+The operators \(J_\pm\), in contrast, are triangular and are not
+Hermitian generators of real one-parameter rotation subgroups.
+
+In a Cartesian basis of \(\C^3\), the same representation has generators
+\begin{equation}
+ (L_i)_{jk}=-i\epsilon_{ijk}.
+ \label{eq:cartesian-spin-one}
+\end{equation}
+The matrices \(e^{-i\theta L_i}\) are real spatial rotations. For example,
+\[
+ e^{-i\theta L_3}=
+ \begin{pmatrix}\cos\theta&-\sin\theta&0\\
+ \sin\theta&\cos\theta&0\\0&0&1\end{pmatrix}.
+\]
+An explicit change from Cartesian to the magnetic basis is supplied by
+\[
+ |1,1\rangle=-\frac{\bm e_x+i\bm e_y}{\sqrt2},\qquad
+ |1,0\rangle=\bm e_z,\qquad
+ |1,-1\rangle=\frac{\bm e_x-i\bm e_y}{\sqrt2}.
+\]
+If \(V\) has these three vectors as columns, then \(V\) is unitary and
+\(V^\dagger L_iV=J_i\). Different-looking generator matrices can therefore
+be equivalent descriptions of the same representation.
+
+\section{Tensor products and irreducible tensors}
+\label{sec:tensors}
+\subsection{Direct sums versus tensor products}
+Two constructions recur in field theory. The direct sum \(V\oplus W\)
+puts two multiplets side by side:
+\[
+ (R\oplus S)(g)=
+ \begin{pmatrix}R(g)&0\\0&S(g)\end{pmatrix},\qquad
+ \dim(V\oplus W)=\dim V+\dim W.
+\]
+The tensor product describes pairs of basis labels. Two two-component
+spaces, for example, have the four product basis vectors
+\(e_1\otimes f_1,e_1\otimes f_2,e_2\otimes f_1,e_2\otimes f_2\).
+A general tensor is a linear combination of these products; it need not
+itself be a single product. The group acts on both labels:
+\begin{equation}
+ (R\otimes S)(g)=R(g)\otimes S(g),\qquad
+ \dim(V\otimes W)=(\dim V)(\dim W).
+ \label{eq:tensor-product}
+\end{equation}
+If \(v\mapsto R(g)v\) and \(w\mapsto S(g)w\), then
+\(v\otimes w\mapsto R(g)v\otimes S(g)w\).
+Differentiating the group action gives
+\begin{equation}
+ T_a^{V\otimes W}=T_a^V\otimes I_W+I_V\otimes T_a^W.
+ \label{eq:tensor-generators}
+\end{equation}
+This is the familiar addition rule for angular momentum.
+
+The tensor product is often reducible. Decomposing it means finding a
+\emph{direct sum} of invariant subspaces, so the symbol changes from
+\(\otimes\) to \(\oplus\). The group and the field of scalars should also
+be specified. For example, the real two-dimensional defining
+representation of \(\SO(2)\) is irreducible over \(\R\); over \(\C\),
+it splits into the one-dimensional weights \(+1\) and \(-1\).
+In the spin decompositions below we use complex vector spaces.
+
+\subsection{Conjugate and dual representations}
+If a column \(v\) transforms by R(g), then its complex conjugate
+transforms by \(R(g)^*\). A dual covector \(\ell\) instead transforms as
+\(\ell\mapsto\ell R(g)^{-1}\), so the pairing \(\ell(v)\) is invariant.
+On columns of dual components this is the representation
+\(R^\vee(g)=R(g)^{-T}\). For a unitary representation,
+\(R(g)^{-T}=R(g)^*\); an invariant Hermitian inner product identifies
+the conjugate and dual representations.
+
+For a fundamental U(N) multiplet this becomes
+\begin{equation}
+ \Phi'^A=U^A{}_B\Phi^B,\qquad
+ \Phi_A'^\dagger=\Phi_B^\dagger(U^\dagger)^B{}_A,
+ \qquad \Phi'^\dagger\Phi'=\Phi^\dagger\Phi.
+ \label{eq:fundamental-dual}
+\end{equation}
+An upper or lower internal index here records the representation in which
+it transforms; it is not a spacetime index raised or lowered with the
+Minkowski metric. The pairing is invariant, but the field norm is not
+constrained to equal one. Lecture 10 will use this transformation law to
+construct conserved currents.
+
+\subsection{A rank-two tensor under spatial rotations}
+Let \(V_1\) denote the three-dimensional spin-one representation.
+A general tensor \(M_{ij}\) belongs to \(V_1\otimes V_1\), a
+nine-dimensional space, and transforms as
+\begin{equation}
+ M'_{ij}=R_{ia}R_{jb}M_{ab},\qquad M'=RMR^T,
+ \qquad R\in\SO(3).
+ \label{eq:rank-two-action}
+\end{equation}
+Every such tensor has a unique decomposition
+\begin{equation}
+ \boxed{M_{ij}=\frac{\tr M}{3}\delta_{ij}+A_{ij}+Q_{ij}},
+ \label{eq:tensor-split}
+\end{equation}
+where
+\begin{align}
+ A_{ij}&=\tfrac12(M_{ij}-M_{ji}),\label{eq:antisymmetric-part}\\
+ Q_{ij}&=\tfrac12(M_{ij}+M_{ji})-\tfrac13\delta_{ij}\tr M,
+ \qquad Q_{ij}=Q_{ji},\quad Q_{ii}=0.
+ \label{eq:traceless-part}
+\end{align}
+These are invariant subspaces: transposition commutes with
+\(M\mapsto RMR^T\), \(R\delta R^T=\delta\), and
+\(\tr(RMR^T)=\tr M\). Their dimensions are
+\[
+ \underbrace{1}_{\text{trace}}+
+ \underbrace{3}_{\text{antisymmetric}}+
+ \underbrace{5}_{\text{symmetric traceless}}=9.
+\]
+The trace is a rotational scalar, hence spin zero. The antisymmetric
+piece is equivalent to a vector through
+\begin{equation}
+ a_k=\tfrac12\epsilon_{kij}A_{ij},\qquad
+ A_{ij}=\epsilon_{ijk}a_k.
+ \label{eq:axial-dual}
+\end{equation}
+The invariance of \(\epsilon_{ijk}\) under proper rotations gives
+\(a'_k=R_{k\ell}a_\ell\), so this piece is spin one. Under an improper
+orthogonal transformation it instead acquires an extra factor
+\(\det R\); it is then called an axial vector.
+
+To identify the symmetric traceless part, take the tensor product of
+two spin-one highest-weight vectors. It is symmetric, has weight two,
+and has zero trace, because the Cartesian vector
+\(\bm e_x+i\bm e_y\) has zero contraction with itself without complex
+conjugation. Repeated lowering generates a five-dimensional spin-two
+subspace. Since the entire symmetric traceless space has dimension five,
+it is precisely this irreducible representation. We conclude
+\begin{equation}
+ \boxed{V_1\otimes V_1\cong V_0\oplus V_1\oplus V_2},
+ \qquad \bm3\otimes\bm3=\bm1\oplus\bm3\oplus\bm5.
+ \label{eq:three-times-three}
+\end{equation}
+Bold numbers in this shorthand label representations by their dimensions.
+The corresponding numerical identity is \(3\times3=1+3+5\).
+
+\begin{remarkbox}[A tensor split you can check entry by entry]
+Take a matrix with only two nonzero entries:
+\[
+ M=\begin{pmatrix}1&2&0\\0&0&0\\0&0&0\end{pmatrix}
+ =\frac13 I+
+ \begin{pmatrix}0&1&0\\-1&0&0\\0&0&0\end{pmatrix}
+ +\frac13\begin{pmatrix}2&3&0\\3&-1&0\\0&0&-1\end{pmatrix}.
+\]
+The pieces are respectively scalar, antisymmetric, and symmetric
+traceless. The antisymmetric piece corresponds to \(\bm a=\bm e_z\).
+A rotation mixes entries inside each of these three spaces, while
+preserving their defining symmetry and trace properties. That is the
+meaning of the irreducible decomposition.
+\end{remarkbox}
+
+\subsection{Higher rank and angular-momentum addition}
+A symmetric rank-\(\ell\) tensor in three dimensions has
+\(\binom{\ell+2}{2}\) independent components. For \(\ell\geq2\),
+the trace map onto symmetric rank-\(\ell-2\) tensors is surjective.
+One way to see this is to identify symmetric tensors with homogeneous
+polynomials: trace is proportional to the Laplacian, which maps degree
+\(\ell\) polynomials onto degree \(\ell-2\) polynomials. For a polynomial
+\(q\) of degree \(k\),
+\[
+ \nabla^2(r^2q)=(4k+6)q+r^2\nabla^2q;
+\]
+iterating this identity with the successive Laplacians of \(q\)
+constructs a preimage. Therefore the symmetric traceless subspace has
+\begin{equation}
+ \binom{\ell+2}{2}-\binom{\ell}{2}=2\ell+1
+ \label{eq:higher-tensor-dimension}
+\end{equation}
+components. Its highest-weight tensor is
+\((\bm e_x+i\bm e_y)^{\otimes\ell}\); it generates the spin-\(\ell\)
+representation. Rank zero and rank one give the same count directly.
+This is why spherical harmonics of degree \(\ell\) have
+\(m=-\ell,\ldots,\ell\).
+
+More generally, angular-momentum addition gives the Clebsch--Gordan rule
+\begin{equation}
+ V_{j_1}\otimes V_{j_2}
+ \cong\bigoplus_{j=|j_1-j_2|}^{j_1+j_2}V_j,
+ \label{eq:cg-rule}
+\end{equation}
+where the sum increases in steps of one. The highest weight of the
+product is \(j_1+j_2\). Remove that irreducible multiplet, then repeat
+with the largest remaining weight. This gives one copy of each spin in
+the displayed range, and their dimensions sum to
+\((2j_1+1)(2j_2+1)\). For two spin-one-half representations,
+\[
+ \bm2\otimes\bm2=\bm1\oplus\bm3.
+\]
+The antisymmetric combination
+\((|{+}{-}\rangle-|{-}{+}\rangle)/\sqrt2\) is the singlet; the three
+symmetric combinations form the triplet. For two spin-one representations,
+Eq.~\eqref{eq:cg-rule} agrees with the explicit tensor decomposition above.
+
+A rank-three Cartesian tensor has 27 components and transforms with
+three factors of \(R\). Applying the same rule twice gives
+\[
+ V_1^{\otimes3}\cong V_0\oplus3V_1\oplus2V_2\oplus V_3,
+ \qquad 27=1+3(3)+2(5)+7.
+\]
+Here \(3V_1\) means three copies in a direct sum. Only the fully symmetric
+traceless rank-three part is the seven-dimensional spin-three multiplet;
+a general rank-three tensor contains the other spins as well.
+
+\subsection{Matrix fields and the adjoint of \texorpdfstring{\(\UU(N)\)}{U(N)}}
+A matrix with one fundamental and one dual index transforms by
+\begin{equation}
+ M'^A{}_B=U^A{}_C M^C{}_D(U^\dagger)^D{}_B,
+ \qquad M'=UMU^\dagger.
+ \label{eq:matrix-field}
+\end{equation}
+Its trace is invariant and its traceless part stays traceless. Thus, for
+\(N\geq2\),
+\begin{equation}
+ \bm N\otimes\overline{\bm N}
+ \cong\bm1\oplus\operatorname{Adj}_{\SU(N)},\qquad
+ N^2=1+(N^2-1),\qquad
+ M=\frac{\tr M}{N}I+\left(M-\frac{\tr M}{N}I\right).
+ \label{eq:fundamental-antifundamental}
+\end{equation}
+This is the complexified adjoint action of U(N). Its full dimension is
+\(N^2=\dim\UU(N)\), but it is reducible: the identity matrix is a singlet
+and the traceless subspace is the SU(N) adjoint. The central U(1) subgroup
+acts trivially by conjugation, so the U(N) adjoint is not faithful either.
+
+To obtain the generator matrices, choose a Hermitian basis \(t_a\) and define
+\(Ut_bU^\dagger=t_aD(U)^a{}_b\). Expanding
+\(U=e^{-i\epsilon^ct_c}\) gives
+\begin{equation}
+ D(U)^a{}_b=\delta^a{}_b+\epsilon^cf_{cb}{}^a+O(\epsilon^2),
+ \qquad (t_c^{\rm ad})^a{}_b=i f_{cb}{}^a,
+ \qquad D(U)=e^{-i\epsilon^ct_c^{\rm ad}}.
+ \label{eq:adjoint-matrices}
+\end{equation}
+For a basis with \(\tr(t_at_b)=\delta_{ab}/2\), the fully lowered
+structure constants are antisymmetric, and the same formula reads
+\((t_c^{\rm ad})_{ab}=-if_{cab}\). The U(1) generator has zero adjoint
+matrix. This separates the dimension of the adjoint representation from
+whether it is irreducible or faithful, and prepares the transformation
+law for the currents in Lecture 10.
+
+\section{Quantum symmetries act on rays}
+\label{sec:rays}
+\subsection{Wigner's theorem}
+A pure state is a ray in a complex Hilbert space \(\cH\): two nonzero
+vectors related by a nonzero complex factor describe the same state.
+For normalized vectors the redundancy is a phase, and the transition
+probability is
+\[
+ P(\psi,\chi)=|\langle\psi|\chi\rangle|^2.
+\]
+For example, let \(\lvert0\rangle,\lvert1\rangle\) be orthonormal and set
+\(\lvert\pm\rangle=(\lvert0\rangle\pm\lvert1\rangle)/\sqrt2\).
+Multiplying \(\lvert+\rangle\) by one common phase leaves its ray
+unchanged, whereas changing the relative sign gives the orthogonal
+state \(\lvert-\rangle\). Only the common phase is redundant.
+
+Wigner's theorem states that a bijection of rays preserving these
+probabilities is implemented by a unitary or antiunitary operator,
+unique up to a phase. The physical input is preservation of probabilities,
+not a demand that the complex overlap itself remain unchanged.
+
+A unitary operator is complex linear and satisfies
+\(\langle U\psi|U\chi\rangle=\langle\psi|\chi\rangle\).
+An antiunitary operator \(A\) is conjugate linear:
+\begin{equation}
+ A(c_1\psi+c_2\chi)=c_1^*A\psi+c_2^*A\chi,
+ \qquad \langle A\psi|A\chi\rangle=\langle\chi|\psi\rangle.
+ \label{eq:antiunitary}
+\end{equation}
+Both preserve transition probabilities. In a chosen orthonormal basis,
+\(A=VK\), where \(V\) is unitary and \(K\) conjugates coefficients.
+Thus an antiunitary map is not just a complex matrix acting linearly.
+Continuous transformations connected to the identity have unitary
+implementers; disconnected transformations can be antiunitary.
+
+For a spin-one-half degree of freedom, time reversal can be implemented
+by \(\mathcal T=MK\), with \(M=i\sigma_2\). Since
+\(KM=M^*K\) and \(K^2=I\), its square is \(MM^*=-I\).
+Using the Pauli matrices also gives
+\[
+ \mathcal T\bm J\mathcal T^{-1}=-\bm J,\qquad
+ \mathcal T^2=-I,\qquad \bm J=\bm\sigma/2.
+\]
+The minus sign in its square acts trivially on a ray. This example also
+shows why replacing an antiunitary operator by its matrix factor alone
+would give the wrong transformation law.
+
+\subsection{Field components and quantum states}
+A Lorentz vector field has four components transformed by a
+finite-dimensional matrix preserving the Minkowski metric, generally not
+a positive-definite inner product. The corresponding quantum symmetry
+acts unitarily on a Hilbert space that includes continuous momentum
+labels. These are different representations on different spaces.
+
+Even a scalar's trivial component representation does not make its
+function-space representation trivial:
+\[
+ \phi'(x)=\phi\bigl(\Lambda^{-1}(x-a)\bigr).
+\]
+Translations act by shifts of the argument; their infinitesimal generators
+are derivatives. Infinite-dimensional group operators are not in general
+differential operators themselves.
+
+A stable relativistic particle's one-particle space carries a
+positive-energy irreducible unitary representation of the appropriate
+Poincar\'e cover. This concerns all its momentum states and applies also
+to stable composite particles; it does not define microscopic
+fundamentality. The present lecture supplies the group-theoretic reasons
+that a cover may be needed.
+
+\subsection{Why multiplication can hold only up to phase}
+Choose one unitary operator for each symmetry connected to the identity.
+Two successive symmetries and their group product have the same action
+on rays, so their operators can differ by a phase:
+\begin{equation}
+ U(g)U(h)=e^{i\omega(g,h)}U(gh).
+ \label{eq:projective-preview}
+\end{equation}
+This is called a projective representation. The phase is one scalar on
+the entire representation space. In this lecture we need this idea to
+interpret the sign of a \(2\pi\) rotation. Lecture 10 will derive the
+consistency condition on \(\omega\) and study which phases can be removed.
+
+\section{Covering groups and the global origin of spin}
+\label{sec:covers}
+\subsection{Loops, the universal cover, and the circle}
+A connected group is path connected as a manifold. It is simply connected
+if every closed loop contracts to a point. The fundamental group
+\(\pi_1(G)\) records loop classes, with multiplication given by
+concatenation. The universal covering group \(p:\widetilde G\to G\)
+is connected and simply connected; locally \(p\) is an isomorphism.
+For a connected Lie group its kernel is discrete and central and is
+isomorphic to \(\pi_1(G)\).
+
+For example,
+\begin{equation}
+ \widetilde{\SO(2)}=\R,
+ \qquad p(\theta)=R(\theta),\qquad
+ \ker p=2\pi\Z,\qquad \pi_1(\SO(2))\cong\Z.
+ \label{eq:circle-cover}
+\end{equation}
+The covering coordinate remembers how many complete turns have occurred.
+The circle and the line have the same one-dimensional Lie algebra, but
+different allowed ordinary characters:
+\[
+ R_q(t)=e^{-iqt}\ (q\in\R)\quad\text{on }\R;
+ \qquad R_q(\theta)=e^{-iq\theta}\ (q\in\Z)\quad\text{on }\UU(1).
+\]
+The integer condition is exactly \(R_q(\theta+2\pi)=R_q(\theta)\).
+For the finite cyclic group \(\Z_N\), the characters instead are
+\[
+ \chi_q(k)=e^{2\pi i qk/N},\qquad k,q=0,\ldots,N-1.
+\]
+The characters are fixed by the image of a single generator: its Nth
+power must be one. Each finite group has zero-dimensional Lie algebra.
+
+A finite-dimensional Lie algebra representation integrates uniquely to
+its connected simply connected group. To \emph{descend} means to define
+the action using g alone, without choosing a lift \(\widetilde g\).
+Two lifts differ by \(k\in\ker p\), and
+\[
+ \widetilde U(\widetilde g k)
+ =\widetilde U(\widetilde g)\widetilde U(k).
+\]
+They give the same operator if \(\widetilde U(k)=I\), and the same
+action on rays if \(\widetilde U(k)\) is a scalar phase. These are the
+conditions for ordinary and projective descent, respectively.
+For an irreducible unitary
+representation, central elements act as scalars by Schur's lemma;
+a reducible representation requires checking the scalar condition on the
+whole space.
+
+\subsection{The double cover of spatial rotations}
+The matrices in Eq.~\eqref{eq:su2-exponential} already display a
+half-angle. We now explain how their two-dimensional action is related
+to a three-dimensional spatial rotation.
+Associate \(\bm v\in\R^3\) with the traceless Hermitian matrix
+\[
+ V=\bm v\cdot\bm\sigma
+ =\begin{pmatrix}v_z&v_x-iv_y\\v_x+iv_y&-v_z\end{pmatrix}.
+\]
+Conjugation defines a real linear map \(R_U\) by
+\begin{equation}
+ UVU^\dagger=(R_U\bm v)\cdot\bm\sigma.
+ \label{eq:su2-cover}
+\end{equation}
+It preserves \(|\bm v|^2=\tfrac12\tr V^2\), so it is orthogonal, and
+has determinant one by continuity. For a rotation about the z-axis,
+\[
+ U_z=\begin{pmatrix}e^{-i\theta/2}&0\\0&e^{i\theta/2}\end{pmatrix},
+ \qquad
+ \begin{pmatrix}v'_x\\v'_y\\v'_z\end{pmatrix}
+ =\begin{pmatrix}\cos\theta&-\sin\theta&0\\
+ \sin\theta&\cos\theta&0\\0&0&1\end{pmatrix}
+ \begin{pmatrix}v_x\\v_y\\v_z\end{pmatrix}.
+\]
+The general axis follows from the Pauli multiplication law. Thus every
+proper rotation is obtained. The kernel consists of matrices commuting
+with all Pauli matrices, namely \(\{I,-I\}\), and
+\begin{equation}
+ \boxed{\SO(3)\cong\SU(2)/\{I,-I\}},\qquad
+ \so(3)\cong\su(2).
+ \label{eq:double-cover}
+\end{equation}
+Every SU(2) matrix can be written \(a_0I-i\bm a\cdot\bm\sigma\), with
+real coefficients satisfying \(a_0^2+|\bm a|^2=1\). Hence SU(2) is the
+three-sphere, which is simply connected. It is the universal cover, and
+\begin{equation}
+ \pi_1(\SU(2))=0,\qquad \pi_1(\SO(3))=\Z_2.
+ \label{eq:fundamental-groups}
+\end{equation}
+A loop describing a 2\(\pi\) rotation lifts to a path from I to -I;
+traversing it twice gives a closed loop on the cover, which can contract.
+
+\subsection{Which spin representations descend?}
+The spin-j multiplet has \(m=-j,-j+1,\ldots,j\), so
+\begin{equation}
+ e^{-2\pi iJ_3}=(-1)^{2j}I.
+ \label{eq:two-pi}
+\end{equation}
+For integer j, the kernel acts trivially and the representation descends
+to an ordinary representation of SO(3). For half-integer j, it acts by
+minus the identity: the representation is ordinary on SU(2) and
+projective on SO(3). Locally the same commutator algebra holds in both
+cases: \([J_i,J_j]=i\epsilon_{ijk}J_k\). The half-integer possibility
+comes from the global group, with no extra identity term in this bracket.
+
+The spin-one representation of SU(2) is irreducible but not faithful:
+-I acts trivially. The spin-one-half representation is both irreducible
+and faithful. These facts concern a particular action on a vector space,
+not whether the group has normal subgroups.
+
+A direct sum can fail even projective descent. On
+\(V_0\oplus V_{1/2}\), the kernel element -I acts as
+\(\operatorname{diag}(1,-I_2)\), which is not one scalar on the entire
+space. Consequently not every ordinary representation of the covering
+group defines a projective representation of the base group on all its
+rays. The common scalar action of the kernel is the essential condition.
+
+\subsection{Higher-dimensional spin groups}
+For \(n\geq3\), the universal cover of SO(n) is its double cover Spin(n).
+Some useful low-dimensional identifications are
+\begin{equation}
+ \begin{split}
+ \Spin(3)&\cong\SU(2),\qquad
+ \Spin(4)\cong\SU(2)\times\SU(2),\\
+ \Spin(5)&\cong\Sp(2)\cong\mathrm{USp}(4),\qquad
+ \Spin(6)\cong\SU(4).
+ \end{split}
+ \label{eq:spin-isomorphisms}
+\end{equation}
+Here Sp(2) is the compact symplectic group. Spin(2) is an exception to the
+universal-cover statement: it is a circle that double covers SO(2),
+whereas the universal cover of SO(2) is the line.
+
+In Spin(4), the covering kernel is \(\{(I,I),(-I,-I)\}\). An irreducible
+representation labeled \((j_L,j_R)\) descends to SO(4) precisely when
+\(j_L+j_R\) is an integer. This illustrates how the global quotient adds
+a condition beyond the direct-sum Lie algebra found in Lecture 8.
+
+\clearpage
+\section*{Questions and checks}
+\addcontentsline{toc}{section}{Questions and checks}
+\begin{enumerate}
+\item Use Schur's lemma to explain why \(J^2\) has a single eigenvalue
+in an irreducible complex spin representation. Compute it for spin two.
+\item Verify the spin-one matrices in Eq.~\eqref{eq:spin-one-matrices},
+including \(J^2=2I\) and the unitary change to the Cartesian basis.
+\item Construct \(J_3\) and \(J_+\) for spin \(\tfrac32\) from the ladder
+formula. Check the dimension and both endpoint conditions.
+\item Verify that the three operations extracting the trace,
+antisymmetric part, and symmetric traceless part in
+Eq.~\eqref{eq:tensor-split} are mutually annihilating projectors whose
+sum is the identity on the tensor space.
+\item Compare the decompositions of \(M_{ij}=v_iw_j\) under SO(3) and
+\(M^A{}_B=v^Aw_B^*\) under U(N). Identify their invariant scalar pieces
+and explain why the U(N) adjoint is reducible.
+\item Obtain the spin content of a general rank-three Cartesian tensor
+using Eq.~\eqref{eq:cg-rule}, and check the total dimension. Compare it
+with the fully symmetric rank-three tensor.
+\item Verify that \(i\sigma_2K\) is antiunitary, reverses all three spin
+operators, and squares to \(-I\). Why does its square fix every ray?
+\item Compare the universal cover of SO(2), Spin(2), and SO(2) itself.
+Derive the integer-weight condition for an ordinary circle character.
+\item Compute \(U_zVU_z^\dagger\) explicitly and recover the ordinary
+rotation of \((v_x,v_y)\). Identify the kernel of the full covering map.
+\item Which of \(V_0\oplus V_1\), \(V_{1/2}\oplus V_{3/2}\), and
+\(V_0\oplus V_{1/2}\) descend to ordinary or projective representations
+of SO(3) on the whole vector space?
+\end{enumerate}
+
+\clearpage
+\section*{Summary}
+\addcontentsline{toc}{section}{Summary}
+\begin{keyidea}[From an algebraic multiplet to a physical rotation]
+The ladder calculation determines the allowed finite-dimensional
+\(\SU(2)\) multiplets. Tensor products organize composite objects.
+Quantum states are rays, so a scalar phase can be invisible on states.
+The global cover then explains why both integer and half-integer spin
+can describe rotations, even though only integer spin gives an ordinary
+representation of \(\SO(3)\).
+\end{keyidea}
+\begin{itemize}
+\item The spin-\(j\) multiplet has dimension \(2j+1\) and
+\(J^2=j(j+1)I\). Ladder operators construct the matrices explicitly.
+\item Tensor-product generators add. A rank-two spatial tensor splits
+as \(\bm3\otimes\bm3=\bm1\oplus\bm3\oplus\bm5\): trace,
+antisymmetric, and symmetric traceless pieces.
+\item The dual action preserves a pairing. For U(N), a matrix field
+transforms by conjugation and splits into a singlet and the SU(N)
+adjoint; the central U(1) acts trivially on that matrix field.
+\item Wigner's theorem implements probability-preserving ray symmetries
+by unitary or antiunitary operators. Field-component and Hilbert-space
+representations act on different spaces.
+\item \(\SU(2)\) is the simply connected double cover of \(\SO(3)\).
+The kernel element \(-I\) acts as \((-1)^{2j}\). Ordinary descent
+requires the kernel to act as the identity; projective descent requires
+one scalar on the whole space.
+\item Lecture 10 studies the general projective phase, derives its
+possible central Lie algebra term, and realizes symmetry generators as
+Noether charges.
+\end{itemize}
+
+\section*{Further reading}
+\addcontentsline{toc}{section}{Further reading}
+These notes reorganize the supplied symmetry and representation slide
+sets into Lectures 8--10. For mathematical background and further proofs:
+\begin{itemize}
+\item B. C. Hall, \emph{An Elementary Introduction to Groups and
+Representations}, \href{https://arxiv.org/abs/math-ph/0005032}{arXiv:math-ph/0005032}.
+\end{itemize}
+\end{document}

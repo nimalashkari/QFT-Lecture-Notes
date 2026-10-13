@@ -1,0 +1,728 @@
+\documentclass[11pt]{article}
+
+\usepackage[letterpaper,margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb,mathtools,bm}
+\usepackage{slashed}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{hyperref}
+\usepackage[most]{tcolorbox}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{parskip}
+\usepackage{needspace}
+
+\definecolor{qftblue}{HTML}{245A8D}
+\definecolor{qftgreen}{HTML}{2F6B4F}
+\definecolor{qftred}{HTML}{A23B3B}
+\definecolor{qftgray}{HTML}{F4F6F8}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=qftblue,
+  urlcolor=qftblue,
+  citecolor=qftgreen,
+  pdftitle={PHYS 662 Lecture 16: Symmetries, Causality, and Propagators},
+  pdfauthor={Nima Lashkari}
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{PHYS 662: Quantum Field Theory I}
+\rhead{Lecture 16}
+\cfoot{\thepage}
+\setlength{\headheight}{14pt}
+
+\titleformat{\section}{\Large\bfseries\color{qftblue}}{\thesection.}{0.6em}{}
+\titleformat{\subsection}{\large\bfseries\color{qftgreen}}{\thesubsection}{0.6em}{}
+\titleformat{\subsubsection}{\normalsize\bfseries\color{qftred}}{\thesubsubsection}{0.6em}{}
+
+\setlist[itemize]{leftmargin=2em,itemsep=0.25em,topsep=0.4em}
+\setlist[enumerate]{leftmargin=2em,itemsep=0.25em,topsep=0.4em}
+
+\newcommand{\dd}{\mathrm{d}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Lag}{\mathcal{L}}
+\newcommand{\cM}{\mathcal{M}}
+\newcommand{\SO}{\mathrm{SO}}
+\newcommand{\OO}{\mathrm{O}}
+
+\newtcolorbox{keyidea}[1][]{
+  enhanced, breakable, colback=qftgray, colframe=qftblue,
+  boxrule=0.8pt, arc=1.5mm, title={#1}, fonttitle=\bfseries,
+  coltitle=white
+}
+\newtcolorbox{remarkbox}[1][]{
+  enhanced, breakable, colback=white, colframe=qftgreen,
+  boxrule=0.7pt, arc=1.5mm, title={#1}, fonttitle=\bfseries,
+  coltitle=white
+}
+\newtcolorbox{warningbox}[1][]{
+  enhanced, breakable, colback=white, colframe=qftred,
+  boxrule=0.7pt, arc=1.5mm, title={#1}, fonttitle=\bfseries,
+  coltitle=white
+}
+
+
+\newcommand{\Th}{\Theta}
+\newcommand{\Eul}{\mathcal E}
+\newcommand{\Lie}{\mathscr L}
+
+\newcommand{\C}{\mathbb C}
+\newcommand{\Z}{\mathbb Z}
+\newcommand{\SU}{\mathrm{SU}}
+\newcommand{\UU}{\mathrm{U}}
+\newcommand{\GL}{\mathrm{GL}}
+\newcommand{\SL}{\mathrm{SL}}
+\newcommand{\Sp}{\mathrm{Sp}}
+\newcommand{\tr}{\operatorname{tr}}
+\newcommand{\Ad}{\operatorname{Ad}}
+\newcommand{\ad}{\operatorname{ad}}
+\newcommand{\lieg}{\mathfrak g}
+\newcommand{\lieh}{\mathfrak h}
+\newcommand{\su}{\mathfrak{su}}
+\newcommand{\so}{\mathfrak{so}}
+\newcommand{\slie}{\mathfrak{sl}}
+
+
+\newcommand{\cH}{\mathcal H}
+\newcommand{\Spin}{\operatorname{Spin}}
+\newcommand{\id}{\mathrm{id}}
+\newcommand{\Lor}{\SO^+(1,3)}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\one}{\mathbf 1}
+
+\newcommand{\smu}{s}
+\newcommand{\tmu}{\widetilde s}
+\newcommand{\Eps}{E}
+\newcommand{\pslash}{\slashed p}
+\newcommand{\ISO}{\mathrm{ISO}}
+\newcommand{\pL}{P_L}
+\newcommand{\pR}{P_R}
+\newcommand{\hc}{\mathrm{h.c.}}
+\newcommand{\diag}{\operatorname{diag}}
+\newcommand{\vol}{\mathrm{vol}}
+\newcommand{\supp}{\operatorname{supp}}
+
+\newcommand{\ddPi}{\dd\Pi}
+\newcommand{\vac}{\lvert0\rangle}
+\newcommand{\vbra}{\langle0\rvert}
+\newcommand{\ii}{\mathrm i}
+\newcommand{\Dc}{\mathcal C}
+\newcommand{\Dp}{\mathcal P}
+\newcommand{\Dt}{\mathcal T}
+\begin{document}
+\pagenumbering{gobble}
+\begin{titlepage}
+\centering
+\vspace*{1.2in}
+{\scshape\Large PHYS 662 --- Quantum Field Theory I\par}
+\vspace{0.35in}
+{\Huge\bfseries\color{qftblue} Lecture 16\par}
+\vspace{0.18in}
+{\LARGE\bfseries Symmetries, Causality, and Propagators\par}
+\vspace{0.16in}
+{\large\color{qftgreen} Discrete Transformations, Correlations, and Response\par}
+\vspace{0.6in}
+{\large Nima Lashkari\par}
+{\large Fall 2026\par}
+\vfill
+\begin{minipage}{0.86\textwidth}\small
+The quantum fields of Lecture 15 now become a laboratory for discrete symmetries and locality. We separate vacuum correlations from signals, and derive Green functions from their initial data and boundary conditions.
+
+\medskip
+Course page: \url{https://nimalashkari.com/quantum-field-theory-2026-part-i/}
+\end{minipage}
+\vspace{0.5in}
+\end{titlepage}
+\pagenumbering{roman}
+\setcounter{tocdepth}{1}\begingroup\small\tableofcontents\endgroup
+\newpage
+\pagenumbering{arabic}
+
+\section*{Roadmap}
+\addcontentsline{toc}{section}{Roadmap}
+Lecture 15 constructed the scalar and Dirac Fock spaces. We first determine
+how charge conjugation, parity, and time reversal act on those states.
+We then distinguish vacuum correlations from causal response, derive
+retarded and advanced Green functions, and construct scalar and Dirac
+Feynman propagators. Equal-time canonical data fix every source normalization.
+
+\begin{keyidea}[Conventions and prerequisites]
+Use \(\eta=\diag(1,-1,-1,-1)\), \(p\cdot x=E_pt-\bm p\cdot\bm x\),
+and \(\dd\Pi_p=\dd^3p/[(2\pi)^3 2E_p]\). The spinor basis is
+\[
+\gamma^0=\begin{pmatrix}0&I\\I&0\end{pmatrix},\qquad
+\gamma^i=\begin{pmatrix}0&-\sigma_i\\\sigma_i&0\end{pmatrix},\qquad
+\bar\Psi=\Psi^\dagger\gamma^0.
+\]
+Lecture 15 fixes the mode algebra and the positive-energy particle and
+antiparticle vacuum. The spin sums are those of Lecture 14:
+\(\sum_su_s\bar u_s=\slashed p+m\),
+\(\sum_sv_s\bar v_s=\slashed p-m\).
+\end{keyidea}
+
+\Needspace{7\baselineskip}
+\section{Charge conjugation and parity on Fock space}
+\subsection{The charge-conjugation matrix and its quantum implementer}
+Keep separate the spinor matrix \(C\) and the unitary Hilbert-space
+operator \(\Dc\). In the gamma basis recalled above, choose
+\begin{equation}
+ E=i\sigma_2=\begin{pmatrix}0&1\\-1&0\end{pmatrix},\qquad
+ C=\begin{pmatrix}E&0\\0&-E\end{pmatrix}=i\gamma^0\gamma^2,
+ \qquad C(\gamma^\mu)^T C^{-1}=-\gamma^\mu.
+ \label{f-eq:Cmatrix}
+\end{equation}
+Then \(C^T=-C\), \(C^{-1}=-C\). Its overall phase is conventional.
+The field transformation is
+\begin{equation}
+ \Dc\Psi(x)\Dc^{-1}=\Psi^c(x)=C\bar\Psi(x)^T
+   =B_C(\Psi^\dagger(x))^T,\qquad B_C=C\gamma^0=-i\gamma^2.
+ \label{f-eq:Cfield}
+\end{equation}
+The transpose is on spinor indices. On a classical coefficient column
+this is an antilinear map, but \(\Dc\) is unitary on quantum states:
+\(\Dc i\Dc^{-1}=i\). Componentwise adjoints in \eqref{f-eq:Cfield} must not
+be confused with antiunitarity of the implementing operator.
+
+To verify the mode action, choose spinor phases so that
+\begin{equation}
+ v_s(p)=C\bar u_s(p)^T,\qquad u_s(p)=C\bar v_s(p)^T.
+ \label{f-eq:Cspinors}
+\end{equation}
+For the square-root spinors of Lecture 14 this means
+\(\eta_s=E\xi_s^*\). Substitution into the Dirac mode expansion of Lecture 15 exchanges its two
+mode coefficients, giving
+\begin{equation}
+ \Dc b_s\Dc^{-1}=d_s,\qquad \Dc d_s\Dc^{-1}=b_s,\qquad
+ \Dc Q\Dc^{-1}=-Q,\qquad \Dc H_N\Dc^{-1}=H_N.
+ \label{f-eq:Cmodes}
+\end{equation}
+Other spin bases may insert unitary spin-label matrices and phases;
+the exchange of charge sectors is invariant information.
+Reordering the odd fields gives
+\(\bar\Psi^c\Psi^c=\bar\Psi\Psi\) and
+\(:\bar\Psi^c\gamma^\mu\Psi^c:=-:\bar\Psi\gamma^\mu\Psi:\).
+For quantum composite operators these equalities use a consistent
+normal-ordering or renormalization prescription.
+
+\subsection{Parity and relative intrinsic parity}
+Let \(x_P=(t,-\bm x)\). A parity symmetry of the free massive theory can act as
+\begin{equation}
+ \Dp\Psi(x)\Dp^{-1}=\eta_P\gamma^0\Psi(x_P),\qquad |\eta_P|=1.
+ \label{f-eq:Pfield}
+\end{equation}
+The conditions \((\gamma^0)^\dagger\gamma^0=1\) and
+\(\gamma^0\gamma^i\gamma^0=-\gamma^i\) make \(j^0\) even and \(j^i\) odd,
+at the reflected point. They also establish invariance of the action.
+Taking \(\eta_P=1\), the canonical-spin wavefunctions satisfy
+\[
+ \gamma^0u_s(p)=u_s(p_-),\qquad \gamma^0v_s(p)=-v_s(p_-),
+ \quad p_-=(E_{\bm p},-\bm p).
+\]
+Comparison of modes gives
+\begin{equation}
+ \Dp b_s(\bm p)\Dp^{-1}=b_s(-\bm p),\qquad
+ \Dp d_s(\bm p)\Dp^{-1}=-d_s(-\bm p).
+ \label{f-eq:Pmodes}
+\end{equation}
+With the usual choice that parity squares to one on the field,
+\(\eta_P=\pm1\), particle and antiparticle have opposite intrinsic
+parities. Composing parity with an internal charge rotation changes
+the definition of the symmetry and its phase assignments; that choice
+must be specified separately. Parity invariance of the free Dirac action
+does not guarantee parity invariance of arbitrary interactions.
+
+\Needspace{7\baselineskip}
+\section{Time reversal and CPT}
+\subsection{Why time reversal is antiunitary}
+A symmetry reversing the direction of time evolution must satisfy
+\begin{equation}
+ \Dt e^{-iHt}\Dt^{-1}=e^{+iHt}.
+ \label{f-eq:Tevolution}
+\end{equation}
+If \(\Dt\) were unitary, this would require \(\Dt H\Dt^{-1}=-H\), which
+is incompatible with a nontrivial spectrum bounded below and unbounded
+above. Instead time reversal is antiunitary:
+\begin{equation}
+ \Dt i\Dt^{-1}=-i,\qquad \Dt H\Dt^{-1}=H,\qquad
+ \Dt\bm P\Dt^{-1}=-\bm P,\qquad \Dt\bm J\Dt^{-1}=-\bm J.
+ \label{f-eq:Tcharges}
+\end{equation}
+Energy is preserved. The sign of \(i\), not a sign reversal of physical
+energy, reverses the exponential. Thus the spacetime reflection matrix
+\(\diag(-1,1,1,1)\) cannot be applied to \(P^\mu\) by the same unitary
+conjugation rule used for the connected Lorentz group.
+
+\subsection{The spinor transformation and its phases}
+For \(x_T=(-t,\bm x)\), one convenient choice in our basis is
+\begin{equation}
+ \Dt\Psi(x)\Dt^{-1}=B_T\Psi(x_T),\qquad B_T=i\gamma^1\gamma^3.
+ \label{f-eq:Tfield}
+\end{equation}
+The useful matrix tests are
+\begin{equation}
+ B_T(\gamma^0)^*B_T^{-1}=\gamma^0,\qquad
+ B_T(\gamma^i)^*B_T^{-1}=-\gamma^i,\qquad B_TB_T^*=-1.
+ \label{f-eq:Tmatrix}
+\end{equation}
+They express the complex conjugation of numerical coefficients caused
+by antiunitarity. On a classical solution the corresponding transformed
+column is \(B_T\psi^*(-t,\bm x)\); on the field operator the conjugation
+of coefficients is already performed by \(\Dt\).
+
+For a canonical spin basis, the phases of states can be chosen so that
+\[
+ \Dt|\bm p,+\tfrac12\rangle=|-\bm p,-\tfrac12\rangle,\qquad
+ \Dt|\bm p,-\tfrac12\rangle=-|-\bm p,+\tfrac12\rangle.
+\]
+The relative minus sign makes \(\Dt^2=-1\) on the one-fermion sector.
+A rule that merely reverses momentum while leaving both spin labels
+unchanged would miss spin reversal and this square. The antiparticle
+sector has the same spin-reversal structure.
+
+\subsection{Combining the operations}
+With the specific phase choices above, \(\Theta=\Dc\Dp\Dt\) is antiunitary
+and the successive field maps give
+\begin{equation}
+ \Theta\Psi(x)\Theta^{-1}
+   =B_T\gamma^0B_C(\Psi^\dagger(-x))^T
+   =-i\gamma_* (\Psi^\dagger(-x))^T,
+ \quad \gamma_*=\diag(-1,1)=-i\gamma^0\gamma^1\gamma^2\gamma^3.
+ \label{f-eq:CPT}
+\end{equation}
+The phase and the sign used to name \(\gamma_*\) are conventional.
+The physical operation exchanges particle and antiparticle, reverses
+spin, and leaves the momentum label unchanged because parity and time
+reversal each reverse it.
+
+\begin{remarkbox}[The scope of the CPT statement]
+The free theory here has \(C\), \(P\), and \(T\) separately. More generally,
+local relativistic quantum field theories satisfying the usual
+Lorentz-covariance, positive-energy, and positive-Hilbert-space assumptions
+obey the CPT theorem, even when the separate operations fail to be
+symmetries. Locality by itself, without the other hypotheses, is not
+a sufficient statement of the theorem. The explicit free-field matrices
+illustrate CPT; they do not constitute its general proof.
+\end{remarkbox}
+
+
+
+\Needspace{7\baselineskip}
+\section{Locality and the scalar commutator}
+\begin{keyidea}[Fix the metric and every factor of \(i\)]
+Use \(\eta=\diag(1,-1,-1,-1)\), \(z=x-y=(t,\bm r)\), and
+\(p\cdot z=E_{\bm p}t-\bm p\cdot\bm r\). Thus spacelike means
+\(z^2=t^2-r^2<0\). For a real scalar field define
+\[
+ D^+(z)=\vbra\phi(x)\phi(y)\vac,\qquad
+ \mathcal K(z)=[\phi(x),\phi(y)]=D^+(z)-D^+(-z).
+\]
+The last equality identifies a c-number distribution multiplying the
+identity operator. We suppress that identity. Our \(\mathcal K\) is purely
+imaginary for real arguments; a real Pauli--Jordan distribution can be
+defined by \(\Delta=\mathcal K/i\). All Green functions called \(G\) below
+are normalized to \((\Box+m^2)G=\delta^{(4)}\).
+\end{keyidea}
+\subsection{From equal time to spacelike separation}
+Canonical quantization gives \([\phi(t,\bm x),\phi(t,\bm y)]=0\).
+Any two spacelike-separated events can be brought to equal time by a
+proper orthochronous Lorentz transformation. Because the field transforms
+covariantly, the operator commutator must vanish for that pair in every
+inertial frame:
+\begin{equation}
+ [\phi(x),\phi(y)]=0\qquad\text{if}\qquad (x-y)^2<0.
+ \label{k-eq:locality}
+\end{equation}
+This is microcausality. More generally, physical local observables
+commute when their supports are spacelike separated. Fermionic odd
+fields obey the corresponding graded relation, discussed below.
+Derivatives of a commutator vanish in the open spacelike region as well;
+there may still be distributions supported on the light cone.
+
+The mode expansion supplies a direct verification:
+\begin{equation}
+ \mathcal K(z)=\int\frac{\dd^3p}{(2\pi)^3 2E_{\bm p}}
+ (e^{-ipz}-e^{ipz}).
+ \label{k-eq:commutator}
+\end{equation}
+In a frame with \(t=0\), the two integrals are equal after
+\(\bm p\mapsto-\bm p\). The invariant mass-shell measure extends this
+cancellation to every spacelike \(z\). Equivalently, a connected Lorentz
+transformation followed by a spatial rotation takes any spacelike
+\(z\) to \(-z\); this is not possible for a future-directed timelike
+vector without changing time orientation.
+
+\subsection{Initial data fix the normalization}
+Each plane wave is on shell, so
+\((\Box+m^2)\mathcal K=0\). At equal time,
+\begin{equation}
+ \mathcal K(0,\bm r)=0,\qquad
+ \partial_t\mathcal K(0,\bm r)=-i\delta^{(3)}(\bm r).
+ \label{k-eq:initialdata}
+\end{equation}
+The second sign follows either by differentiating \eqref{k-eq:commutator}
+or from \([\dot\phi(0,\bm x),\phi(0,\bm y)]=-i\delta^{(3)}(\bm x-\bm y)\).
+These initial data will determine the delta-function sources of the
+retarded and advanced Green functions without an ambiguous contour sign.
+
+For the complex scalar,
+\begin{equation}
+ [\Phi(x),\Phi^\dagger(y)]=\mathcal K(x-y),\qquad
+ [\Phi(x),\Phi(y)]=0.
+ \label{k-eq:complexcomm}
+\end{equation}
+The first term of \(\mathcal K\) comes from the particle commutator and the
+second from the antiparticle commutator, whose reversed order gives its
+minus sign. Keeping only the positive-frequency particle term would
+leave a nonlocal kernel. Antiparticles are part of the local relativistic
+field construction, even though their excitations have positive energy.
+
+\Needspace{7\baselineskip}
+\section{Vacuum correlations do not vanish outside the light cone}
+\subsection{The Wightman function}
+Only an annihilator followed by a creator has a nonzero vacuum expectation,
+so
+\begin{equation}
+ D^+(z)=\int\dd\Pi_p\,e^{-ipz},\qquad
+ D^+(-z)=D^+(z)^*.
+ \label{k-eq:Wightman}
+\end{equation}
+For a complex scalar this is
+\(\vbra\Phi(x)\Phi^\dagger(y)\vac\); the charge-violating correlators
+\(\vbra\Phi(x)\Phi(y)\vac\) and its adjoint vanish in the charge-invariant
+free vacuum. Those zeros are not statements about a real scalar, for
+which the first correlator in \eqref{k-eq:Wightman} is nonzero.
+
+The integral is an oscillatory distribution. Its positive-frequency
+boundary value is defined by \(t\mapsto t-i\epsilon\), \(\epsilon>0\),
+which inserts \(e^{-\epsilon E_{\bm p}}\), followed by
+\(\epsilon\downarrow0\). Lorentz invariance means invariance under the
+proper orthochronous group, preserving the future mass shell. At timelike
+separation the sign of \(t\) remains relevant; writing a function of
+\(z^2\) without a boundary prescription loses information.
+
+\subsection{Spacelike evaluation and the Compton scale}
+For spacelike separation choose \(t=0\) and let \(r=\sqrt{-z^2}>0\).
+Angular integration gives
+\begin{equation}
+ D^+(0,\bm r)=\frac{1}{4\pi^2r}\int_0^\infty\dd p\,
+                 \frac{p\sin(pr)}{\sqrt{p^2+m^2}}
+              =\frac{m}{4\pi^2r}K_1(mr).
+ \label{k-eq:Bessel}
+\end{equation}
+Here \(K_1\) is the modified Bessel function of the second kind, not a
+Lorentz boost generator. One way to verify the coefficient is to use
+\[
+ \frac{1}{2\sqrt{p^2+m^2}}
+ =\frac{1}{2\sqrt\pi}\int_0^\infty\dd\alpha\,\alpha^{-1/2}
+                         e^{-\alpha(p^2+m^2)}.
+\]
+The Gaussian momentum integral yields
+\begin{equation}
+ D^+(0,\bm r)=\frac{1}{16\pi^2}\int_0^\infty\dd\alpha\,
+ \alpha^{-2}e^{-m^2\alpha-r^2/(4\alpha)},
+ \label{k-eq:Schwinger}
+\end{equation}
+which is the integral representation of \eqref{k-eq:Bessel}.
+This also makes positivity at nonzero spacelike distance manifest.
+
+For \(mr\gg1\), \(K_1(mr)\sim\sqrt{\pi/(2mr)}e^{-mr}\), so
+\begin{equation}
+ D^+(0,\bm r)\sim\sqrt{\frac{m}{32\pi^3r^3}}\,e^{-mr}.
+ \label{k-eq:spacelikeasymptotic}
+\end{equation}
+The scale \(m^{-1}\) is the Compton wavelength. In the massless limit at
+fixed nonzero \(r\), \(K_1(mr)\sim1/(mr)\), giving
+\(D^+=1/(4\pi^2r^2)\). The correlation then falls as a power rather than
+exponentially. These limits are different from the singular coincidence
+limit \(r\to0\).
+
+\subsection{Timelike behavior}
+For timelike separation choose \(\bm r=0\). In three spatial dimensions,
+\begin{equation}
+ D^+(t,0)=\frac{1}{4\pi^2}\int_m^\infty\dd E\,
+               \sqrt{E^2-m^2}\,e^{-iE(t-i0)}.
+ \label{k-eq:timelike}
+\end{equation}
+For \(mt\gg1\), \(t>0\), the stationary region is \(|\bm p|\ll m\).
+Using \(E_{\bm p}=m+\bm p^2/(2m)+\cdots\) in the mode integral gives
+\begin{equation}
+ D^+(t,0)\sim\frac{e^{-imt}}{2m}
+                   \left(\frac{m}{2\pi i t}\right)^{3/2}.
+ \label{k-eq:timelikeasymptotic}
+\end{equation}
+It oscillates with a \(t^{-3/2}\) envelope; it does not decay as
+\(e^{-m|t|}\). For \(t<0\), use complex conjugation. A compact formula
+containing both regimes is
+\begin{equation}
+ D^+(t,\bm r)=\lim_{\epsilon\downarrow0}
+ \frac{m}{4\pi^2\rho_\epsilon}K_1(m\rho_\epsilon),\qquad
+ \rho_\epsilon=\sqrt{r^2-(t-i\epsilon)^2},
+ \label{k-eq:analyticW}
+\end{equation}
+with the square root continued from positive real \(\rho\).
+
+\Needspace{7\baselineskip}
+\section{Locality, statistics, and signaling}
+\subsection{Why a nonzero correlation is not a signal}
+At spacelike separation, \(D^+(z)=D^+(-z)\) and both can be nonzero,
+while their difference \(\mathcal K(z)\) vanishes. A correlation measures
+properties of the state. A controllable influence depends on a commutator.
+For example, let \(A\) be an observable in one region, \(B\) a Hermitian
+observable in a spacelike-separated region, and \(U_B=e^{-i\lambda B}\).
+Then
+\[
+ \langle U_B^\dagger A U_B\rangle
+ =\langle A\rangle+i\lambda\langle[B,A]\rangle+O(\lambda^2).
+\]
+If \([A,B]=0\), the expectation is unchanged to every order. Vacuum
+entanglement can give correlations between the regions without enabling
+this local operation to send a message.
+
+\subsection{The free scalar test of statistics}
+Take a positive-norm scalar mode family and a trial field
+\(F_\lambda(x)=\int\dd\Pi_p[a(\bm p)e^{-ipx}
++\lambda a^\dagger(\bm p)e^{ipx}]\).
+At spacelike separation its bosonic commutator with its adjoint is
+\((1-|\lambda|^2)D^+(z)\), which vanishes for \(|\lambda|=1\).
+If the same modes instead obey CAR, its anticommutator is
+\((1+|\lambda|^2)D^+(z)\), which cannot vanish for any \(\lambda\).
+Even the \(\lambda=0\) positive-frequency field is nonlocal.
+This calculation identifies the cancellation needed for a local free
+scalar field. A general spin--statistics theorem requires further
+hypotheses, including relativistic covariance, energy positivity, and
+a positive Hilbert-space inner product.
+
+For the Dirac field the local relation is an anticommutator:
+\begin{equation}
+ \{\Psi_\alpha(x),\bar\Psi_\beta(y)\}
+   =(i\gamma^\mu\partial_\mu+m)_{\alpha\beta}\mathcal K(x-y),
+ \qquad \{\Psi_\alpha(x),\Psi_\beta(y)\}=0.
+ \label{k-eq:Diraclocal}
+\end{equation}
+Use the two spin sums from Lecture 15 to verify this: differentiating the
+negative-frequency term reverses the sign of \(\slashed p\), while the
+minus in \(\mathcal K\) reverses it again. Since \(\mathcal K\) vanishes in
+the open spacelike region, so does the anticommutator. Even local
+bilinears commute at spacelike separation: moving each of two fermions
+past the two in the other bilinear gives four minus signs. Coincident
+products still require their usual regulator or subtraction.
+
+\Needspace{7\baselineskip}
+\section{Retarded and advanced Green functions}
+\subsection{Derivation from the equal-time jump}
+Let \(L=\Box+m^2\). Define
+\begin{equation}
+ G_R(z)=i\theta(t)\mathcal K(z),\qquad
+ G_A(z)=-i\theta(-t)\mathcal K(z).
+ \label{k-eq:RA}
+\end{equation}
+The opposite signs are essential. For a homogeneous solution \(f\) with
+\(f(0,\bm r)=0\), distributional differentiation gives
+\[
+ L[\theta(t)f]=\delta(t)\partial_t f(0,\bm r),\qquad
+ L[\theta(-t)f]=-\delta(t)\partial_t f(0,\bm r).
+\]
+The apparent \(\delta' f\) and \(2\delta\dot f\) terms combine into one
+jump term; treating them as ordinary functions would give a spurious
+factor of two. Applying \eqref{k-eq:initialdata} gives
+\begin{equation}
+ LG_R=LG_A=\delta^{(4)}(z),\qquad G_R-G_A=i\mathcal K.
+ \label{k-eq:RAequation}
+\end{equation}
+The retarded function has support in the future light cone; the advanced
+function in the past light cone. The commutator itself has both supports
+and is a homogeneous solution, not a retarded Green function.
+
+In spatial Fourier space these facts are especially transparent:
+\begin{equation}
+ G_R(t,\bm p)=\theta(t)\frac{\sin(E_{\bm p}t)}{E_{\bm p}},\qquad
+ G_A(t,\bm p)=-\theta(-t)\frac{\sin(E_{\bm p}t)}{E_{\bm p}}.
+ \label{k-eq:RAoscillator}
+\end{equation}
+Both have a unit jump in their first derivative across \(t=0\).
+
+\subsection{Response to a local source}
+Add \(J\phi\) to the Lagrangian, so \(L\phi=J\). With no incoming change
+in the initial data, the induced field is
+\begin{equation}
+ \delta\phi(x)=\int\dd^4y\,G_R(x-y)J(y).
+ \label{k-eq:response}
+\end{equation}
+The response depends only on sources in the causal past of \(x\).
+Linear response in the quantum theory gives the same result because
+\(G_R=i\theta(x^0-y^0)\langle[\phi(x),\phi(y)]\rangle\).
+This is the operational role of the commutator that a Wightman
+correlation alone does not have.
+
+In \(3+1\) dimensions a useful explicit check is
+\begin{equation}
+ G_R(t,r)=\theta(t)\left[
+ \frac{\delta(t^2-r^2)}{2\pi}
+ -\theta(t^2-r^2)\frac{mJ_1(m\sqrt{t^2-r^2})}{4\pi\sqrt{t^2-r^2}}
+ \right].
+ \label{k-eq:retardedexplicit}
+\end{equation}
+The first term propagates on the cone. A massive field also has an
+interior tail. For \(m=0\) the tail disappears and
+\(G_R=\delta(t-r)/(4\pi r)\) for \(r>0\). The light-cone delta term cannot
+be recovered by evaluating the Bessel expression only away from the cone.
+
+\Needspace{7\baselineskip}
+\section{Pole prescriptions encode boundary conditions}
+\subsection{Retarded and advanced poles}
+Fourier transforming \(LG=\delta^{(4)}\) suggests
+\(\widetilde G=-1/(p^2-m^2)\), but this is singular on the mass shell.
+The boundary condition prescribes how to pass the poles:
+\begin{align}
+ G_R(z)&=\lim_{\epsilon\downarrow0}\int\frac{\dd^4p}{(2\pi)^4}
+ \frac{-e^{-ipz}}{(p^0+i\epsilon)^2-E_{\bm p}^2},\notag\\
+ G_A(z)&=\lim_{\epsilon\downarrow0}\int\frac{\dd^4p}{(2\pi)^4}
+ \frac{-e^{-ipz}}{(p^0-i\epsilon)^2-E_{\bm p}^2}.
+ \label{k-eq:RApoles}
+\end{align}
+For the retarded prescription both poles are below the real axis.
+When \(t<0\), close in the upper half-plane, where
+\(e^{-ip^0t}\) decays: there are no poles, so the answer is zero.
+When \(t>0\), close clockwise below; the residues give
+\(\sin(E_{\bm p}t)/E_{\bm p}\). Reversing the displacements gives the
+advanced prescription. Contour orientation supplies a minus sign and
+must be kept together with the numerator in \eqref{k-eq:RApoles}.
+
+The equation alone cannot choose a prescription. The difference of two
+Green functions solves the homogeneous equation; boundary or initial
+conditions provide the missing information.
+
+\subsection{Time ordering and the Feynman function}
+The scalar time-ordered vacuum expectation is
+\begin{equation}
+ D_F(z)=\vbra T\phi(x)\phi(y)\vac
+ =\theta(t)D^+(z)+\theta(-t)D^+(-z).
+ \label{k-eq:DFtime}
+\end{equation}
+Its Fourier representation is
+\begin{equation}
+ D_F(z)=\lim_{\epsilon\downarrow0}\int\frac{\dd^4p}{(2\pi)^4}
+        \frac{i\,e^{-ipz}}{p^2-m^2+i\epsilon}.
+ \label{k-eq:DFfourier}
+\end{equation}
+The positive-energy pole lies just below and the negative-energy pole
+just above the real axis. Closing below for \(t>0\) keeps the
+positive-frequency mode; closing above for \(t<0\) keeps the
+negative-frequency contribution. This gives \eqref{k-eq:DFtime}, including
+its normalization.
+
+Unlike \(\mathcal K\), time ordering has a derivative jump:
+\begin{equation}
+ LD_F=-i\delta^{(4)}(z),\qquad
+ G_F\equiv iD_F,\qquad LG_F=\delta^{(4)}(z).
+ \label{k-eq:DFsource}
+\end{equation}
+The name ``Feynman propagator'' is used for either \(D_F\), \(G_F\), or a
+function differing by a factor of \(i\) in different texts. The defining
+expectation value and source equation remove that ambiguity.
+\begin{center}\small
+\begin{tabular}{llll}
+\toprule
+Object & Definition & \(L\) acting on it & Support/property\\
+\midrule
+\(D^+\) & \(\langle\phi(x)\phi(y)\rangle\) & \(0\) & positive frequency\\
+\(\mathcal K\) & \(D^+(z)-D^+(-z)\) & \(0\) & causal cone\\
+\(G_R\) & \(i\theta(t)\mathcal K\) & \(\delta^{(4)}\) & future cone\\
+\(G_A\) & \(-i\theta(-t)\mathcal K\) & \(\delta^{(4)}\) & past cone\\
+\(D_F\) & \(\langle T\phi(x)\phi(y)\rangle\) & \(-i\delta^{(4)}\) & time ordering\\
+\bottomrule
+\end{tabular}
+\end{center}
+The Feynman function is nonzero at spacelike separation. This is
+consistent with causality: it encodes vacuum time ordering, not the
+retarded response to a controllable source. It is the two-point kernel
+used in scattering and path-integral perturbation theory.
+
+\Needspace{7\baselineskip}
+\section{The Dirac Feynman propagator}
+Fermionic time ordering includes the exchange sign:
+\begin{equation}
+ S_F(x-y)_{\alpha\beta}=\vbra T\Psi_\alpha(x)\bar\Psi_\beta(y)\vac
+ =\theta(t)\vbra\Psi_\alpha(x)\bar\Psi_\beta(y)\vac
+ -\theta(-t)\vbra\bar\Psi_\beta(y)\Psi_\alpha(x)\vac.
+ \label{k-eq:SFtime}
+\end{equation}
+Insert the mode expansion and the spin sums. For \(t>0\) the numerator is
+\(\slashed p+m\); for \(t<0\) the exchange sign combines with the
+antiparticle spin sum. The result is
+\begin{equation}
+ S_F(z)=(i\gamma^\mu\partial_\mu+m)D_F(z)
+ =\int\frac{\dd^4p}{(2\pi)^4}
+       \frac{i(\slashed p+m)e^{-ipz}}{p^2-m^2+i0}.
+ \label{k-eq:SF}
+\end{equation}
+Since
+\((i\slashed\partial-m)(i\slashed\partial+m)=-(\Box+m^2)\),
+\begin{equation}
+ (i\slashed\partial-m)S_F(z)=i\delta^{(4)}(z)I_4.
+ \label{k-eq:SFsource}
+\end{equation}
+The scalar denominator fixes propagation and its boundary condition;
+the numerator carries the spinor structure. This links the invariant
+tensors of Lectures 12--13, the spin sums of Lecture 14, and the
+quantization of Lecture 15 without repeating those derivations.
+
+\section*{Summary}
+\addcontentsline{toc}{section}{Summary}
+Charge conjugation exchanges charge sectors; parity reverses momentum;
+antiunitary time reversal preserves energy and reverses momentum and spin.
+Their implementation must respect the mode phases and spinor basis.
+Vacuum correlations can be nonzero at spacelike separation, while local
+observables still commute there. Retarded and advanced Green functions
+encode causal support and have opposite step-function prefactors.
+Feynman time ordering chooses a different boundary condition. The Dirac
+propagator follows by applying its numerator to the scalar Feynman function.
+The canonical equal-time jump fixes all delta-function sources.
+
+\newpage
+\section*{Questions for review}
+\addcontentsline{toc}{section}{Questions for review}
+\begin{enumerate}
+\item Verify the four matrix identities for \(C\) in \eqref{f-eq:Cmatrix} and
+the spinor relation \eqref{f-eq:Cspinors}.
+\item Derive the opposite intrinsic parities directly from the mode expansion.
+\item Explain why time reversal preserves \(H\) but conjugates \(i\).
+Check \(B_TB_T^*=-1\).
+\item Distinguish a classical antilinear spinor map, a unitary charge
+conjugation operator, and an antiunitary time reversal operator.
+\item Prove microcausality both from equal-time covariance and from the
+mode integral. Why must the separation be spacelike?
+\item Derive \(\partial_t\mathcal K(0,\bm r)=-i\delta^{(3)}(\bm r)\).
+\item Reproduce the coefficient of \(K_1(mr)\) using the Gaussian integral.
+Compare large spacelike and large timelike separation.
+\item Why can \(D^+(z)\neq0\) coexist with the impossibility of signaling?
+\item Show why a positive-frequency scalar field by itself is nonlocal.
+\item Verify the Dirac anticommutator and explain how even observables
+can commute when the underlying fields anticommute.
+\item Differentiate the step-function definitions of \(G_R,G_A\) and
+track their relative sign.
+\item Locate all poles in the retarded, advanced, and Feynman prescriptions.
+Explain which half-plane is used for each sign of time.
+\item Why is the commutator a homogeneous solution while a propagator
+with a step function can have a delta-function source?
+\item Verify the source equations for \(D_F\), \(G_F\), and \(S_F\).
+\end{enumerate}
+
+\section*{Sources and reading}
+\addcontentsline{toc}{section}{Sources and reading}
+Based on the discrete-symmetry sections of the supplied Dirac and
+causality slides, the scalar locality/statistics example in the Dirac
+slides, and the complete propagator discussion in the causality slides.
+Compare D.~Tong, \emph{Quantum Field Theory}, Chapters 2 and 5,
+\url{https://www.damtp.cam.ac.uk/user/tong/qft.htm}.
+Bessel integral representations and asymptotics are collected in
+\url{https://dlmf.nist.gov/10.32} and \url{https://dlmf.nist.gov/10.40}.
+\end{document}

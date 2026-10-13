@@ -1,0 +1,500 @@
+\documentclass[11pt]{article}
+\usepackage[letterpaper,margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern,microtype}
+\usepackage{amsmath,amssymb,mathtools,bm,slashed,mathrsfs}
+\usepackage{xcolor,enumitem,booktabs,array,needspace}
+\usepackage[most]{tcolorbox}
+\usepackage{fancyhdr,titlesec,parskip,hyperref}
+\definecolor{qftblue}{HTML}{245A8D}
+\definecolor{qftgreen}{HTML}{2F6B4F}
+\definecolor{qftgray}{HTML}{F4F6F8}
+\hypersetup{colorlinks=true,linkcolor=qftblue,urlcolor=qftblue,pdfauthor={Nima Lashkari}}
+\pagestyle{fancy}\fancyhf{}
+\lhead{PHYS 662: Quantum Field Theory I}\cfoot{\thepage}
+\setlength{\headheight}{14pt}
+\titleformat{\section}{\Large\bfseries\color{qftblue}}{\thesection.}{0.6em}{}
+\titleformat{\subsection}{\large\bfseries\color{qftgreen}}{\thesubsection}{0.6em}{}
+\setlist[enumerate]{leftmargin=2em,itemsep=0.25em,topsep=0.35em}
+\setlist[itemize]{leftmargin=2em,itemsep=0.2em,topsep=0.35em}
+\newcommand{\dd}{\mathrm d}
+\newcommand{\ii}{\mathrm i}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\tr}{\operatorname{tr}}
+\newcommand{\Tr}{\operatorname{Tr}}
+\newcommand{\diag}{\operatorname{diag}}
+\newcommand{\Lag}{\mathcal L}
+\newcommand{\D}{\mathcal D}
+\newcommand{\vac}{\lvert0\rangle}
+\newcommand{\vbra}{\langle0\rvert}
+\newcommand{\Tord}{\mathrm T}
+\newcommand{\ket}[1]{\lvert#1\rangle}
+\newcommand{\bra}[1]{\langle#1\rvert}
+\newtcolorbox{keyidea}[1][]{enhanced,breakable,colback=qftgray,colframe=qftblue,
+ boxrule=0.7pt,arc=1.5mm,title={#1},fonttitle=\bfseries,coltitle=white}
+\newtcolorbox{remarkbox}[1][]{enhanced,breakable,colback=white,colframe=qftgreen,
+ boxrule=0.6pt,arc=1.5mm,title={#1},fonttitle=\bfseries,coltitle=white}
+\newcommand{\intp}{\int\!\frac{\dd^4p}{(2\pi)^4}}
+\newcommand{\MSbar}{\overline{\mathrm{MS}}}
+\newcommand{\module}[1]{\clearpage\section{#1}}
+\newcommand{\braket}[2]{\langle#1\mid#2\rangle}
+\newcommand{\dPi}{\dd\Pi}
+\newcommand{\cM}{\mathcal M}
+\newcommand{\cH}{\mathcal H}
+\newcommand{\cS}{\mathcal S}
+\newcommand{\Zp}{Z_{\rm pole}}
+\newcommand{\Kallen}{\mathcal K}
+\newcommand{\lecturefront}[4]{%
+\rhead{Lecture #1}\hypersetup{pdftitle={PHYS 662 Lecture #1: #2}}
+\begin{document}\pagenumbering{gobble}
+\begin{titlepage}\centering\vspace*{1.05in}
+{\scshape\Large PHYS 662 --- Quantum Field Theory I\par}
+\vspace{0.35in}{\Huge\bfseries\color{qftblue}Lecture #1\par}
+\vspace{0.2in}{\LARGE\bfseries #2\par}
+\vspace{0.2in}{\large\color{qftgreen}#3\par}
+\vspace{0.6in}{\large Nima Lashkari\par}{\large Fall 2026\par}
+\vfill\begin{minipage}{0.86\textwidth}\small #4\par\medskip
+Course page: \url{https://nimalashkari.com/quantum-field-theory-2026-part-i/}
+\end{minipage}\vspace{0.5in}\end{titlepage}
+\pagenumbering{roman}\setcounter{tocdepth}{1}\tableofcontents
+\vfill\begin{remarkbox}[Place in the course]
+Lectures 21--22 developed interacting correlators and scalar loops.
+Lecture 23 defines the scattering states and the S-matrix.
+Lecture 24 converts amplitudes into rates and cross sections.
+Lecture 25 derives the reduction formula connecting these subjects.
+Homework 8 covers this three-lecture sequence.
+\end{remarkbox}
+\small\textbf{Reading and conventions.} These notes use the course slides and
+D.~Harlow, \href{https://www.mit.edu/~harlow/HarlowQFT1.pdf}{\textit{QFT I}},
+Sections 8--9, with our covariant state normalization and mostly-minus metric.
+Useful online companions are D.~Tong,
+\href{https://www.damtp.cam.ac.uk/user/tong/qft/qfthtml/S3.html}{\textit{QFT}, Sections 3.6--3.7},
+and D.~Buchholz and W.~Dybalski,
+\href{https://arxiv.org/abs/math-ph/0509047}{\textit{Scattering in relativistic quantum field theory}},
+Sections 1--3, for the scope of the asymptotic construction.
+For textbook study, see Weinberg, \textit{The Quantum Theory of Fields},
+Vol.~I, Chapter 3, and Peskin--Schroeder, \textit{An Introduction to QFT},
+Chapters 4 and 7. The accompanying editorial memo records the online
+sources consulted and the corrections to the slides.
+\normalsize\clearpage\pagenumbering{arabic}}
+\lecturefront{24}{Decay Rates and Cross Sections}
+{From normalized amplitudes to measurable event rates}
+{We derive the phase-space and flux factors rather than memorizing them.
+Two-body examples connect the invariant amplitude to lifetimes and
+scattering cross sections. Resonances and the optical theorem then explain
+how these observables fit the analytic and unitary structure of the theory.}
+
+\section{What an experiment measures}
+The S-matrix of Lecture 23 gives a transition amplitude between normalized
+wave packets. A plane-wave matrix element is a distribution,
+\begin{equation}
+ \langle f|S-1|i\rangle_c
+ =\ii(2\pi)^4\delta^{(4)}(P_f-P_i)\cM_{fi},
+ \qquad
+ \langle p|q\rangle=2E_p(2\pi)^3\delta^{(3)}(\bm p-\bm q).
+ \label{eq:amp}
+\end{equation}
+Squaring just \(\cM\) is not yet a probability. We must account for state
+normalization, the observation time, and the number of available final
+states. For a collision we must also divide by the incoming flux.
+
+For two dilute, incoherent beams with local laboratory number densities
+\(n_A,n_B\), define the instantaneous luminosity by
+\begin{equation}
+ \mathscr L(t)=\int\dd^3x\,n_A(\bm x,t)n_B(\bm x,t)v_{\rm M},
+ \qquad \frac{\dd N_X}{\dd t}=\mathscr L(t)\,\sigma_X .
+ \label{eq:luminosity}
+\end{equation}
+Narrow momentum distributions are understood; otherwise average the
+momentum-dependent product inside the integral. For collinear beams,
+\(v_{\rm M}=|\bm v_A-\bm v_B|\); Section 5 gives its general definition.
+\(\mathscr L\) has units of inverse area per time, and \(\sigma_X\) is an
+area. A cross section is not itself a dimensionless probability.
+
+An alternative packet picture labels collisions by the transverse impact
+parameter \(\bm b\). In the narrow-momentum limit, with packets that scan
+all transverse separations and the usual incident normalization,
+\begin{equation}
+ \sigma_X=\int\dd^2b\,P_X(\bm b).
+\end{equation}
+The probability changes when a beam is focused; the extracted cross section
+characterizes the interaction at the chosen incoming momenta. This
+picture also explains why two incoming plane waves require a flux factor.
+
+For a narrow unstable excitation, the corresponding observable is the
+probability to decay per unit proper time. If its rest-frame width is
+\(\Gamma\), exponential decay over its regime of validity gives
+\begin{equation}
+ N(t)=N(0)e^{-\Gamma t},\qquad
+ \tau=\Gamma^{-1},\qquad t_{1/2}=\frac{\log2}{\Gamma}.
+\end{equation}
+\begin{keyidea}[The normalization plan]
+Use a finite box and a finite observation time to derive a rate. Then
+remove the regulators after combining the squared amplitude with final
+state counting. One incoming particle gives a decay formula; two incoming
+particles give a collision rate that must be divided by a flux.
+\end{keyidea}
+An exactly stable asymptotic particle cannot decay. The decay formulas
+below describe a weakly unstable prepared excitation to leading order,
+or a narrow resonance whose mass and width are well separated scales.
+
+\module{Why a squared delta function becomes time and volume}
+Let \(\mathcal T\) be a long observation time, distinct from the transition
+operator \(T\). Regulate energy conservation by
+\begin{equation}
+ F_{\mathcal T}(\omega)=\int_{-\mathcal T/2}^{\mathcal T/2}\dd t\,
+ e^{\ii\omega t}=\frac{2\sin(\omega\mathcal T/2)}{\omega}.
+\end{equation}
+Its squared modulus has the distributional limit
+\begin{equation}
+ \frac{|F_{\mathcal T}(\omega)|^2}{\mathcal T}
+ \longrightarrow 2\pi\delta(\omega).
+ \label{eq:golden}
+\end{equation}
+Indeed, \(\int\dd\omega\,|F_{\mathcal T}(\omega)|^2/(2\pi)=\mathcal T\),
+and the normalized peak narrows around zero. The limit is taken after
+integration against a smooth final-state density. This is the origin of
+Fermi's golden rule, not a prescription for multiplying arbitrary distributions.
+
+In a large periodic box of volume \(V\), a momentum eigenstate has norm
+\(2E_pV\). Its unit-normalized representative is \(\ket{p}/\sqrt{2E_pV}\),
+and the number of final momentum modes in \(\dd^3p\) is
+\(V\dd^3p/(2\pi)^3\). For the spacetime delta function these regulators give
+\begin{equation}
+ \big[(2\pi)^4\delta^{(4)}(P_f-P_i)\big]^2
+ \rightsquigarrow V\mathcal T\,(2\pi)^4\delta^{(4)}(P_f-P_i).
+\end{equation}
+The arrow means precisely the regulated limiting operation above.
+
+For \(r\) unit-normalized incoming modes, division by all external norms,
+summation over final modes, and division by \(\mathcal T\) yield
+\begin{equation}
+ \frac{\dd P_{i\to f}}{\dd t}
+ =\frac{V^{1-r}}{\prod_{a=1}^{r}2E_a}\,
+ \frac{|\cM_{fi}|^2}{\cS_f}\,\dd\Phi_n(P_i),
+ \label{eq:master}
+\end{equation}
+\begin{equation}
+ \dd\Phi_n(P)=(2\pi)^4\delta^{(4)}\!\left(P-\sum_jp_j\right)
+ \prod_j\frac{\dd^3p_j}{(2\pi)^3\,2E_j},\qquad
+ \cS_f=\prod_a n_a!.
+\end{equation}
+There is no symmetry factor for the prepared incoming beam particles.
+\(\cS_f\) removes repeated counting when we integrate over all labeled
+momenta of identical final particles. Spin sums will be specified separately.
+
+\begin{remarkbox}[A useful volume check]
+For one incoming particle the volume cancels. For two, the rate is
+proportional to \(1/V\): two particles in a larger box meet less often.
+The incident flux is also proportional to \(1/V\), so their ratio is a
+finite cross section. In four dimensions \([\dd\Phi_n]=({\rm mass})^{2n-4}\).
+\end{remarkbox}
+
+\module{Decay widths, branching fractions, and time dilation}
+Set \(r=1\) in \eqref{eq:master}. In the rest frame of an unstable scalar
+excitation \(A\) of mass \(M_A\), the partial width is
+\begin{equation}
+ \boxed{\quad \dd\Gamma_{A\to X}
+ =\frac{1}{2M_A}\frac{1}{\cS_X}
+ \overline{|\cM_{XA}|^2}\,\dd\Phi_X(p_A).\quad}
+ \label{eq:width}
+\end{equation}
+The bar denotes a sum over unobserved final spins and, for an unpolarized
+initial ensemble, an average over its initial spin states. There is no
+initial spin average for a specified polarization. For scalar particles
+there are no spin sums or averages.
+
+The total width and branching fractions are
+\begin{equation}
+ \Gamma_{\rm tot}=\sum_X\Gamma_X,\qquad
+ B_X=\frac{\Gamma_X}{\Gamma_{\rm tot}},\qquad \sum_XB_X=1.
+\end{equation}
+Channels in this sum must be distinct physical outcomes. Counting both an
+inclusive channel and its exclusive subdivisions would count events twice.
+
+If the parent has laboratory energy \(E_A\), the same invariant phase-space
+integral is divided by \(2E_A\) instead of \(2M_A\). Consequently
+\begin{equation}
+ \Gamma_{\rm lab}=\frac{M_A}{E_A}\Gamma_{\rm rest},\qquad
+ \tau_{\rm lab}=\frac{E_A}{M_A}\tau_{\rm rest}.
+ \label{eq:dilation}
+\end{equation}
+The Lorentz-invariant content is decay per unit proper time. For a packet
+with appreciable energy spread one averages its survival probability over
+the momentum distribution; a single dilation factor then need not suffice.
+
+Consider, as a running example,
+\begin{equation}
+ \Lag_{\rm int}=-\frac{g}{2}A\chi^2,\qquad M_A>2m_\chi,
+ \qquad \ii\cM(A\to\chi\chi)=-\ii g.
+ \label{eq:decaymodel}
+\end{equation}
+Here \([g]={\rm mass}\). Assume additional interactions stabilize the
+potential, the vacuum is chosen consistently, and \(g\) is small enough
+that \(\Gamma_A\ll M_A\). The identical \(\chi\) particles require
+\(\cS_f=2!\), even though the vertex rule already included the \(2!\)
+Wick contractions. The two factorials have different origins.
+
+\begin{keyidea}[Why this does not contradict Lecture 23]
+In a leading decay calculation, \(A\) is treated as a stable external mode
+of the zeroth-order theory to compute its small decay probability. At
+nonzero coupling it is not an exact asymptotic state. Resumming its
+self-energy produces the resonance description in Section 7. The stable
+\(\chi\) particles remain legitimate asymptotic external states.
+\end{keyidea}
+
+\module{Two-body phase space from the delta functions}
+Let \(P^2=s=W^2\), \(P^0>0\), and work in the rest frame \(P=(W,\bm0)\).
+For final masses \(m_1,m_2\), the spatial delta function sets
+\(\bm p_2=-\bm p_1\). Writing \(p=|\bm p_1|\) gives
+\begin{equation}
+ \dd\Phi_2=\frac{p^2\dd p\,\dd\Omega}{16\pi^2 E_1E_2}
+ \delta(W-E_1-E_2).
+\end{equation}
+At its physical root \(p=p_*\),
+\begin{equation}
+ \frac{\dd(E_1+E_2)}{\dd p}=\frac{pW}{E_1E_2},\qquad
+ p_* =\frac{\sqrt{\Kallen(s,m_1^2,m_2^2)}}{2\sqrt{s}},
+\end{equation}
+where the K\"all\'en kinematic polynomial is
+\begin{equation}
+ \Kallen(x,y,z)=x^2+y^2+z^2-2xy-2xz-2yz.
+\end{equation}
+It follows that
+\begin{equation}
+ \boxed{\ \dd\Phi_2=\frac{p_*}{16\pi^2 W}\dd\Omega,\qquad
+ \int\dd\Phi_2=\frac{p_*}{4\pi W}
+ =\frac{\sqrt{\Kallen(s,m_1^2,m_2^2)}}{8\pi s}.\ }
+ \label{eq:two}
+\end{equation}
+These formulas apply for \(W\geq m_1+m_2\); below threshold the physical
+phase space vanishes. A positive algebraic value of \(\Kallen\) on another
+branch does not by itself define a physical final state.
+
+For equal masses, \(p_*=W\beta/2\) with
+\(\beta=\sqrt{1-4m^2/s}\), so \(\int\dd\Phi_2=\beta/(8\pi)\).
+For an angle-independent decay amplitude,
+\begin{equation}
+ \Gamma_{A\to12}=\frac{p_*}{8\pi M_A^2\cS_f}|\cM|^2.
+\end{equation}
+The example \eqref{eq:decaymodel} therefore gives
+\begin{equation}
+ \boxed{\quad \Gamma_{A\to\chi\chi}
+ =\frac{g^2}{32\pi M_A}\sqrt{1-\frac{4m_\chi^2}{M_A^2}}.\quad}
+ \label{eq:examplewidth}
+\end{equation}
+The width has mass dimension one and vanishes at threshold. The square-root
+suppression here comes from phase space; amplitudes with angular-momentum
+barriers can vanish with additional powers of \(p_*\).
+
+\begin{remarkbox}[A route to more final particles]
+Phase space factorizes by introducing the invariant mass of a subgroup:
+\[
+ \dd\Phi_3(P;p_1,p_2,p_3)=\frac{\dd s_{12}}{2\pi}
+ \dd\Phi_2(P;q,p_3)\,\dd\Phi_2(q;p_1,p_2),\quad q^2=s_{12}.
+\]
+The limits are \((m_1+m_2)^2\leq s_{12}\leq(W-m_3)^2\).
+The final-state counting factor still belongs to the full physical channel.
+\end{remarkbox}
+
+\module{The invariant flux and the differential cross section}
+For one incoming particle of each beam in a box, \eqref{eq:master} gives
+\(\dd P/\dd t=|\cM|^2\dd\Phi_n/(4E_AE_BV\cS_f)\).
+Dividing by the incident flux per target, \(v_{\rm M}/V\), yields
+\begin{equation}
+ \boxed{\quad \dd\sigma_{AB\to X}=
+ \frac{1}{F}\frac{\overline{|\cM_{XA B}|^2}}{\cS_X}\dd\Phi_X,
+ \qquad F=4\sqrt{(p_A\cdot p_B)^2-m_A^2m_B^2}.\quad}
+ \label{eq:sigma}
+\end{equation}
+The square root and the phase-space measure are Lorentz invariant.
+The quantity used in laboratory luminosities is
+\begin{align}
+ v_{\rm M}&=\frac{\sqrt{(p_A\cdot p_B)^2-m_A^2m_B^2}}{E_AE_B}\notag\\
+ &=\sqrt{|\bm v_A-\bm v_B|^2-|\bm v_A\times\bm v_B|^2}.
+ \label{eq:moller}
+\end{align}
+To verify the identity, write
+\(p_A\cdot p_B=E_AE_B(1-\bm v_A\cdot\bm v_B)\) and
+\(m_A^2m_B^2=E_A^2E_B^2(1-v_A^2)(1-v_B^2)\).
+For collinear beams the cross product vanishes, recovering the familiar
+relative speed in that frame.
+
+The M\o ller factor \(v_{\rm M}\) is a flux factor, not the speed of one
+particle measured in the rest frame of the other. It can exceed one for
+oppositely directed relativistic beams; this does not violate causality.
+For two massive particles the latter relative speed is instead
+\(\sqrt{(p_A\cdot p_B)^2-m_A^2m_B^2}/(p_A\cdot p_B)\), which is below one.
+
+Two useful special frames are
+\begin{equation}
+ F_{\rm CM}=4p_i\sqrt{s}=2\sqrt{\Kallen(s,m_A^2,m_B^2)},\qquad
+ F_{B\,\mathrm{at\ rest}}=4m_B|\bm p_A|.
+\end{equation}
+In the center-of-mass frame \(p_i\) is either incoming momentum magnitude.
+The cross section is invariant when expressed through invariant kinematics;
+the separate laboratory density and velocity factors need not be.
+
+\begin{keyidea}[Spin and counting conventions]
+For an unpolarized two-particle beam, average over its incoming spin states
+and sum over unobserved outgoing spins. Do not average over final spins.
+Identical incoming particles in two prepared beams introduce no extra
+\(1/2!\) into \eqref{eq:sigma}. Counting unordered pairs in a gas, such as
+an event density \(n^2\langle\sigma v_{\rm M}\rangle/2\), is a separate step.
+\end{keyidea}
+
+\module{Two-to-two scattering and a complete scalar example}
+Combine \eqref{eq:two} and \eqref{eq:sigma}. In the center-of-mass frame,
+with initial and final momentum magnitudes \(p_i,p_f\),
+\begin{equation}
+ \boxed{\quad\frac{\dd\sigma}{\dd\Omega}
+ =\frac{1}{64\pi^2s}\frac{p_f}{p_i}
+ \frac{\overline{|\cM(s,t)|^2}}{\cS_f}.\quad}
+ \label{eq:dsdo}
+\end{equation}
+For identical final particles this formula uses a full labeled angular
+sphere with the factor \(1/\cS_f\); it is an event-counting convention.
+One can instead integrate a nonredundant angular region without that
+factor. A single-particle inclusive angular distribution is a different
+observable and counts the detected particles, not just the events.
+
+For \(A+B\to1+2\), set the incoming \(A\) direction as the polar axis.
+The momentum-transfer invariant is
+\begin{equation}
+ t=m_A^2+m_1^2-2E_AE_1+2p_ip_f\cos\theta,\qquad
+ \frac{\dd t}{\dd\cos\theta}=2p_ip_f.
+\end{equation}
+For an azimuthally symmetric amplitude, integration over the azimuth gives
+\begin{equation}
+ \frac{\dd\sigma}{\dd t}
+ =\frac{\overline{|\cM(s,t)|^2}}
+ {16\pi\Kallen(s,m_A^2,m_B^2)\cS_f},
+ \quad
+ t_\pm=m_A^2+m_1^2-2E_AE_1\pm2p_ip_f.
+ \label{eq:dsdt}
+\end{equation}
+Use the same counting convention for the \(t\) range as for the sphere.
+
+In the theory \(\Lag_{\rm int}=-\lambda\phi^4/4!\), all four particles
+have mass \(M\), \(p_i=p_f\), and at tree level \(\cM=-\lambda\).
+There are two identical final particles. Thus
+\begin{equation}
+ \frac{\dd\sigma}{\dd\Omega}=\frac{\lambda^2}{128\pi^2s},\qquad
+ \boxed{\ \sigma_{\phi\phi\to\phi\phi}
+ =\frac{\lambda^2}{32\pi s}+O(\lambda^3).\ }
+ \label{eq:quarticsigma}
+\end{equation}
+The amplitude already includes exchange symmetry through its Feynman
+rules; there is only one quartic contact vertex to draw. Adding another
+``exchange contact diagram'' would double the amplitude incorrectly.
+
+\begin{remarkbox}[Checks at threshold and at high energy]
+For equal-mass elastic scattering, the vanishing final phase space and
+incoming flux cancel, leaving a finite threshold limit of \(\sigma\).
+The rate coefficient \(\sigma v_{\rm M}\) still tends to zero. At fixed
+weak coupling and high energy the result scales as \(s^{-1}\), consistent
+with the dimension of an area. When large logarithms matter, the loop
+corrections and running discussed in Lecture 22 must also be included.
+\end{remarkbox}
+
+\module{Resonances: lifetime, propagator, and line shape}
+An unstable excitation appears as a resonance in scattering of stable
+particles. Continue its two-point function through the physical cut.
+For a narrow, isolated resonance the nearby pole lies on the appropriate
+unphysical sheet, approximately at
+\begin{equation}
+ s_{\rm pole}\simeq(M_R-\ii\Gamma_R/2)^2
+ =M_R^2-\ii M_R\Gamma_R+O(\Gamma_R^2).
+\end{equation}
+Near the resonance and away from rapidly varying thresholds, its
+propagator on the physical real-energy boundary has the form
+\begin{equation}
+ \widetilde G_R(s)\simeq
+ \frac{\ii\mathcal Z_R}{s-M_R^2+\ii M_R\Gamma_R}.
+ \label{eq:resprop}
+\end{equation}
+This is a local approximation to a function with a continuum spectral
+measure, not an extra stable delta function in that measure.
+
+The pole near positive rest energy is \(E\simeq M_R-\ii\Gamma_R/2\).
+Fourier transformation for positive time gives the survival amplitude
+and probability
+\begin{equation}
+ A(t)\simeq e^{-\ii M_Rt}e^{-\Gamma_Rt/2},\qquad
+ |A(t)|^2\simeq e^{-\Gamma_Rt}.
+ \label{eq:survival}
+\end{equation}
+This refers to a prepared rest excitation or a fixed-momentum pole
+contribution, not a generic position-space propagator with packet spreading.
+Exponential decay is an intermediate-time approximation; an exact
+bounded-below spectrum also produces short-time and late-time deviations.
+
+To connect with Lecture 22, write the denominator as
+\(s-m^2-\Sigma_R(s)\), and choose \(M_R^2-m^2-\operatorname{Re}\Sigma_R(M_R^2)=0\).
+Expanding its real part gives, to narrow-width accuracy,
+\begin{equation}
+ \mathcal Z_R=[1-\operatorname{Re}\Sigma_R'(M_R^2)]^{-1},\qquad
+ M_R\Gamma_R=-\mathcal Z_R\operatorname{Im}\Sigma_R(M_R^2).
+\end{equation}
+This sign follows from our insertion convention \(-\ii\Sigma_R\).
+\(\mathcal Z_R\) here is a resonance approximation, not the positive stable
+pole residue used in LSZ.
+
+For slowly varying production and decay numerators,
+\begin{equation}
+ |\cM(s)|^2\ \propto\ \frac{1}{(s-M_R^2)^2+M_R^2\Gamma_R^2},\qquad
+ \frac{1}{(s-M_R^2)^2+M_R^2\Gamma_R^2}
+ \longrightarrow\frac{\pi}{M_R\Gamma_R}\delta(s-M_R^2).
+\end{equation}
+The last relation holds under an integral when the narrow peak lies well
+inside its range. In the energy variable \(\sqrt{s}\), the full width at
+half maximum is approximately \(\Gamma_R\). Background interference and
+nearby thresholds can spoil this simple line shape and its factorization.
+
+\module{The optical theorem as a measurable normalization check}
+For fixed incoming quantum numbers, Lecture 23 gave
+\begin{equation}
+ 2\operatorname{Im}\cM_{ii}
+ =\sum_X\frac1{\cS_X}\sum_{\rm final\ spins}
+ \int\dd\Phi_X\,|\cM_{Xi}|^2.
+\end{equation}
+Comparing with \eqref{eq:sigma}, the right side is \(F\sigma_{\rm tot}\).
+Therefore, for two incoming particles,
+\begin{equation}
+ \boxed{\quad\operatorname{Im}\cM_{ii}(s,t=0)
+ =\frac{F}{2}\sigma_{\rm tot}(s)
+ =2p_i\sqrt{s}\,\sigma_{\rm tot}(s).\quad}
+ \label{eq:opticalrate}
+\end{equation}
+The incoming and outgoing states on the left are the same: this is the
+\emph{forward elastic} amplitude. The right side sums all allowed final
+channels, including inelastic ones. If initial spins are averaged, average
+the diagonal forward amplitude over the same ensemble. This is not an
+identity between a generic-angle amplitude and a total cross section.
+
+Check the factors with \eqref{eq:quarticsigma}. For equal incoming masses,
+\(F=2s\beta\), where \(\beta=\sqrt{1-4M^2/s}\). The optical theorem predicts
+\begin{equation}
+ \operatorname{Im}\cM_{\rm forward}^{\rm one\ loop}
+ =\frac{\lambda^2\beta}{32\pi}.
+\end{equation}
+This is precisely the imaginary part of the physical \(s\)-channel bubble
+found in Lecture 22. Equivalently,
+\(2\operatorname{Im}\cM=\lambda^2\int\dd\Phi_2/2!\).
+Dropping the identical-particle factor would fail this check by two.
+
+\begin{keyidea}[A practical calculation in five steps]
+Specify the incoming ensemble and the exclusive final channel.
+Compute its on-shell \(\cM\) with the conventions of Lecture 21.
+Sum unobserved final spins and average only the specified initial ensemble.
+Integrate the allowed phase space, counting identical final states once.
+Finally divide by \(2M_A\) for a rest-frame decay or by \(F\) for a collision.
+\end{keyidea}
+These rules separate dynamics, which is in \(\cM\), from kinematics and
+normalization. They apply to scalar and fermion processes alike, provided
+the amplitude and the asymptotic-state assumptions are appropriate.
+The remaining theoretical step is to justify how the correlation
+functions calculated by path integrals produce this physical amplitude.
+That is the purpose of LSZ reduction in Lecture 25.
+\end{document}

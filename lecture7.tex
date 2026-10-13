@@ -1,0 +1,961 @@
+\documentclass[11pt]{article}
+
+\usepackage[letterpaper,margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb,mathtools,bm}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{hyperref}
+\usepackage[most]{tcolorbox}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{parskip}
+\usepackage{needspace}
+
+\definecolor{qftblue}{HTML}{245A8D}
+\definecolor{qftgreen}{HTML}{2F6B4F}
+\definecolor{qftred}{HTML}{A23B3B}
+\definecolor{qftgray}{HTML}{F4F6F8}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=qftblue,
+  urlcolor=qftblue,
+  citecolor=qftgreen,
+  pdftitle={PHYS 662 Lecture 7: Symmetries and Noether's First Theorem},
+  pdfauthor={Nima Lashkari}
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{PHYS 662: Quantum Field Theory I}
+\rhead{Lecture 7}
+\cfoot{\thepage}
+\setlength{\headheight}{14pt}
+
+\titleformat{\section}{\Large\bfseries\color{qftblue}}{\thesection.}{0.6em}{}
+\titleformat{\subsection}{\large\bfseries\color{qftgreen}}{\thesubsection}{0.6em}{}
+\titleformat{\subsubsection}{\normalsize\bfseries\color{qftred}}{\thesubsubsection}{0.6em}{}
+
+\setlist[itemize]{leftmargin=2em,itemsep=0.25em,topsep=0.4em}
+\setlist[enumerate]{leftmargin=2em,itemsep=0.25em,topsep=0.4em}
+
+\newcommand{\dd}{\mathrm{d}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Lag}{\mathcal{L}}
+\newcommand{\cM}{\mathcal{M}}
+\newcommand{\SO}{\mathrm{SO}}
+\newcommand{\OO}{\mathrm{O}}
+
+\newtcolorbox{keyidea}[1][]{
+  enhanced, breakable, colback=qftgray, colframe=qftblue,
+  boxrule=0.8pt, arc=1.5mm, title={#1}, fonttitle=\bfseries,
+  coltitle=white
+}
+\newtcolorbox{remarkbox}[1][]{
+  enhanced, breakable, colback=white, colframe=qftgreen,
+  boxrule=0.7pt, arc=1.5mm, title={#1}, fonttitle=\bfseries,
+  coltitle=white
+}
+\newtcolorbox{warningbox}[1][]{
+  enhanced, breakable, colback=white, colframe=qftred,
+  boxrule=0.7pt, arc=1.5mm, title={#1}, fonttitle=\bfseries,
+  coltitle=white
+}
+
+
+\newcommand{\Th}{\Theta}
+\newcommand{\Eul}{\mathcal E}
+\newcommand{\Lie}{\mathscr L}
+\begin{document}
+\pagenumbering{gobble}
+\begin{titlepage}
+\centering
+\vspace*{1.2in}
+{\scshape\Large PHYS 662 --- Quantum Field Theory I\par}
+\vspace{0.35in}
+{\Huge\bfseries\color{qftblue} Lecture 7\par}
+\vspace{0.15in}
+{\LARGE\bfseries Symmetries and Noether's First Theorem\par}
+\vspace{0.12in}
+{\Large\color{qftgreen} From Transformations to Conserved Currents\par}
+\vspace{0.6in}
+{\large Nima Lashkari\par}
+{\large Fall 2026\par}
+\vfill
+\begin{minipage}{0.86\textwidth}
+\small
+A continuous symmetry of a local action produces a local conservation law.
+We establish this statement by carefully comparing fields at the same
+coordinate and at displaced points, varying both the integrand and the
+integration region, and retaining the boundary term. Translations give
+energy and momentum, internal phase rotations give a charge, and Lorentz
+transformations give angular momentum and boost charges. The examples also
+explain the roles of boundary flux, current conventions, and field spin.
+
+\medskip
+Course page: \url{https://nimalashkari.com/quantum-field-theory-2026-part-i/}
+\end{minipage}
+\vspace{0.5in}
+\end{titlepage}
+\pagenumbering{roman}
+\tableofcontents
+\newpage
+\pagenumbering{arabic}
+
+\section*{Roadmap}
+\addcontentsline{toc}{section}{Roadmap}
+Lecture 5 derived the field equations from stationary action. Lecture 6
+provided actions on which to practice. We now ask what additional
+information follows when an action has a continuous symmetry. The answer
+is a current whose divergence vanishes on every classical solution.
+
+% We follow the sequence of the slides: spacetime maps and field variations;
+% the first variation on a finite region; Noether's first theorem; and the
+% examples of translations, global \(U(1)\), and Lorentz transformations.
+% The recurring distinction is between a symmetry identity, valid for
+% arbitrary fields, and a conservation equation, valid on solutions.
+
+\begin{keyidea}[Conventions]
+We use \(D=d+1\), \(x^0=t\), \(\hbar=c=1\), and
+\(\eta_{\mu\nu}=\operatorname{diag}(1,-1,\ldots,-1)\).
+Greek indices label spacetime components; \(a,b\) label field components;
+\(I\) labels independent symmetry parameters. Repeated indices are summed.
+The action calculation uses Cartesian Minkowski coordinates.
+All variation formulas retain only first order in the small parameters.
+\end{keyidea}
+
+\section{Spacetime maps, coordinates, and fields}
+
+\subsection{A coordinate chart is a labeling of points}
+A spacetime manifold \(\cM\) is a collection of events with a smooth local
+coordinate structure. A chart is an invertible map
+\begin{equation}
+\alpha:U\subset\cM\longrightarrow\alpha(U)\subset\R^D,
+\qquad p\longmapsto x=\alpha(p).
+\end{equation}
+A second chart \(\alpha'\) gives \(x'=\alpha'(p)\). On their common domain,
+\begin{equation}
+\boxed{x'=\alpha'\circ\alpha^{-1}(x).}
+\label{eq:charts}
+\end{equation}
+The order matters: first recover the event from its old coordinates, then
+assign its new coordinates. A chart is generally local; one need not be
+able to label the entire manifold with a single chart.
+
+A diffeomorphism \(f:\cM\to\cM\) is an invertible smooth map with a smooth
+inverse. Unlike a change of chart, it can map one event \(p\) to a different
+event \(f(p)\). In a fixed chart its coordinate expression is
+\(F=\alpha\circ f\circ\alpha^{-1}\).
+
+\subsection{Active and passive descriptions}
+For an \emph{active} transformation, keep the chart fixed and move the
+field configuration by \(f\). A scalar is transported with its value:
+\begin{equation}
+\widetilde\phi'(f(p))=\widetilde\phi(p).
+\end{equation}
+In coordinates, with \(x'=F(x)\), this reads
+\begin{equation}
+\boxed{\phi'(x')=\phi(x),\qquad
+\phi'(x)=\phi(F^{-1}(x)).}
+\label{eq:activeScalar}
+\end{equation}
+For \(F(x)=x+a\), a profile moves by \(+a\), and its new value at a fixed
+coordinate is \(\phi'(x)=\phi(x-a)\). For example, the peak of
+\(\exp[-(x-b)^2/(2\sigma^2)]\) moves from \(b\) to \(b+a\).
+This provides a direct check of the inverse and the sign.
+
+For a \emph{passive} transformation, keep the event and geometric field
+fixed and change the chart. If \(x'=F(x)\), the two coordinate descriptions
+again obey \(\phi'(x')=\phi(x)\). The same algebraic relation can therefore
+appear in both descriptions, but the meanings of the primes differ.
+A passive relabeling does not move the physical profile. Moreover, a passive
+change to a frame displaced by \(+a\) commonly uses \(x'=x-a\), the inverse
+coordinate map to an active displacement by \(+a\).
+
+\begin{warningbox}[Evaluating a field elsewhere is not its active transformation]
+The Taylor expansion \(\phi(x+\xi)=\phi(x)+\xi^\mu\partial_\mu\phi(x)\)
+compares the original field at two arguments. With our active convention
+\(x'=x+\xi\), the transformed scalar instead satisfies
+\(\phi'(x)=\phi(x)-\xi^\mu\partial_\mu\phi(x)\) to first order.
+One must specify which field and which argument are being compared.
+\end{warningbox}
+
+\subsection{Coordinate covariance and physical symmetry}
+An isometry is a diffeomorphism preserving the metric:
+\(f^*g=g\). In Minkowski space,
+\begin{equation}
+x'^\mu=\Lambda^\mu{}_{\nu}x^\nu+a^\mu,
+\qquad \Lambda^T\eta\Lambda=\eta,
+\end{equation}
+is a Poincare transformation; the case \(a=0\) is a Lorentz transformation.
+Infinitesimally an isometry has displacement \(\xi\) obeying
+\begin{equation}
+\partial_\mu\xi_\nu+\partial_\nu\xi_\mu=0.
+\label{eq:Killing}
+\end{equation}
+This is the Killing equation in Cartesian flat coordinates.
+
+Coordinate independence is a requirement on how we describe a theory.
+It does not make every active diffeomorphism a symmetry of matter on a
+fixed metric. A generic active deformation changes lengths and gradients
+relative to that metric. Even an isometry can fail to be a symmetry if
+an external source or boundary condition breaks it. In general coordinates
+one writes \(\sqrt{|g|}\,\dd^D x\) and covariant derivatives; here we keep
+\(\eta\) fixed and test the actual action and its backgrounds.
+
+\section{Two field variations and two kinds of symmetry}
+
+Consider an infinitesimal transformation of coordinates and fields,
+\begin{equation}
+x'^\mu=x^\mu+\xi^\mu(x),\qquad
+\phi'^a(x')=\phi^a(x)+\Delta\phi^a(x).
+\end{equation}
+Define the variation at the same coordinate by
+\begin{equation}
+\delta\phi^a(x):=\phi'^a(x)-\phi^a(x).
+\end{equation}
+Taylor expansion of \(\phi'^a(x')\) gives
+\begin{equation}
+\boxed{\Delta\phi^a=\delta\phi^a+\xi^\mu\partial_\mu\phi^a,
+\qquad \delta\phi^a=\Delta\phi^a-\xi^\mu\partial_\mu\phi^a.}
+\label{eq:twoVariations}
+\end{equation}
+The derivative of \(\delta\phi\) multiplied by \(\xi\) would be second
+order and has been dropped.
+
+\begin{center}
+\small
+\begin{tabular}{@{}p{0.16\textwidth}p{0.34\textwidth}p{0.41\textwidth}@{}}
+\toprule
+Quantity & Comparison & Scalar transported by \(x'=x+\xi\) \\
+\midrule
+\(\Delta\phi\) & New field at \(x'\), old field at \(x\) & \(0\) \\
+\(\delta\phi\) & New and old fields at the same argument &
+\(-\xi^\mu\partial_\mu\phi\) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+An internal transformation leaves the spacetime argument fixed:
+\(\xi^\mu=0\). For two real fields, an internal rotation is
+\begin{equation}
+\begin{pmatrix}\phi'^1\\\phi'^2\end{pmatrix}
+=\begin{pmatrix}\cos\alpha&-\sin\alpha\\\sin\alpha&\cos\alpha\end{pmatrix}
+\begin{pmatrix}\phi^1\\\phi^2\end{pmatrix}.
+\end{equation}
+A spacetime transformation has nonzero \(\xi\), and can also rotate tensor
+or spinor components. Consequently, \(\delta\phi\) is \emph{not} synonymous
+with an internal transformation: it contains the displacement contribution
+as well. The component change \(\Delta\phi\) vanishes for a transported
+scalar, but generally not for a vector or spinor.
+
+For finitely many constant parameters \(\varepsilon^I\), write
+\begin{equation}
+\xi^\mu=\varepsilon^I X_I^\mu,
+\qquad \Delta\phi^a=\varepsilon^I\Phi_I^a,
+\qquad \delta\phi^a=\varepsilon^I\chi_I^a,
+\quad \chi_I^a:=\Phi_I^a-X_I^\nu\partial_\nu\phi^a.
+\label{eq:generators}
+\end{equation}
+The functions \(X_I,\Phi_I\) describe the infinitesimal transformation.
+Here the coordinate map is a point transformation, with \(X_I^\mu(x)\).
+The \(\varepsilon^I\) are independent constants, not arbitrary functions
+of position. This is the setting of Noether's first theorem.
+
+\section{Varying the action on a finite region}
+\label{sec:variation}
+
+\subsection{The fixed-coordinate first variation}
+For a collection of fields take one local Lagrangian,
+\begin{equation}
+S_B[\phi]=\int_B\dd^D x\,\Lag(\phi^a,\partial_\mu\phi^a,x).
+\end{equation}
+It may couple different components; it need not be a sum of independent
+single-field Lagrangians. Complex scalars can be treated as pairs of real
+fields, or varied using \(\phi\) and \(\phi^*\) as independent variables
+before imposing complex conjugacy.
+
+Define
+\begin{equation}
+\pi_a^\mu:=\frac{\partial\Lag}{\partial(\partial_\mu\phi^a)},
+\qquad
+\Eul_a:=\frac{\partial\Lag}{\partial\phi^a}-\partial_\mu\pi_a^\mu.
+\label{eq:ELdefinitions}
+\end{equation}
+The equations of motion are \(\Eul_a=0\); this condition is called
+\emph{on shell}. An identity valid without imposing it is \emph{off shell}.
+Since the fixed-coordinate variation commutes with differentiation,
+\begin{align}
+\delta\Lag
+&=\frac{\partial\Lag}{\partial\phi^a}\delta\phi^a
+ +\pi_a^\mu\partial_\mu\delta\phi^a\notag\\
+&=\Eul_a\delta\phi^a+\partial_\mu(\pi_a^\mu\delta\phi^a).
+\label{eq:basicVariation}
+\end{align}
+In these expressions, \(\partial_\mu\) differentiates the full spacetime
+function, including the fields' dependence on \(x\). It is the total
+spacetime derivative denoted \(D_\mu\) on the slides. By contrast,
+\((\partial\Lag/\partial x^\mu)_{\rm explicit}\) holds the field and
+its derivatives fixed.
+
+\subsection{The derivative and the volume element also transform}
+At displaced arguments, the derivative transformation is
+\begin{equation}
+\Delta(\partial_\mu\phi^a)
+=\partial_\mu\Delta\phi^a
+ -(\partial_\mu\xi^\nu)\partial_\nu\phi^a.
+\label{eq:derivativeVariation}
+\end{equation}
+This follows from
+\(\partial'_\mu=(\delta_\mu{}^\nu-\partial_\mu\xi^\nu)\partial_\nu\).
+Using Eq.~\eqref{eq:twoVariations}, it also equals
+\(\partial_\mu\delta\phi^a+\xi^\nu\partial_\nu\partial_\mu\phi^a\).
+Thus \(\Delta\) does not commute with a coordinate derivative in the same
+way that \(\delta\) does.
+
+Let \(B'=F(B)\), and compare \(S_{B'}[\phi']\) to \(S_B[\phi]\).
+Near the identity the Jacobian is positive, and
+\begin{align}
+\dd^D x'&=\det\left(\delta^\mu{}_{\nu}+\partial_\nu\xi^\mu\right)
+\dd^D x\notag\\
+&=\left(1+\partial_\mu\xi^\mu\right)\dd^D x+O(\varepsilon^2).
+\label{eq:Jacobian}
+\end{align}
+For a matrix \(A\), the linear term of \(\det(I+\varepsilon A)\) is
+\(\varepsilon\operatorname{tr}A\). This proves the Jacobian formula.
+The finite-change definition uses an absolute determinant; an
+infinitesimal map connected to the identity lets us omit the absolute sign.
+
+Define \(\Delta\Lag\) by comparing the transformed integrand at \(x'\)
+with the old integrand at \(x\). The chain rule gives
+\begin{equation}
+\Delta\Lag=\delta\Lag+\xi^\mu\partial_\mu\Lag.
+\end{equation}
+Pulling the transformed integral back to \(B\), its first variation is
+\begin{align}
+\Delta S_B
+&=\int_B\dd^D x\left(\Delta\Lag+\Lag\partial_\mu\xi^\mu\right)\notag\\
+&=\int_B\dd^D x\left[\delta\Lag+
+\partial_\mu(\Lag\xi^\mu)\right].
+\label{eq:movingRegion}
+\end{align}
+The term \(\Lag\partial_\mu\xi^\mu\) from the Jacobian is essential:
+\((\partial_\mu\Lag)\xi^\mu\) alone is not the divergence of
+\(\Lag\xi^\mu\).
+
+\subsection{The boundary term contains the conserved current}
+Combining Eqs.~\eqref{eq:basicVariation} and \eqref{eq:movingRegion},
+\begin{equation}
+\boxed{\Delta S_B=\int_B\dd^D x\,\Eul_a\delta\phi^a
++\int_{\partial B}\dd\Sigma_\mu
+\left(\pi_a^\mu\delta\phi^a+\Lag\xi^\mu\right).}
+\label{eq:master}
+\end{equation}
+Here \(\dd\Sigma_\mu\) is the oriented boundary element, defined so that
+\(\int_B\partial_\mu V^\mu\,\dd^D x=
+\int_{\partial B}V^\mu\dd\Sigma_\mu\).
+On shell the bulk term vanishes, but the boundary term need not.
+
+For the action principle, we used arbitrary variations vanishing at the
+boundary to derive \(\Eul_a=0\). A symmetry transformation is a particular
+variation that generally does not vanish on \(\partial B\). Its boundary
+term must be retained. The key issue is the boundary condition on the
+variation, not whether the boundary happens to be at infinity.
+
+Introduce the canonical energy-momentum tensor
+\begin{equation}
+\boxed{\Th^\mu{}_{\nu}
+=\pi_a^\mu\partial_\nu\phi^a-\delta^\mu{}_{\nu}\Lag.}
+\label{eq:Theta}
+\end{equation}
+Then the boundary integrand becomes
+\begin{equation}
+\pi_a^\mu\delta\phi^a+\Lag\xi^\mu
+=\pi_a^\mu\Delta\phi^a-\Th^\mu{}_{\nu}\xi^\nu.
+\label{eq:boundaryTheta}
+\end{equation}
+The index \(\mu\) labels the direction of current flow; \(\nu\) labels
+which translation charge is transported. The displacement multiplies
+\(\Th\) in Eq.~\eqref{eq:boundaryTheta}; it is not part of the definition
+of \(\Th\) itself.
+
+\section{Noether's first theorem}
+
+\subsection{A local symmetry condition}
+A variational symmetry is a transformation for which the action density,
+including its measure, changes by at most a total derivative. For each
+constant parameter we require the off-shell identity
+\begin{equation}
+\boxed{\Delta\Lag+\Lag\partial_\mu\xi^\mu
+=\varepsilon^I\partial_\mu K_I^\mu.}
+\label{eq:symmetryCondition}
+\end{equation}
+The local functions \(K_I^\mu\) describe an allowed boundary contribution.
+Strict invariance corresponds to \(K_I^\mu=0\).
+For a finite region this means
+\(\Delta S_B=\varepsilon^I\int_{\partial B}K_I^\mu\dd\Sigma_\mu\).
+The full action is invariant when the relevant boundary term vanishes,
+or the boundary formulation is chosen to accommodate it.
+
+\begin{keyidea}[Noether's first theorem]
+Each independent continuous global variational symmetry of a local action
+has a local current whose divergence vanishes on solutions of the
+Euler--Lagrange equations. The symmetry condition is an off-shell identity;
+current conservation is its on-shell consequence.
+\end{keyidea}
+A discrete transformation has no infinitesimal parameter and is outside
+this statement. Gauge transformations with arbitrary spacetime-dependent
+parameters involve Noether's second theorem and identities among the
+field equations; they do not supply an independent ordinary bulk charge
+for every function used as a gauge parameter. A Noether current can also
+be trivial or differ from another representative by a boundary term.
+
+\subsection{Proof and the current formula}
+Substituting Eq.~\eqref{eq:generators} into the local form of
+Eq.~\eqref{eq:master}, and comparing with Eq.~\eqref{eq:symmetryCondition},
+gives, for each \(I\),
+\begin{equation}
+\Eul_a\chi_I^a+
+\partial_\mu\left(\pi_a^\mu\chi_I^a+\Lag X_I^\mu-K_I^\mu\right)=0.
+\end{equation}
+Thus define
+\begin{equation}
+\boxed{J_I^\mu
+=\pi_a^\mu\chi_I^a+\Lag X_I^\mu-K_I^\mu
+=\pi_a^\mu\Phi_I^a-\Th^\mu{}_{\nu}X_I^\nu-K_I^\mu.}
+\label{eq:NoetherCurrent}
+\end{equation}
+The complete identity is
+\begin{equation}
+\boxed{\partial_\mu J_I^\mu=-\Eul_a\chi_I^a
+\quad\Longrightarrow\quad\partial_\mu J_I^\mu=0\ \text{on shell}.}
+\label{eq:NoetherIdentity}
+\end{equation}
+Equivalently, on a solution the flux of \(J_I\) through the boundary of
+every sufficiently small region vanishes. Since the region is arbitrary,
+its local divergence must vanish. Checking only that one integral over
+all spacetime is zero would not establish this local conclusion.
+
+\subsection{An equivalent calculation at fixed coordinates}
+If we choose to keep the integration region fixed, use only
+\(\delta\phi^a=\varepsilon^I\chi_I^a\). The symmetry condition becomes
+\begin{equation}
+\delta\Lag=\varepsilon^I\partial_\mu F_I^\mu,
+\qquad F_I^\mu=K_I^\mu-\Lag X_I^\mu.
+\end{equation}
+The familiar formula is then
+\begin{equation}
+J_I^\mu=\pi_a^\mu\chi_I^a-F_I^\mu.
+\end{equation}
+It agrees with Eq.~\eqref{eq:NoetherCurrent}. In particular, a spacetime
+symmetry can be strictly invariant when the region is moved, while its
+fixed-coordinate Lagrangian changes by a total derivative. These are two
+consistent ways to do the same calculation.
+
+As a useful diagnostic, temporarily replace a constant parameter by a
+smooth function \(\varepsilon(x)\) in the fixed-coordinate variation.
+For the point transformations considered here, Eq.~\eqref{eq:basicVariation}
+and the constant-parameter symmetry identity imply
+\begin{equation}
+\delta_{\varepsilon(x)}\Lag
+=\partial_\mu(\varepsilon F^\mu)
++(\partial_\mu\varepsilon)J^\mu.
+\label{eq:localParameter}
+\end{equation}
+Thus the coefficient of \(\partial_\mu\varepsilon\), after isolating a
+boundary term, is the Noether current. For compactly supported
+\(\varepsilon(x)\), stationarity on shell yields
+\(-\int\varepsilon\partial_\mu J^\mu=0\), hence local conservation.
+This calculation does not assume that the local transformation is a new
+symmetry or that the original theory has been gauged.
+
+\subsection{Currents are not unique}
+For any local antisymmetric tensor \(U^{\nu\mu}=-U^{\mu\nu}\),
+\begin{equation}
+J'^\mu=J^\mu+\partial_\nu U^{\nu\mu}
+\quad\Longrightarrow\quad
+\partial_\mu J'^\mu=\partial_\mu J^\mu.
+\label{eq:improvement}
+\end{equation}
+Commuting derivatives annihilates the antisymmetric term. Its integrated
+charge is a surface contribution and vanishes under suitable boundary
+conditions. Reversing a generator's parameter also reverses its current
+and charge. These freedoms explain some harmless differences between
+textbooks; they do not justify changing signs midway through a derivation.
+
+\section{From a local current to a conserved charge}
+
+Write \(J^\mu=(\rho,\bm j)\). In our convention,
+\begin{equation}
+\boxed{\partial_\mu J^\mu=\partial_t\rho+\nabla\cdot\bm j=0.}
+\label{eq:continuity}
+\end{equation}
+There is no minus sign in this coordinate divergence. The metric enters
+when raising or lowering current components: \(J_i=-J^i\).
+
+For a fixed spatial volume \(V\), define
+\begin{equation}
+Q_V(t)=\int_V\dd^d x\,J^0(t,\bm x).
+\end{equation}
+Integrating Eq.~\eqref{eq:continuity} and using the divergence theorem,
+\begin{equation}
+\boxed{\frac{\dd Q_V}{\dd t}
+=-\int_{\partial V}\bm j\cdot\bm n\,\dd A.}
+\label{eq:chargeFlux}
+\end{equation}
+A decrease of charge inside the volume is exactly the outward flux.
+For a spacetime slab \(B=[t_i,t_f]\times V\), the same statement is
+\begin{equation}
+Q_V(t_f)-Q_V(t_i)
++\int_{t_i}^{t_f}\dd t\int_{\partial V}\bm j\cdot\bm n\,\dd A=0.
+\end{equation}
+The final time slice has positive orientation and the initial slice has
+negative orientation. The side of the slab supplies the spatial flux.
+
+A time-independent total charge follows when the integral is finite and
+the boundary flux vanishes: for example on a compact space without
+boundary, with periodic boundary conditions, or on \(\R^d\) with adequate
+falloff. Local conservation alone does not guarantee conservation in an
+open subsystem. It also does not guarantee that the total charge of an
+infinite homogeneous configuration is finite.
+
+More geometrically, a charge on a spacelike hypersurface is
+\begin{equation}
+Q[\Sigma]=\int_\Sigma\dd\Sigma_\mu J^\mu.
+\end{equation}
+It is unchanged under deformation of the surface when there is no flux
+through the remaining boundary. This is the spacetime meaning of a
+conserved charge.
+
+\section{Example 1: translations and energy-momentum}
+
+\subsection{Translations give one current for each direction}
+Suppose \(\Lag\) has no explicit spacetime dependence and the backgrounds
+and boundary conditions admit translations. For
+\begin{equation}
+x'^\mu=x^\mu+a^\mu,\qquad \phi'^a(x')=\phi^a(x),
+\end{equation}
+we have \(X_{(\nu)}^\mu=\delta^\mu{}_{\nu}\),
+\(\Phi_{(\nu)}^a=0\), and \(K_{(\nu)}^\mu=0\). Therefore
+\begin{equation}
+J_{(\nu)}^\mu=-\Th^\mu{}_{\nu},\qquad
+\boxed{\partial_\mu\Th^\mu{}_{\nu}=0.}
+\label{eq:translationCurrent}
+\end{equation}
+The \(D\) columns of the canonical energy-momentum tensor are conserved
+currents. Its time row gives their densities.
+
+\begin{remarkbox}[Fix the sign of momentum once]
+With the transformation \(x'=x+a\) and the current convention
+\eqref{eq:NoetherCurrent}, the direct Noether charge is
+\(Q_{(\nu)}=-\int\Th^0{}_{\nu}\,\dd^d x\).
+We define the conventional physical momentum by
+\[
+P_\nu:=\int\dd^d x\,\Th^0{}_{\nu},\qquad
+P^\nu=\eta^{\nu\rho}P_\rho=(H,\bm P).
+\]
+Thus \(Q_{(\nu)}=-P_\nu\). Equivalently, parameterizing the same
+translations by \(x'=x-a\) yields the current \(+\Th^\mu{}_{\nu}\).
+The conservation law is unchanged. The charge always integrates the
+\(\mu=0\) component, not a free \(\mu\) component.
+\end{remarkbox}
+
+At fixed coordinates, \(\delta\phi^a=-a^\nu\partial_\nu\phi^a\), so
+\(\delta\Lag=-a^\nu\partial_\nu\Lag\). The fixed-coordinate formula
+uses \(F^\mu=-a^\mu\Lag\) and gives the same answer.
+
+\subsection{A direct divergence check}
+Differentiate Eq.~\eqref{eq:Theta} and use the chain rule:
+\begin{align}
+\partial_\mu\Th^\mu{}_{\nu}
+&=(\partial_\mu\pi_a^\mu)\partial_\nu\phi^a
+ +\pi_a^\mu\partial_\mu\partial_\nu\phi^a
+ -\partial_\nu\Lag\notag\\
+&=-\Eul_a\partial_\nu\phi^a
+ -\left(\frac{\partial\Lag}{\partial x^\nu}\right)_{\rm explicit}.
+\label{eq:ThetaDivergence}
+\end{align}
+Hence a prescribed position-dependent coupling or source can exchange
+energy-momentum with the field. Translation invariance is a property of
+the complete setup, not just of the background metric.
+
+\subsection{The real scalar: energy density and energy flow}
+For
+\begin{equation}
+\Lag=\frac12\partial_\mu\phi\,\partial^\mu\phi-V(\phi),
+\qquad \Box\phi+V'(\phi)=0,
+\end{equation}
+we find
+\begin{equation}
+\Th^\mu{}_{\nu}=\partial^\mu\phi\,\partial_\nu\phi
+-\delta^\mu{}_{\nu}\Lag,
+\qquad
+\Th^{\mu\nu}=\partial^\mu\phi\,\partial^\nu\phi-\eta^{\mu\nu}\Lag.
+\label{eq:scalarTheta}
+\end{equation}
+For this scalar Lagrangian \(\Th^{\mu\nu}\) is already symmetric.
+The energy density and momentum density are
+\begin{align}
+\mathcal H=\Th^{00}
+&=\frac12\dot\phi^2+\frac12|\nabla\phi|^2+V(\phi),\notag\\
+\Th^{0i}&=-\dot\phi\,\partial_i\phi.
+\label{eq:scalarEnergy}
+\end{align}
+Since the canonical momentum is \(\pi=\dot\phi\), the first formula also
+follows from \(\mathcal H=\pi\dot\phi-\Lag\). Energy conservation is
+\begin{equation}
+\partial_t\mathcal H+\nabla\cdot(-\dot\phi\nabla\phi)=0.
+\end{equation}
+The energy flux is therefore \(-\dot\phi\nabla\phi\), equal to the
+momentum density in this relativistic scalar example.
+
+For a free massive field, \(V=m^2\phi^2/2\), consider
+\(\phi=A\cos(\omega t-\bm k\cdot\bm x)\), with
+\(\omega^2=|\bm k|^2+m^2\). Averaging over a period gives
+\begin{equation}
+\langle\mathcal H\rangle=\frac{A^2\omega^2}{2},\qquad
+\langle\bm j_E\rangle=\frac{A^2\omega\bm k}{2},\qquad
+\frac{\langle\bm j_E\rangle}{\langle\mathcal H\rangle}
+=\frac{\bm k}{\omega}.
+\end{equation}
+The flux points in the propagation direction, and the ratio is the group
+velocity. This checks both the metric sign and the physical interpretation.
+The plane wave has infinite total energy on all of \(\R^d\); these are
+local densities, or quantities in a periodic box.
+
+\section{Example 2: the global phase symmetry of a complex scalar}
+
+\subsection{An internal rotation of two real components}
+Take
+\begin{equation}
+\Lag=\partial_\mu\phi^*\partial^\mu\phi-U(\phi^*\phi),
+\qquad \phi=\frac{\phi_1+i\phi_2}{\sqrt2}.
+\label{eq:complexL}
+\end{equation}
+The free example has \(U(z)=m^2z\). More generally, any real function of
+\(z=\phi^*\phi\) preserves the constant phase rotation
+\begin{equation}
+\phi\longmapsto e^{i\alpha}\phi,\qquad
+\phi^*\longmapsto e^{-i\alpha}\phi^*.
+\end{equation}
+In real components this is the rotation matrix introduced earlier:
+\(\delta\phi_1=-\alpha\phi_2\), \(\delta\phi_2=\alpha\phi_1\).
+The connected group is \(U(1)\simeq SO(2)\).
+The displayed Lagrangian also admits the discrete reflection
+\(\phi\leftrightarrow\phi^*\), so its full real-component internal
+symmetry includes \(O(2)\). The continuous current comes from its
+\(SO(2)\) subgroup.
+
+The word global means that the same angle acts at every point. If
+\(\alpha=\alpha(x)\), derivatives of the angle appear in the kinetic
+term. The action \eqref{eq:complexL} has not yet introduced a gauge field
+to compensate for them.
+
+\subsection{Derivation and a direct conservation check}
+Here \(X^\mu=0\), \(K^\mu=0\), and the field generators are
+\(\Phi_\phi=i\phi\), \(\Phi_{\phi^*}=-i\phi^*\). Since
+\begin{equation}
+\pi_\phi^\mu=\partial^\mu\phi^*,\qquad
+\pi_{\phi^*}^\mu=\partial^\mu\phi,
+\end{equation}
+the current is
+\begin{equation}
+\boxed{J^\mu=i\left[(\partial^\mu\phi^*)\phi
+-\phi^*\partial^\mu\phi\right]
+=\phi_1\partial^\mu\phi_2-\phi_2\partial^\mu\phi_1.}
+\label{eq:U1}
+\end{equation}
+It is real and agrees with the phase convention \(e^{+i\alpha}\) used
+on the slides. Both real components are essential.
+
+The field equations are
+\begin{equation}
+\Box\phi+U'(z)\phi=0,\qquad
+\Box\phi^*+U'(z)\phi^*=0.
+\end{equation}
+Therefore
+\begin{align}
+\partial_\mu J^\mu
+&=i\left[(\Box\phi^*)\phi-\phi^*\Box\phi\right]\notag\\
+&=i\left[-U'(z)\phi^*\phi+\phi^*U'(z)\phi\right]=0.
+\end{align}
+The terms containing one derivative on each field cancel before using the
+field equations. The potential terms cancel because the potential is
+phase invariant, not because the theory is free.
+
+\subsection{What the charge measures}
+The density and charge are
+\begin{equation}
+J^0=\phi_1\dot\phi_2-\phi_2\dot\phi_1,
+\qquad Q=\int\dd^d x\,J^0.
+\end{equation}
+This is angular momentum in the \((\phi_1,\phi_2)\) plane at each
+spatial point, integrated over space. Where polar variables are regular,
+write \(\phi=r e^{i\theta}/\sqrt2\). Then
+\begin{equation}
+\Lag=\frac12(\partial r)^2+\frac12r^2(\partial\theta)^2-U(r^2/2),
+\qquad J^\mu=r^2\partial^\mu\theta.
+\end{equation}
+The angle has no potential dependence, so its conjugate momentum is
+conserved. This is the field-theory version of a cyclic angular coordinate
+in mechanics.
+
+For a free positive-frequency mode
+\(\phi=Ae^{-i\omega t+i\bm k\cdot\bm x}\), our convention gives
+\begin{equation}
+J^0=-2\omega|A|^2.
+\end{equation}
+This is allowed: a charge density is not a positive probability density.
+Using the inverse phase convention \(e^{-i\alpha}\) reverses the current
+and charge. The energy density remains positive for the stable free
+massive theory. The classical derivation by itself does not yet imply
+charge quantization or a particle-number interpretation.
+
+\section{Example 3: Lorentz transformations}
+
+\subsection{Infinitesimal transformations and antisymmetric parameters}
+Let
+\begin{equation}
+\Lambda^\mu{}_{\nu}=\delta^\mu{}_{\nu}+\omega^\mu{}_{\nu}
++O(\omega^2).
+\end{equation}
+Expanding \(\Lambda^T\eta\Lambda=\eta\) gives
+\begin{equation}
+\omega_{\mu\nu}:=\eta_{\mu\rho}\omega^\rho{}_{\nu}
+=-\omega_{\nu\mu}.
+\label{eq:omegaAntisym}
+\end{equation}
+It is the tensor with both indices lowered (or both raised) that is
+antisymmetric. The mixed-index matrix is not generally antisymmetric
+under ordinary matrix transpose; boosts give a familiar counterexample.
+There are \(D(D-1)/2\) independent parameters.
+
+The displacement is
+\begin{equation}
+\xi^\mu=\omega^\mu{}_{\nu}x^\nu
+=\frac12\omega^{\rho\sigma}
+\left(\delta^\mu{}_{\rho}x_\sigma-\delta^\mu{}_{\sigma}x_\rho\right).
+\label{eq:LorentzXi}
+\end{equation}
+We sum over both orders of the pair \((\rho,\sigma)\), hence the factor
+\(1/2\). If we sum only over independent pairs \(\rho<\sigma\), that
+factor is absent. Also \(\partial_\mu\xi^\mu=0\).
+
+\subsection{Scalar fields: orbital angular momentum}
+For a scalar, \(\Delta\phi=0\), so
+\(\delta\phi=-\omega^\mu{}_{\nu}x^\nu\partial_\mu\phi\).
+For a Lorentz-invariant scalar Lagrangian with \(K=0\), its full current
+including the parameter is
+\begin{align}
+\mathcal J^\mu[\omega]
+&=-\Th^\mu{}_{\nu}\omega^\nu{}_{\lambda}x^\lambda\notag\\
+&=\frac12\omega^{\rho\sigma}M^\mu{}_{\rho\sigma},
+\qquad
+\boxed{M^\mu{}_{\rho\sigma}
+=x_\rho\Th^\mu{}_{\sigma}-x_\sigma\Th^\mu{}_{\rho}.}
+\label{eq:orbitalM}
+\end{align}
+This defines the conventional normalization of the angular-momentum
+current. The coefficient of \(\omega^{\rho\sigma}\) in a sum over all
+ordered pairs is \(M^\mu{}_{\rho\sigma}/2\).
+
+Assuming translation conservation, differentiation gives
+\begin{equation}
+\partial_\mu M^\mu{}_{\rho\sigma}
+=\Th_{\rho\sigma}-\Th_{\sigma\rho}.
+\label{eq:orbitalDivergence}
+\end{equation}
+For the standard scalar in Eq.~\eqref{eq:scalarTheta}, the tensor is
+symmetric and the Lorentz current is conserved. The charges are
+\begin{equation}
+M_{\rho\sigma}=\int\dd^d x\,M^0{}_{\rho\sigma}.
+\label{eq:LorentzCharge}
+\end{equation}
+Spatial moments require sufficient falloff for the factors of \(x\) as
+well as for the original translation charges.
+
+\subsection{Rotations and boosts have concrete conserved charges}
+In \(3+1\) dimensions, the three rotation charges can be written
+\begin{equation}
+L^k=\frac12\epsilon^{kij}M_{ij},\qquad \epsilon^{123}=+1.
+\end{equation}
+Using raised spatial momentum components, this gives
+\begin{equation}
+\bm L=\int\dd^3x\,\bm x\times\bm{\mathcal P},
+\qquad \mathcal P^i=\Th^{0i}.
+\end{equation}
+The two minus signs from lowering \(x_i\) and \(\Th^0{}_i\) cancel.
+
+For a symmetric conserved stress tensor, define the three boost charges
+with raised indices,
+\begin{equation}
+B^i:=M^{0i}=tP^i-\int\dd^3x\,x^i\mathcal H.
+\label{eq:boost}
+\end{equation}
+Energy conservation and an integration by parts give
+\begin{equation}
+\frac{\dd}{\dd t}\int x^i\mathcal H\,\dd^3x
+=\int\Th^{i0}\,\dd^3x=P^i,
+\end{equation}
+so \(\dd B^i/\dd t=0\). If \(H\ne0\), the center of energy
+\(X_E^i=H^{-1}\int x^i\mathcal H\,\dd^3x\) consequently satisfies
+\(\dot X_E^i=P^i/H\). Conservation of boosts expresses uniform motion of
+the center of energy. A conserved charge may contain explicit time
+dependence that cancels the evolution of the fields.
+
+\subsection{Vectors and other fields also rotate their components}
+A covector transforms by
+\begin{equation}
+A'_\mu(x')=(\Lambda^{-1})^\nu{}_{\mu}A_\nu(x),
+\end{equation}
+so the one-form \(A'_\mu(x')\dd x'^\mu=A_\mu(x)\dd x^\mu\) is preserved.
+Its two variations are
+\begin{align}
+\Delta A_\mu&=-\omega^\nu{}_{\mu}A_\nu,\notag\\
+\delta A_\mu&=-\xi^\nu\partial_\nu A_\mu
+             -A_\nu\partial_\mu\xi^\nu.
+\label{eq:covectorVariation}
+\end{align}
+The second expression is minus the Lie derivative of a one-form. Its
+first term moves the argument; its second changes the component basis.
+For a contravariant vector the corresponding component term has the
+opposite index action:
+\(\delta A^\mu=-\xi^\nu\partial_\nu A^\mu
++A^\nu\partial_\nu\xi^\mu\).
+
+For a general multiplet let
+\begin{equation}
+\phi'^a(\Lambda x)=S(\Lambda)^a{}_b\phi^b(x),\qquad
+S(\Lambda)=1+\frac12\omega^{\rho\sigma}\mathsf S_{\rho\sigma}
++O(\omega^2),
+\label{eq:LorentzRepresentation}
+\end{equation}
+where \(\mathsf S_{\rho\sigma}=-\mathsf S_{\sigma\rho}\) are matrices
+acting on field components. This definition absorbs any factors of \(i\)
+into the matrices; conventions with explicit \(i\) must change the
+matrix definitions accordingly. Spinors use a representation of the
+Lorentz group's double cover. These finite-dimensional component
+representations need not be unitary.
+
+The component variation contributes a spin current
+\begin{equation}
+s^\mu{}_{\rho\sigma}
+=\pi_a^\mu(\mathsf S_{\rho\sigma})^a{}_b\phi^b.
+\end{equation}
+For a strictly invariant action, the full Lorentz current is
+\begin{equation}
+\boxed{M^\mu{}_{\rho\sigma}
+=x_\rho\Th^\mu{}_{\sigma}-x_\sigma\Th^\mu{}_{\rho}
++s^\mu{}_{\rho\sigma}.}
+\label{eq:totalM}
+\end{equation}
+Noether's theorem now implies, on shell,
+\begin{equation}
+\partial_\mu s^\mu{}_{\rho\sigma}
+=\Th_{\sigma\rho}-\Th_{\rho\sigma}.
+\label{eq:spinIdentity}
+\end{equation}
+A nonsymmetric canonical tensor is therefore compatible with Lorentz
+invariance: the spin current supplies the missing contribution.
+
+\begin{warningbox}[The symmetry condition on the stress tensor needs a qualifier]
+For the purely orbital current, after translation conservation is imposed,
+Eq.~\eqref{eq:orbitalDivergence} vanishes exactly when the stress tensor is
+symmetric. For fields with a spin contribution, it is the \emph{total}
+current \eqref{eq:totalM} that is conserved. The canonical stress tensor
+need not be symmetric.
+\end{warningbox}
+
+In ordinary Poincaré-invariant theories, a suitable improvement can absorb
+the spin contribution into a symmetric stress tensor. This is the
+Belinfante construction. The improvement changes local densities by
+superpotential terms and leaves the integrated Poincare charges unchanged
+when the corresponding boundary terms vanish. Maxwell theory from Lecture
+6 is an example where the distinction between a canonical tensor and a
+symmetric, gauge-invariant tensor matters. Its construction can be developed
+after the present scalar examples.
+
+\section{How to apply the theorem}
+For each proposed symmetry:
+\begin{enumerate}
+\item Specify the action, field components, background data, and boundary
+conditions. State the metric and generator conventions.
+\item Write \(\xi^\mu=\varepsilon^I X_I^\mu\) and
+\(\Delta\phi^a=\varepsilon^I\Phi_I^a\); calculate
+\(\chi_I^a=\Phi_I^a-X_I^\nu\partial_\nu\phi^a\).
+\item Check the local symmetry identity off shell and determine \(K_I^\mu\).
+Equivalently, compute the fixed-coordinate boundary term \(F_I^\mu\).
+\item Compute \(\pi_a^\mu\) and then
+\(J_I^\mu=\pi_a^\mu\Phi_I^a-\Th^\mu{}_{\nu}X_I^\nu-K_I^\mu\).
+\item Check its divergence with the field equations. Integrate \(J_I^0\)
+and state the boundary-flux condition needed to obtain a conserved charge.
+\end{enumerate}
+
+\section{Questions to think about}
+\begin{enumerate}
+\item Translate a localized Gaussian profile by \(+a\). Compute
+\(\delta\phi\) and \(\Delta\phi\), and explain why they differ.
+\item Derive Eqs.~\eqref{eq:derivativeVariation} and \eqref{eq:Jacobian}.
+Why can one commute \(\delta\), but not \(\Delta\), with a derivative?
+\item For the massless scalar with \(\Lag=(\partial\phi)^2/2\), find the
+current for \(\phi\mapsto\phi+\varepsilon\). What term in a potential
+would break this symmetry?
+\item Let \(\Lag=(\partial\phi)^2/2-m^2(x)\phi^2/2\). Use
+Eq.~\eqref{eq:ThetaDivergence} to determine the local rate of
+energy-momentum exchange with the prescribed background.
+\item Compute the scalar energy flux for a wave moving in the negative
+\(x\)-direction. Check the sign of \(\Th^{01}\).
+\item Add \(-\lambda(\phi^*\phi)^2\) to the complex scalar Lagrangian.
+Show that the phase current is unchanged and remains conserved.
+\item Instead add \(-\kappa(\phi^2+\phi^{*2})/2\), for real \(\kappa\).
+Find \(\partial_\mu J^\mu\) on shell and identify the surviving discrete
+phase symmetry.
+\item Starting from \(J^0=\phi_1\dot\phi_2-\phi_2\dot\phi_1\), show that
+\(\{\phi_1,Q\}=-\phi_2\) and \(\{\phi_2,Q\}=\phi_1\), using equal-time
+canonical Poisson brackets. In what sense does the charge generate the
+symmetry?
+\item Prove the boost-charge conservation law \eqref{eq:boost}. Which
+surface term and which symmetry of \(\Th\) are needed?
+\item Derive the covector variation \eqref{eq:covectorVariation} from
+invariance of \(A_\mu\dd x^\mu\). Identify its component and orbital parts.
+\item Explain why an antisymmetric improvement preserves local
+conservation but may change a charge in a region with a boundary.
+\item In mechanics, take \(L=m\dot q^2/2\) and the boost
+\(\delta q=\varepsilon t\) at fixed time. Show that
+\(\delta L=\varepsilon\,\dd(mq)/\dd t\), and use the boundary term to
+find the conserved quantity \(pt-mq\).
+\end{enumerate}
+
+\section*{Summary}
+\addcontentsline{toc}{section}{Summary}
+The geometric field variation and the fixed-coordinate variation are
+related by \(\delta\phi^a=\Delta\phi^a-\xi^\mu\partial_\mu\phi^a\).
+This distinction, together with the Jacobian of the coordinate map, gives
+the action's boundary term. For a continuous global variational symmetry,
+\begin{equation*}
+J_I^\mu=\pi_a^\mu\Phi_I^a-\Th^\mu{}_{\nu}X_I^\nu-K_I^\mu,
+\qquad \partial_\mu J_I^\mu=-\Eul_a\chi_I^a.
+\end{equation*}
+The right-hand side vanishes on classical solutions. A finite charge is
+conserved when the associated boundary flux vanishes.
+
+Translations give energy-momentum conservation; a complex scalar's phase
+rotation gives angular momentum in its internal two-component plane;
+Lorentz transformations give rotations and boosts. Scalars have a purely
+orbital Lorentz current, while fields transforming in nontrivial component
+representations also have a spin current. The current's sign and
+normalization must track the chosen symmetry parameter throughout.
+
+\smallskip
+\noindent\textit{Further reading:} David Tong,
+\href{https://www.damtp.cam.ac.uk/user/tong/qft.htm}{Quantum Field Theory},
+Section 1.3, for another presentation of Noether currents, translations,
+and Lorentz transformations. The derivation here follows the supplied
+Lecture 7 slides, with its conventions stated explicitly.
+\end{document}

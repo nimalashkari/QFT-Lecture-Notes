@@ -1,0 +1,833 @@
+\documentclass[11pt]{article}
+
+\usepackage[letterpaper,margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb,mathtools,bm}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{hyperref}
+\usepackage[most]{tcolorbox}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{parskip}
+\usepackage{needspace}
+
+\definecolor{qftblue}{HTML}{245A8D}
+\definecolor{qftgreen}{HTML}{2F6B4F}
+\definecolor{qftred}{HTML}{A23B3B}
+\definecolor{qftgray}{HTML}{F4F6F8}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=qftblue,
+  urlcolor=qftblue,
+  citecolor=qftgreen,
+  pdftitle={PHYS 662 Lecture 13: Weyl, Dirac, and Majorana Dynamics},
+  pdfauthor={Nima Lashkari}
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{PHYS 662: Quantum Field Theory I}
+\rhead{Lecture 13}
+\cfoot{\thepage}
+\setlength{\headheight}{14pt}
+
+\titleformat{\section}{\Large\bfseries\color{qftblue}}{\thesection.}{0.6em}{}
+\titleformat{\subsection}{\large\bfseries\color{qftgreen}}{\thesubsection}{0.6em}{}
+\titleformat{\subsubsection}{\normalsize\bfseries\color{qftred}}{\thesubsubsection}{0.6em}{}
+
+\setlist[itemize]{leftmargin=2em,itemsep=0.25em,topsep=0.4em}
+\setlist[enumerate]{leftmargin=2em,itemsep=0.25em,topsep=0.4em}
+
+\newcommand{\dd}{\mathrm{d}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Lag}{\mathcal{L}}
+\newcommand{\cM}{\mathcal{M}}
+\newcommand{\SO}{\mathrm{SO}}
+\newcommand{\OO}{\mathrm{O}}
+
+\newtcolorbox{keyidea}[1][]{
+  enhanced, breakable, colback=qftgray, colframe=qftblue,
+  boxrule=0.8pt, arc=1.5mm, title={#1}, fonttitle=\bfseries,
+  coltitle=white
+}
+\newtcolorbox{remarkbox}[1][]{
+  enhanced, breakable, colback=white, colframe=qftgreen,
+  boxrule=0.7pt, arc=1.5mm, title={#1}, fonttitle=\bfseries,
+  coltitle=white
+}
+\newtcolorbox{warningbox}[1][]{
+  enhanced, breakable, colback=white, colframe=qftred,
+  boxrule=0.7pt, arc=1.5mm, title={#1}, fonttitle=\bfseries,
+  coltitle=white
+}
+
+
+\newcommand{\Th}{\Theta}
+\newcommand{\Eul}{\mathcal E}
+\newcommand{\Lie}{\mathscr L}
+
+\newcommand{\C}{\mathbb C}
+\newcommand{\Z}{\mathbb Z}
+\newcommand{\SU}{\mathrm{SU}}
+\newcommand{\UU}{\mathrm{U}}
+\newcommand{\GL}{\mathrm{GL}}
+\newcommand{\SL}{\mathrm{SL}}
+\newcommand{\Sp}{\mathrm{Sp}}
+\newcommand{\tr}{\operatorname{tr}}
+\newcommand{\Ad}{\operatorname{Ad}}
+\newcommand{\ad}{\operatorname{ad}}
+\newcommand{\lieg}{\mathfrak g}
+\newcommand{\lieh}{\mathfrak h}
+\newcommand{\su}{\mathfrak{su}}
+\newcommand{\so}{\mathfrak{so}}
+\newcommand{\slie}{\mathfrak{sl}}
+
+
+\newcommand{\cH}{\mathcal H}
+\newcommand{\Spin}{\operatorname{Spin}}
+\newcommand{\id}{\mathrm{id}}
+\newcommand{\Lor}{\SO^+(1,3)}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\one}{\mathbf 1}
+
+\newcommand{\smu}{s}
+\newcommand{\tmu}{\widetilde s}
+\newcommand{\Eps}{E}
+\newcommand{\pslash}{\slashed p}
+\newcommand{\pL}{P_L}
+\newcommand{\pR}{P_R}
+\newcommand{\hc}{\mathrm{h.c.}}
+\newcommand{\diag}{\operatorname{diag}}
+\newcommand{\vol}{\mathrm{vol}}
+\newcommand{\supp}{\operatorname{supp}}
+\begin{document}
+\pagenumbering{gobble}
+\begin{titlepage}
+\centering
+\vspace*{1.2in}
+{\scshape\Large PHYS 662 --- Quantum Field Theory I\par}
+\vspace{0.35in}
+{\Huge\bfseries\color{qftblue} Lecture 13\par}
+\vspace{0.15in}
+{\LARGE\bfseries Weyl, Dirac, and Majorana\par}
+\vspace{0.06in}
+{\LARGE\bfseries Dynamics\par}
+\vspace{0.16in}
+{\large\color{qftgreen} Mass, Chirality, and Charge Conjugation\par}
+\vspace{0.6in}
+{\large Nima Lashkari\par}
+{\large Fall 2026\par}
+\vfill
+\begin{minipage}{0.86\textwidth}\small
+Invariant spinor bilinears now become kinetic and mass terms.
+We derive the Weyl equation, combine two fields into a charged Dirac
+field, and impose a Majorana condition when appropriate. Four-component notation makes their common
+Lorentz structure transparent. We derive the Dirac adjoint, action,
+chiral projectors, and charge-conjugation map, and finish with a
+comparison to spinors in two spacetime dimensions.
+
+\medskip
+Course page: \url{https://nimalashkari.com/quantum-field-theory-2026-part-i/}
+\end{minipage}
+\vspace{0.5in}
+\end{titlepage}
+\pagenumbering{roman}
+\begingroup\small\tableofcontents\endgroup
+\newpage
+\pagenumbering{arabic}
+
+\section*{Roadmap}
+\addcontentsline{toc}{section}{Roadmap}
+Lecture 12 supplied the invariant spinor contractions and their
+Grassmann signs. We now use them to construct and vary a local action.
+The two-component calculation then explains how a fermion can have
+a mass and a conserved charge, why the Dirac equation uses four
+components, and what a Majorana condition means.
+\begin{enumerate}
+\item Derive and vary the Weyl kinetic and mass terms.
+\item Combine two equal-mass Weyl fields and identify their phase symmetry.
+\item Package the action with gamma matrices and derive the Dirac equation.
+\item Separate Lorentz chirality, charge conjugation, and Majorana reality.
+\item Compare the four-dimensional result with the special case of \(1+1\) dimensions.
+\end{enumerate}
+We postpone the construction and normalization of particle wavefunctions
+until Lecture 14. This keeps the algebra of fields separate from the
+unitary representations carried by physical states.
+
+\begin{keyidea}[Two-component input]
+We retain \(\eta=\diag(1,-1,-1,-1)\),
+\(E=\begin{psmallmatrix}0&1\\-1&0\end{psmallmatrix}\),
+\(s^\mu=(\one,\bm\sigma)\), and
+\(\widetilde s^\mu=(\one,-\bm\sigma)\).
+Both \(\chi\) and \(\zeta\) below transform with
+\(A=\exp[-i\bm\theta\cdot\bm\sigma/2-\bm\rho\cdot\bm\sigma/2]\).
+The column \(-E\zeta^*\) transforms with \((A^\dagger)^{-1}\).
+For Grassmann-odd fields,
+\[
+ B(\chi,\zeta)=\chi^T E\zeta=B(\zeta,\chi).
+\]
+The bilinear is nonzero even for one field. We first allow a complex
+mass parameter, and then show when its phase can be removed so that
+\(m\geq0\).
+\end{keyidea}
+
+\section{The local quadratic action for one Weyl field}
+\subsection{A first-order kinetic term}
+The derivative \(\partial_\mu\) is a covector. Lecture 12 showed that
+\(\xi^\dagger s^\mu\chi\) is a vector. Contracting it with the
+derivative gives the Lorentz scalar
+\begin{equation}
+ \Lag_{\rm kin}=i\xi^\dagger s^\mu\partial_\mu\xi.
+ \label{weyl:eq:weylkin}
+\end{equation}
+The factor of \(i\) is required for Hermiticity of the action. Indeed,
+\begin{equation}
+ (i\xi^\dagger s^\mu\partial_\mu\xi)^\dagger
+ =-i(\partial_\mu\xi^\dagger)s^\mu\xi
+ =i\xi^\dagger s^\mu\partial_\mu\xi
+     -i\partial_\mu(\xi^\dagger s^\mu\xi).
+ \label{weyl:eq:hermkin}
+\end{equation}
+Assuming fields or variations have suitable boundary behavior, the
+last term integrates to a boundary contribution. A manifestly
+Hermitian density is
+\begin{equation}
+ \Lag_{\rm kin}^{\rm sym}
+  =\frac{i}{2}\left[\xi^\dagger s^\mu\partial_\mu\xi
+            -(\partial_\mu\xi^\dagger)s^\mu\xi\right].
+ \label{weyl:eq:symkin}
+\end{equation}
+Both densities define the same bulk equations.
+
+In four spacetime dimensions an action has zero mass dimension,
+\([\partial]=1\), and \([\Lag]=4\). The kinetic term therefore fixes
+\([\xi]=3/2\). A quadratic term with two derivatives, such as
+\((\partial_\mu\xi)^T E\partial^\mu\xi+\hc\), has dimension five.
+It is not part of the dimension-four first-order free theory being
+constructed here. Such terms can occur in effective field theory with
+inverse-mass coefficients and must be analyzed in that setting.
+Their exclusion here does not require an unproved blanket claim that
+every two-derivative fermion theory has an unbounded Hamiltonian.
+
+\subsection{The mass term and its phase}
+The Grassmann scalar \(B(\xi,\xi)=\xi^T E\xi\) permits the Hermitian Lagrangian
+\begin{equation}
+ \boxed{\Lag=i\xi^\dagger s^\mu\partial_\mu\xi
+       -\frac12\left[m\,\xi^T E\xi
+                   +m^*(\xi^T E\xi)^\dagger\right].}
+ \label{weyl:eq:weylmass}
+\end{equation}
+The factor \(1/2\) compensates for the two identical fields in the
+bilinear. Since \([\xi]=3/2\), \([m]=1\).
+For \(m=|m|e^{i\alpha}\), the change of variable
+\begin{equation}
+ \xi_{\rm old}=e^{-i\alpha/2}\xi_{\rm new}
+ \label{weyl:eq:phase}
+\end{equation}
+makes this one mass parameter real and nonnegative. It is the
+\emph{half-angle} that is needed because the mass term contains two
+copies of \(\xi\). In a theory with other couplings, not all relative
+phases need be removable; here we are discussing an isolated free field.
+
+At $m=0$, the action is invariant under $\xi \mapsto e^{i\beta} \xi$. The mass term transforms with $e^{2i\beta}$, so a nonzero fixed mass breaks this continuous phase symmetry to $\xi \mapsto -\xi$. A fermion that is its own antiparticle—and therefore carries no conserved continuous phase charges—is defined as a Majorana fermion. A single massive Weyl field therefore describes a neutral Majorana fermion, unless an additional internal representation changes which mass terms are allowed.
+
+\subsection{Varying the Grassmann action explicitly}
+Using \(B(\xi,\xi)^\dagger=-2\xi_1^*\xi_2^*\), write the mass density as
+\[
+ \Lag_m=-m\xi_1\xi_2+m^*\xi_1^*\xi_2^*.
+\]
+Put each variation on the left. The variation of its conjugate piece is
+\[
+ \delta\Lag_m\big|_{\delta\xi^*}
+  =m^*\big(\delta\xi_1^*\xi_2^*+\xi_1^*\delta\xi_2^*\big)
+  =\delta\xi_1^*(m^*\xi_2^*)
+        +\delta\xi_2^*(-m^*\xi_1^*).
+\]
+Together with the kinetic term this yields
+\begin{equation}
+ \boxed{i s^\mu\partial_\mu\xi+m^*E\xi^*=0.}
+ \label{weyl:eq:weyleom}
+\end{equation}
+In terms of the conjugate-dual column \(r=-E\xi^*\), the equation and
+its conjugate become
+\begin{equation}
+ i s^\mu\partial_\mu\xi-m^*r=0,
+ \qquad i\widetilde s^\mu\partial_\mu r-m\xi=0.
+ \label{weyl:eq:coupled}
+\end{equation}
+Here \(E(s^\mu)^*=\widetilde s^\mu E\) supplies the matrix identity
+needed to conjugate the first equation. The mass couples opposite
+chiral transformation laws; for one Weyl field the second column is
+its conjugate, rather than an independent field.
+
+Act with \(i\widetilde s^\nu\partial_\nu\) on the first equation
+and substitute the second. Symmetry of \(\partial_\mu\partial_\nu\)
+and the identity \(\widetilde s^\mu s^\nu+\widetilde s^\nu s^\mu=2\eta^{\mu\nu}\one\) give
+\begin{equation}
+ (\Box+|m|^2)\xi=0,
+ \qquad \Box=\partial_t^2-\nabla^2.
+ \label{weyl:eq:kg}
+\end{equation}
+The dispersion relation is therefore \(E_{\bm p}^2=|\bm p|^2+|m|^2\).
+The first-order equation contains more information than this squared
+equation: it also relates spinor components. Solving the Klein--Gordon
+equation alone does not impose those relations.
+
+For \(m=0\), the equation reduces to the massless Weyl equation
+motivated from covariance at the end of Lecture 12. Its plane-wave
+polarization was worked out there; the action now explains its dynamics.
+
+\section{How two Weyl fields acquire a conserved charge}
+\subsection{Two equal Majorana masses}
+Start with two independent Weyl fields \(\xi_1,\xi_2\), each with
+the same real mass:
+\begin{equation}
+ \Lag=\sum_{a=1}^{2}\left[
+ i\xi_a^\dagger s^\mu\partial_\mu\xi_a
+ -\frac{m}{2}\big(B(\xi_a,\xi_a)+\hc\big)\right].
+ \label{eq:twoequal}
+\end{equation}
+The kinetic term is invariant under unitary rotations of the flavor
+index. The mass term additionally requires \(R^T R=\one\).
+For nonzero \(m\), the intersection of these conditions is real
+\(\OO(2)\). Its connected \(\SO(2)\) subgroup acts by
+\begin{equation}
+ \begin{pmatrix}\xi_1\\\xi_2\end{pmatrix}
+ \longmapsto
+ \begin{pmatrix}\cos\beta&-\sin\beta\\
+                 \sin\beta&\cos\beta\end{pmatrix}
+ \begin{pmatrix}\xi_1\\\xi_2\end{pmatrix}.
+ \label{eq:flavorrot}
+\end{equation}
+Define a basis that diagonalizes this rotation:
+\begin{equation}
+ \chi=\frac{\xi_1+i\xi_2}{\sqrt2},\qquad
+ \zeta=\frac{\xi_1-i\xi_2}{\sqrt2}.
+ \label{eq:chizeta}
+\end{equation}
+Then \(\chi\mapsto e^{i\beta}\chi\) and
+\(\zeta\mapsto e^{-i\beta}\zeta\). They are independent complex
+Grassmann fields. Neither is the complex conjugate of the other:
+\(\xi_1\) and \(\xi_2\) themselves were not real two-component fields.
+
+The change of basis is unitary, so the kinetic term stays diagonal.
+Using the symmetry of \(B\), the mass terms satisfy
+\begin{equation}
+ B(\xi_1,\xi_1)+B(\xi_2,\xi_2)=2B(\chi,\zeta).
+ \label{eq:masschange}
+\end{equation}
+Thus
+\begin{equation}
+ \Lag=i\chi^\dagger s^\mu\partial_\mu\chi
+      +i\zeta^\dagger s^\mu\partial_\mu\zeta
+      -m\big[B(\chi,\zeta)+B(\chi,\zeta)^\dagger\big].
+ \label{eq:twodirac}
+\end{equation}
+This is a Dirac mass: it pairs Weyl fields with opposite phase charges
+and therefore preserves the continuous \(\UU(1)\) symmetry.
+
+\begin{remarkbox}[When the equal-mass observation applies]
+Two free Majorana fields of equal mass can be reorganized into one
+Dirac field. For interacting fields, degeneracy of the free masses is
+not enough: the interactions must also respect the rotations that
+define the conserved charge. The free \(\OO(2)\) flavor symmetry is
+not a claim that every interacting Majorana pair has this symmetry.
+\end{remarkbox}
+
+\subsection{A useful mass-matrix perspective}
+For several same-chirality Weyl fields, the most general quadratic
+mass term has the form
+\begin{equation}
+ \Lag_m=-\frac12\sum_{a,b}M_{ab}B(\xi_a,\xi_b)+\hc,
+ \qquad M_{ab}=M_{ba}.
+ \label{eq:massmatrix}
+\end{equation}
+Only the symmetric part contributes because \(B\) is symmetric in
+the field labels. The Dirac example has
+\(M=\begin{psmallmatrix}0&m\\m&0\end{psmallmatrix}\) in the
+\((\chi,\zeta)\) basis. A phase charge with diagonal matrix \(Q\)
+is preserved precisely when
+\(Q^T M+M Q=0\). Charges \(+1,-1\) satisfy this condition for the
+off-diagonal Dirac mass, but a nonzero diagonal Majorana mass would
+not. This elementary check is often more informative than naming a
+four-component field before inspecting its symmetries.
+
+\section{Four-component notation and the Clifford algebra}
+\subsection{Packaging the two chiral representations}
+Introduce
+\begin{equation}
+ r=-E\zeta^*,\qquad
+ \Psi=\begin{pmatrix}\chi\\r\end{pmatrix},\qquad
+ \Psi'(x)=\mathcal S(A)\Psi(\Lambda^{-1}x),\quad
+ \mathcal S(A)=\begin{pmatrix}A&0\\0&(A^\dagger)^{-1}\end{pmatrix}.
+ \label{eq:diracpack}
+\end{equation}
+The upper and lower columns are independent here. This is the
+reducible Lorentz representation
+\((\tfrac12,0)\oplus(0,\tfrac12)\); irreducibility under the Lorentz
+group is not required for a useful field variable.
+
+Choose gamma matrices
+\begin{equation}
+ \gamma^\mu=\begin{pmatrix}0&\widetilde s^\mu\\s^\mu&0\end{pmatrix},
+ \qquad
+ \gamma^0=\begin{pmatrix}0&\one\\\one&0\end{pmatrix},\quad
+ \gamma^i=\begin{pmatrix}0&-\sigma_i\\\sigma_i&0\end{pmatrix}.
+ \label{eq:gamma}
+\end{equation}
+The sigma identities give, by block multiplication,
+\begin{equation}
+ \boxed{\{\gamma^\mu,\gamma^\nu\}=2\eta^{\mu\nu}\one_4.}
+ \label{eq:clifford}
+\end{equation}
+In particular \((\gamma^0)^2=\one\) and
+\((\gamma^i)^2=-\one\). These checks fix the sign of the Clifford
+algebra for the mostly-minus metric. The Hermiticity properties are
+\begin{equation}
+ (\gamma^0)^\dagger=\gamma^0,\qquad
+ (\gamma^i)^\dagger=-\gamma^i,\qquad
+ (\gamma^\mu)^\dagger=\gamma^0\gamma^\mu\gamma^0.
+ \label{eq:gammaherm}
+\end{equation}
+
+\subsection{The Dirac adjoint}
+For an ordinary complex component column, the positive-definite norm
+\(\Psi^\dagger\Psi\) is not a Lorentz scalar:
+the finite-dimensional boost matrix \(\mathcal S\) is not unitary.
+Instead,
+\begin{equation}
+ \mathcal S^\dagger\gamma^0\mathcal S=\gamma^0.
+ \label{eq:pseudounitary}
+\end{equation}
+This follows immediately from the off-diagonal form of \(\gamma^0\)
+and the two inverse-adjoint blocks of \(\mathcal S\). Define
+\begin{equation}
+ \boxed{\bar\Psi=\Psi^\dagger\gamma^0=(r^\dagger,\chi^\dagger).}
+ \label{eq:adjoint}
+\end{equation}
+Then \(\bar\Psi'\!=\bar\Psi\mathcal S^{-1}\) at corresponding
+points. The bar in \(\bar\Psi\) means a Dirac adjoint; it is not
+ordinary componentwise complex conjugation.
+
+The gamma matrices obey the intertwining relation
+\begin{equation}
+ \mathcal S^{-1}\gamma^\mu\mathcal S
+    =\Lambda^\mu{}_{\nu}\gamma^\nu.
+ \label{eq:gammacov}
+\end{equation}
+Consequently \(\bar\Psi\Psi\) is a scalar and
+\(\bar\Psi\gamma^\mu\Psi\) is a vector. The latter has
+\(j^0=\Psi^\dagger\Psi\), but its time component is not itself a
+Lorentz scalar.
+
+\subsection{Deriving the Dirac action from two Weyl actions}
+The mass bilinear is
+\begin{equation}
+ \bar\Psi\Psi=r^\dagger\chi+\chi^\dagger r
+             =B(\chi,\zeta)+B(\chi,\zeta)^\dagger.
+ \label{eq:massbilinear}
+\end{equation}
+For the kinetic term,
+\begin{equation}
+ i\bar\Psi\gamma^\mu\partial_\mu\Psi
+  =i\chi^\dagger s^\mu\partial_\mu\chi
+   +ir^\dagger\widetilde s^\mu\partial_\mu r.
+ \label{eq:kinblocks}
+\end{equation}
+Substitute \(r=-E\zeta^*\) into the second term. The identity
+\(E\widetilde s^\mu E=-(s^\mu)^T\), followed by an exchange of
+odd variables, gives
+\[
+ r^\dagger\widetilde s^\mu\partial_\mu r
+   =\zeta^T(s^\mu)^T\partial_\mu\zeta^*
+   =-(\partial_\mu\zeta^\dagger)s^\mu\zeta.
+\]
+An integration by parts therefore turns it into
+\(\zeta^\dagger s^\mu\partial_\mu\zeta\) in the action.
+Equation \eqref{eq:twodirac} becomes
+\begin{equation}
+ \boxed{S_D=\int\dd^4x\,\bar\Psi(i\gamma^\mu\partial_\mu-m)\Psi.}
+ \label{eq:diracaction}
+\end{equation}
+This derivation explains both the adjoint and the relative signs;
+neither is an arbitrary decoration of the Dirac equation.
+
+\section{The Dirac equation and its continuous symmetry}
+\subsection{Equations for the field and adjoint}
+Varying \(\bar\Psi\) and \(\Psi\) independently, with appropriate
+boundary conditions, gives
+\begin{equation}
+ (i\gamma^\mu\partial_\mu-m)\Psi=0,\qquad
+ i(\partial_\mu\bar\Psi)\gamma^\mu+m\bar\Psi=0.
+ \label{eq:diraceom}
+\end{equation}
+In block form the first equation reads
+\begin{equation}
+ i\widetilde s^\mu\partial_\mu r=m\chi,\qquad
+ i s^\mu\partial_\mu\chi=mr.
+ \label{eq:diracblocks}
+\end{equation}
+The mass mixes the two chiralities. Applying
+\(i\gamma^\mu\partial_\mu+m\) yields
+\begin{equation}
+ (\Box+m^2)\Psi=0.
+ \label{eq:dirackg}
+\end{equation}
+This is a consequence, not a replacement, of the first-order equation.
+
+Multiplication by \(\gamma^0\) gives the Hamiltonian form
+\begin{equation}
+ i\partial_t\Psi=h_D\Psi,\qquad
+ h_D=-i\alpha^i\partial_i+\beta m,\quad
+ \alpha^i=\gamma^0\gamma^i=\diag(\sigma_i,-\sigma_i),\quad
+ \beta=\gamma^0.
+ \label{eq:hamdirac}
+\end{equation}
+The matrices \(\alpha^i,\beta\) are Hermitian. For suitable boundary
+conditions \(h_D\) is a Hermitian differential operator. Its plane-wave
+eigenvalues are \(\pm\sqrt{\bm p^2+m^2}\). The negative-frequency
+solutions will be reinterpreted as antiparticles after fermionic
+quantization; this step is not achieved by deleting those solutions.
+
+\subsection{The vector phase symmetry}
+Under the flavor rotation already identified,
+\begin{equation}
+ \Psi\mapsto e^{i\beta}\Psi,\qquad
+ \bar\Psi\mapsto e^{-i\beta}\bar\Psi.
+ \label{eq:phase}
+\end{equation}
+The Dirac mass preserves it. With an overall charge-sign convention
+chosen once, the associated current is
+\begin{equation}
+ j^\mu=\bar\Psi\gamma^\mu\Psi,
+ \qquad \partial_\mu j^\mu=0.
+ \label{eq:current}
+\end{equation}
+The conservation law follows by multiplying the two equations in
+\eqref{eq:diraceom} by the remaining field and adding.
+In two-component notation,
+\begin{equation}
+ j^\mu=\chi^\dagger s^\mu\chi-\zeta^\dagger s^\mu\zeta.
+ \label{eq:currenttwo}
+\end{equation}
+The minus sign appears when the \(r\) bilinear is reordered into
+\(\zeta^\dagger\zeta\) order. In the quantum theory coincident
+products require an ordering prescription; the normal-ordered charge
+counts particles minus antiparticles. A positive first-quantized
+spinor norm should not be confused with the sign of this charge.
+
+\section{Chirality and Lorentz generators}
+\subsection{Projectors with an explicit sign convention}
+The matrix distinguishing the two blocks is
+\begin{equation}
+ \gamma_\star=\begin{pmatrix}-\one&0\\0&\one\end{pmatrix}
+             =-i\gamma^0\gamma^1\gamma^2\gamma^3,
+ \quad \gamma_\star^2=\one,\quad
+ \{\gamma_\star,\gamma^\mu\}=0.
+ \label{eq:chirality}
+\end{equation}
+The sign in the product is deliberate: it keeps the upper block
+called \((\tfrac12,0)\), as in Lecture 11, while using the explicit
+gamma matrices \eqref{eq:gamma}. If one instead defines
+\(\gamma^5_{\rm std}=+i\gamma^0\gamma^1\gamma^2\gamma^3\), then
+\(\gamma^5_{\rm std}=-\gamma_\star\) in this basis. Physical
+statements are unchanged if labels and projectors are exchanged
+consistently.
+
+Define
+\begin{equation}
+ P_L=\frac{1-\gamma_\star}{2},\qquad
+ P_R=\frac{1+\gamma_\star}{2},\qquad
+ \Psi_L=P_L\Psi=\begin{pmatrix}\chi\\0\end{pmatrix},\quad
+ \Psi_R=P_R\Psi=\begin{pmatrix}0\\r\end{pmatrix}.
+ \label{eq:projectors}
+\end{equation}
+They satisfy \(P_L^2=P_L\), \(P_R^2=P_R\),
+\(P_LP_R=0\), and \(P_L+P_R=1\).
+Because \(\gamma^0\) anticommutes with \(\gamma_\star\),
+\(\overline{\Psi_L}=\bar\Psi P_R\). Hence
+\begin{equation}
+ \bar\Psi\Psi=\overline{\Psi_L}\Psi_R+
+                  \overline{\Psi_R}\Psi_L.
+ \label{eq:chiralmass}
+\end{equation}
+This is the precise sense in which a Dirac mass joins opposite
+chiralities. At \(m=0\), the two Weyl equations decouple and the free
+classical theory has independent phase rotations of the two sectors.
+Statements about survival of axial symmetries in interacting quantum
+theories require additional analysis.
+
+\subsection{The spin generators}
+The Lorentz generators on a Dirac spinor are
+\begin{equation}
+ \Sigma^{\mu\nu}=\frac{i}{4}[\gamma^\mu,\gamma^\nu]
+ =\begin{pmatrix}S_L^{\mu\nu}&0\\0&S_R^{\mu\nu}\end{pmatrix}.
+ \label{eq:Sigmadef}
+\end{equation}
+Their rotation and boost parts are
+\begin{equation}
+ J_i=\frac12\eps_{ijk}\Sigma^{jk}
+    =\frac12\begin{pmatrix}\sigma_i&0\\0&\sigma_i\end{pmatrix},
+ \qquad
+ K_i=\Sigma^{i0}
+    =\frac12\begin{pmatrix}-i\sigma_i&0\\0&i\sigma_i\end{pmatrix}.
+ \label{eq:JK}
+\end{equation}
+They obey
+\begin{equation}
+ [J_i,J_j]=i\eps_{ijk}J_k,\qquad
+ [J_i,K_j]=i\eps_{ijk}K_k,\qquad
+ [K_i,K_j]=-i\eps_{ijk}J_k.
+ \label{eq:lorentzalgebra}
+\end{equation}
+Exponentiating \(-i(\bm\theta\cdot\bm J+\bm\rho\cdot\bm K)\)
+reproduces \(\mathcal S(A)\) in \eqref{eq:diracpack}.
+The chirality matrix commutes with all these generators. A proper
+orthochronous Lorentz transformation therefore preserves each chiral
+subspace; it does not turn one chirality into the other.
+Parity, when it is a symmetry, can exchange the blocks through
+\(\Psi(t,\bm x)\mapsto\gamma^0\Psi(t,-\bm x)\), up to an
+allowed intrinsic phase. It is outside the connected Lorentz group.
+
+\section{Charge conjugation and the Majorana condition}
+\subsection{The charge-conjugate field}
+Choose
+\begin{equation}
+ C=\begin{pmatrix}E&0\\0&-E\end{pmatrix},\qquad
+ C^T=-C,\quad C^{-1}=-C,\quad
+ C(\gamma^\mu)^T C^{-1}=-\gamma^\mu.
+ \label{eq:C}
+\end{equation}
+An overall phase of \(C\) is conventional. 
+
+Physically, charge conjugation is the discrete transformation that maps a particle to its corresponding antiparticle. It reverses all internal additive quantum numbers (such as continuous phase charges) while leaving spacetime and kinematic properties (such as mass, momentum, and spin) completely unchanged.
+
+Mathematically, the charge-conjugate of a Dirac field is defined as
+\begin{equation}
+ \Psi^c=C\bar\Psi^T=C\gamma^0\Psi^*
+       =\begin{pmatrix}E r^*\\-E\chi^*\end{pmatrix}.
+ \label{eq:chargeconj}
+\end{equation}
+The map is antilinear on classical spinor components, and
+\((\Psi^c)^c=\Psi\). The Lorentz identities imply
+\(\Psi^c\mapsto\mathcal S(A)\Psi^c\), so \(\Psi^c\) is again
+a Dirac spinor. In the two-Weyl packaging,
+\begin{equation}
+ \Psi=\begin{pmatrix}\chi\\-E\zeta^*\end{pmatrix}
+ \quad\Longrightarrow\quad
+ \Psi^c=\begin{pmatrix}\zeta\\-E\chi^*\end{pmatrix}.
+ \label{eq:swap}
+\end{equation}
+It exchanges \(\chi\) and \(\zeta\). In the original flavor basis
+this is the reflection \(\xi_2\mapsto-\xi_2\), the disconnected
+part of the free \(\OO(2)\) symmetry.
+
+Under the phase transformation \eqref{eq:phase},
+\(\Psi^c\mapsto e^{-i\beta}\Psi^c\). Charge conjugation reverses
+the phase charge; it is not itself a continuous phase rotation.
+Conjugating the free Dirac equation shows that \(\Psi^c\) satisfies
+the same equation for real \(m\). In a minimally coupled equation
+with \(D_\mu=\partial_\mu+iqA_\mu\), the conjugated equation has
+\(q\to-q\) for a fixed real background potential. A symmetry of
+the full theory must transform the other charged fields and the gauge
+potential appropriately as well.
+
+\begin{warningbox}[An antilinear field map is not time reversal]
+The component formula for \(\Psi^c\) contains complex conjugation.
+This does not make the charge-conjugation operator on the quantum
+Hilbert space antiunitary. Charge conjugation, when it is a symmetry,
+is represented by a unitary operator; time reversal is the familiar
+antiunitary spacetime symmetry. Keep a map on classical components
+distinct from an operator acting on quantum states.
+\end{warningbox}
+
+\subsection{One independent Weyl field: a Majorana spinor}
+The Majorana condition is
+\begin{equation}
+ \boxed{\Psi_M^c=\Psi_M.}
+ \label{eq:Majorana}
+\end{equation}
+It is solved by
+\begin{equation}
+ \Psi_M=\begin{pmatrix}\xi\\-E\xi^*\end{pmatrix}.
+ \label{eq:Mpack}
+\end{equation}
+The lower column is now determined by the upper. The four-component
+field therefore has four real off-shell components, rather than the
+eight of an unconstrained Dirac field. In a suitable Majorana basis
+the condition can look like componentwise reality, but
+\(\Psi=\Psi^*\) is not its basis-independent definition.
+
+The correct action is
+\begin{equation}
+ \boxed{S_M=\frac12\int\dd^4x\,
+            \bar\Psi_M(i\gamma^\mu\partial_\mu-m)\Psi_M.}
+ \label{eq:Majoranaaction}
+\end{equation}
+Using the same calculation as in \eqref{eq:kinblocks}, its kinetic
+term becomes one copy of \(i\xi^\dagger s^\mu\partial_\mu\xi\)
+up to a boundary term, while its mass term becomes
+\(-\tfrac{m}{2}[B(\xi,\xi)+\hc]\), reproducing
+Eq.~\eqref{weyl:eq:weylmass} for real \(m\). The factor \(1/2\) precisely
+removes the duplicate contribution of the dependent lower column.
+The equations of motion are still
+\((i\gamma^\mu\partial_\mu-m)\Psi_M=0\), together with the reality
+constraint. When varying this action one must respect that constraint,
+or use \(\xi,\xi^\dagger\) as the independent variables.
+
+With the chosen \(C\), the condition also implies
+\(\bar\Psi_M=\Psi_M^T C\). Consequently the action can be written
+using a single Grassmann column and the appropriate antisymmetric
+quadratic kernel. This rewriting does not make the components commute.
+
+\subsection{What a Majorana field cannot carry}
+If \(\Psi_M\mapsto e^{i\beta}\Psi_M\), then
+\(\Psi_M^c\mapsto e^{-i\beta}\Psi_M\). The Majorana condition is
+preserved only for \(e^{2i\beta}=1\). There is no continuous ordinary
+phase charge for one Majorana field. Indeed, its diagonal vector
+bilinear vanishes for Grassmann fields:
+\begin{equation}
+ \bar\Psi_M\gamma^\mu\Psi_M
+   =\xi^\dagger s^\mu\xi-\xi^\dagger s^\mu\xi=0.
+ \label{eq:Mcurrent}
+\end{equation}
+This does not say that all Majorana bilinears vanish, nor that Majorana
+fields cannot transform in a real internal representation. It says
+that the ordinary phase charge distinguishing a particle from its
+antiparticle is absent for a single such field.
+
+Charge conjugation exchanges the two chiral subspaces in four
+dimensions:
+\begin{equation}
+ (P_L\Psi)^c=P_R\Psi^c.
+ \label{eq:Cchirality}
+\end{equation}
+A nonzero spinor therefore cannot satisfy both a four-dimensional
+Majorana condition and a single-chirality Weyl condition. A massless
+Majorana field can be described using one two-component field, but its
+four-component Majorana packaging contains both conjugate blocks.
+This is different from a Majorana--Weyl spinor.
+
+\section{A comparison: spinors in \texorpdfstring{\(1+1\)}{1+1} dimensions}
+\subsection{A basis in which Majorana reality is literal}
+The preceding incompatibility depends on spacetime dimension.
+In \(1+1\) dimensions use \(\eta=\diag(1,-1)\) and, for this
+section only, the two-by-two matrices
+\begin{equation}
+ \Gamma^0=\sigma_2,\qquad \Gamma^1=i\sigma_1,
+ \qquad \Gamma_\star=\Gamma^0\Gamma^1=\sigma_3.
+ \label{eq:2dgamma}
+\end{equation}
+They satisfy \(\{\Gamma^a,\Gamma^b\}=2\eta^{ab}\), and both
+\(\Gamma^0,\Gamma^1\) are purely imaginary. Taking
+\(C_2=-\Gamma^0\) gives
+\begin{equation}
+ \psi^c=C_2\bar\psi^T=\psi^*.
+ \label{eq:2dc}
+\end{equation}
+Here \(\bar\psi=\psi^\dagger\Gamma^0\) and
+\(C_2(\Gamma^0)^T=\one\). Thus the Majorana condition is componentwise
+reality in this particular basis. Since \(\Gamma_\star\) is real,
+complex conjugation preserves its eigenspaces. Reality and chirality
+can therefore be imposed simultaneously.
+
+\subsection{Massless propagation and Majorana--Weyl fields}
+Multiplying the massless equation by \(\Gamma^0\) gives
+\begin{equation}
+ (\partial_t+\Gamma_\star\partial_x)\psi=0.
+ \label{eq:2dweyl}
+\end{equation}
+Write \(\psi=(\psi_+,\psi_-)^T\), where the subscript is the
+\(\Gamma_\star\) eigenvalue, and set \(x^\pm=t\pm x\). Then
+\begin{equation}
+ (\partial_t+\partial_x)\psi_+=0,\quad \psi_+=f(x^-),
+ \qquad
+ (\partial_t-\partial_x)\psi_-=0,\quad \psi_-=g(x^+).
+ \label{eq:2dwaves}
+\end{equation}
+A feature at fixed \(x^-=t-x\) moves toward increasing \(x\),
+so \(f\) is right-moving; \(g\) is left-moving. Equivalently
+\(\partial_+=\tfrac12(\partial_t+\partial_x)\) and
+\(\partial_-=\tfrac12(\partial_t-\partial_x)\). Keeping the factor
+\(1/2\) explicit avoids ambiguity in light-cone derivatives.
+
+One real Grassmann-valued function \(f(x^-)\), or one real
+\(g(x^+)\), is a Majorana--Weyl field in this dimension. Its
+first-order chiral action contains, for example,
+\(\tfrac{i}{2}\psi_+(\partial_t+\partial_x)\psi_+\).
+This need not vanish: a field and its derivative are distinct odd
+variables. A nonzero mass couples the two chiral components, so a
+single chiral field cannot have that ordinary mass term.
+
+\begin{remarkbox}[Use one basis consistently]
+A statement such as \(C=\gamma^0\) or \(\psi^c=\psi^*\) is not
+valid for arbitrary gamma matrices. It must be checked with the chosen
+matrix basis and adjoint. The \(1+1\)-dimensional formulas above use
+\(\Gamma\), rather than \(\gamma\), to emphasize that they are a
+separate Clifford representation.
+\end{remarkbox}
+
+\section*{Summary}
+\addcontentsline{toc}{section}{Summary}
+The Weyl kinetic term is Hermitian up to a boundary term, and its
+mass equation couples a field to its conjugate chirality.
+A Dirac mass instead pairs two independent Weyl fields with opposite
+phase charges. Four-component notation packages their coupled equations
+using a Clifford algebra, while the Dirac adjoint supplies Lorentz
+scalars and vectors. Chirality labels invariant subspaces of the
+connected Lorentz group; charge conjugation reverses the phase charge.
+A Majorana condition relates the two chiral blocks and reduces the
+independent field content by half. Majorana reality and Weyl chirality
+are incompatible for a nonzero spinor in \(3+1\) dimensions but can
+coexist in \(1+1\) dimensions.
+
+\section*{Questions for review}
+\addcontentsline{toc}{section}{Questions for review}
+\begin{enumerate}
+\item Derive the Hermiticity boundary term for the Weyl kinetic
+density and vary its Grassmann mass term.
+\item Why does removing the phase of a Weyl mass require a half-angle
+rephasing? Derive the second-order equation from the first-order pair.
+\item Derive \eqref{eq:masschange} and identify exactly where
+Grassmann statistics enter.
+\item Why does a mass degeneracy alone not guarantee a conserved
+Dirac charge in an interacting theory?
+\item Check \(Q^T M+M Q=0\) for the Dirac mass matrix and opposite charges.
+\item Verify the Clifford algebra and the Lorentz transformation
+of the Dirac adjoint directly from their block matrices.
+\item Recover both two-component kinetic terms from the Dirac action,
+keeping the boundary term until the last step.
+\item Derive the adjoint Dirac equation and current conservation.
+\item Explain why \(\overline{P_L\Psi}=\bar\Psi P_R\).
+\item Show \((\Psi^c)^c=\Psi\) and verify the exchange in
+\eqref{eq:swap}.
+\item Reduce the Majorana action to the two-component action
+\eqref{weyl:eq:weylmass}.
+Why would omitting its factor \(1/2\) double the result?
+\item Explain the difference between a Majorana field, a Weyl field,
+and a Majorana--Weyl field.
+\item Check the motion of a localized profile \(f(t-x)\) and
+derive both chiral equations in \(1+1\) dimensions.
+\end{enumerate}
+
+\section*{Sources and reading}
+\addcontentsline{toc}{section}{Sources and reading}
+This lecture consolidates the supplied \emph{Lecture 11: Spinors of the
+Lorentz Group}, pp.\ 15--20; \emph{Lecture 12: Action for Spinors},
+pp.\ 8--18; and the review and two-dimensional example in
+\emph{Lecture 13: Single Particle States}, pp.\ 1--7.
+The invariant-tensor and Grassmann algebra is established in
+course Lecture 12; the action derivations appear once here.
+For comparison of two- and four-component conventions, see
+H.~K.~Dreiner, H.~E.~Haber, and S.~P.~Martin,
+\href{https://arxiv.org/abs/0812.1594}{arXiv:0812.1594}.
+The explicit matrices in these notes fix our convention independently
+of any reference's chiral naming choices.
+\end{document}

@@ -1,0 +1,474 @@
+\documentclass[11pt]{article}
+\usepackage[letterpaper,margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern,microtype}
+\usepackage{amsmath,amssymb,mathtools,bm,slashed}
+\usepackage{xcolor,enumitem,booktabs,array,needspace}
+\usepackage[most]{tcolorbox}
+\usepackage{fancyhdr,titlesec,parskip,hyperref}
+\definecolor{qftblue}{HTML}{245A8D}
+\definecolor{qftgreen}{HTML}{2F6B4F}
+\definecolor{qftgray}{HTML}{F4F6F8}
+\hypersetup{colorlinks=true,linkcolor=qftblue,urlcolor=qftblue,pdfauthor={Nima Lashkari}}
+\pagestyle{fancy}\fancyhf{}
+\lhead{PHYS 662: Quantum Field Theory I}\cfoot{\thepage}
+\setlength{\headheight}{14pt}
+\titleformat{\section}{\Large\bfseries\color{qftblue}}{\thesection.}{0.6em}{}
+\titleformat{\subsection}{\large\bfseries\color{qftgreen}}{\thesubsection}{0.6em}{}
+\setlist[enumerate]{leftmargin=2em,itemsep=0.25em,topsep=0.35em}
+\setlist[itemize]{leftmargin=2em,itemsep=0.2em,topsep=0.35em}
+\newcommand{\dd}{\mathrm d}
+\newcommand{\ii}{\mathrm i}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\tr}{\operatorname{tr}}
+\newcommand{\Tr}{\operatorname{Tr}}
+\newcommand{\diag}{\operatorname{diag}}
+\newcommand{\Lag}{\mathcal L}
+\newcommand{\D}{\mathcal D}
+\newcommand{\vac}{\lvert0\rangle}
+\newcommand{\vbra}{\langle0\rvert}
+\newcommand{\Tord}{\mathrm T}
+\newcommand{\ket}[1]{\lvert#1\rangle}
+\newcommand{\bra}[1]{\langle#1\rvert}
+\newtcolorbox{keyidea}[1][]{enhanced,breakable,colback=qftgray,colframe=qftblue,
+ boxrule=0.7pt,arc=1.5mm,title={#1},fonttitle=\bfseries,coltitle=white}
+\newtcolorbox{remarkbox}[1][]{enhanced,breakable,colback=white,colframe=qftgreen,
+ boxrule=0.6pt,arc=1.5mm,title={#1},fonttitle=\bfseries,coltitle=white}
+\newcommand{\module}[1]{\clearpage\section{#1}}
+\newcommand{\lecturefront}[4]{%
+\rhead{Lecture #1}\hypersetup{pdftitle={PHYS 662 Lecture #1: #2}}
+\begin{document}\pagenumbering{gobble}
+\begin{titlepage}\centering\vspace*{1.05in}
+{\scshape\Large PHYS 662 --- Quantum Field Theory I\par}
+\vspace{0.35in}{\Huge\bfseries\color{qftblue}Lecture #1\par}
+\vspace{0.2in}{\LARGE\bfseries #2\par}
+\vspace{0.2in}{\large\color{qftgreen}#3\par}
+\vspace{0.6in}{\large Nima Lashkari\par}{\large Fall 2026\par}
+\vfill\begin{minipage}{0.86\textwidth}\small #4\par\medskip
+Course page: \url{https://nimalashkari.com/quantum-field-theory-2026-part-i/}
+\end{minipage}\vspace{0.5in}\end{titlepage}
+\pagenumbering{roman}\setcounter{tocdepth}{1}\tableofcontents
+\vfill\begin{remarkbox}[Place in the course]
+Lectures 17--18 develop the quantum-mechanical construction. Lecture 19
+extends Gaussian integration and source methods to scalar fields.
+Lecture 20 introduces Grassmann integration and fermionic fields.
+Problem Set 6 brings these four steps together.
+\end{remarkbox}\clearpage\pagenumbering{arabic}}
+\lecturefront{18}{Path Integrals in Quantum Mechanics II}
+{Perturbations, scattering, and Euclidean time}
+{The free kernel becomes a building block for interactions. We then rotate
+to imaginary time, where evolution projects onto the ground state and a
+trace becomes a thermal partition function. These constructions supply
+the boundary conditions needed for vacuum field theory.}
+
+\section{Perturbing the free kernel}
+Keep \(\hbar\) explicit and write \(H=H_0+V\), with
+\(H_0=\bm p^2/(2m)\). Lecture 17 fixed the normalization of
+\(K_0(\bm q_f,\bm q_i;T)\). Expand the interaction part of the weight:
+\begin{equation}
+ e^{-\frac{\ii}{\hbar}\int_{t_i}^{t_f}V(q(t))\dd t}
+ =1-\frac{\ii}{\hbar}\int\dd t\,V(q(t))
+ +\frac1{2!}\left(-\frac{\ii}{\hbar}\right)^2
+ \int\dd t\,\dd t'\,V(q(t))V(q(t'))+\cdots.
+\end{equation}
+Composition cuts the free path at each insertion. In one dimension,
+\begin{align}
+ K^{(1)}(q_f,t_f;q_i,t_i)
+ =-\frac{\ii}{\hbar}\int_{t_i}^{t_f}\dd t\int\dd q\,
+ K_0(q_f,t_f;q,t)V(q)K_0(q,t;q_i,t_i).                \label{eq:bornkernel}
+\end{align}
+The insertion transfers amplitude between free propagation segments.
+For the second-order term, restrict the integration to \(t_1<t_2\):
+\begin{align}
+ K^{(2)}={}&\left(-\frac{\ii}{\hbar}\right)^2
+ \int_{t_i}^{t_f}\dd t_2\int_{t_i}^{t_2}\dd t_1
+ \int\dd q_2\dd q_1\,
+ K_0(q_f,t_f;q_2,t_2)V(q_2)\nonumber\\[-2pt]
+ &\hspace{17mm}\times K_0(q_2,t_2;q_1,t_1)V(q_1)
+ K_0(q_1,t_1;q_i,t_i).
+\end{align}
+The two possible time orderings cancel the \(2!\). At order \(n\),
+either integrate over ordered times with no factorial, or over the
+whole time cube with time ordering and a factor \(1/n!\).
+
+Equivalently, the interaction-picture operator obeys
+\begin{equation}
+ U_I=\Tord\exp\!\left[-\frac{\ii}{\hbar}\int\dd t\,V_I(t)\right],
+ \qquad V_I(t)=e^{\ii H_0t/\hbar}Ve^{-\ii H_0t/\hbar}.
+\end{equation}
+This is the Dyson expansion derived by slicing histories. It is not
+necessary that \(\int V\dd t\ll\hbar\) on every path. Perturbation
+theory is an expansion of amplitudes; its accuracy depends on couplings,
+energies, duration, and possible resonances. Long times can generate
+large terms even when the potential is weak.
+
+\begin{remarkbox}[Two bodies and a fixed target]
+For a potential \(V(\bm r_1-\bm r_2)\), center-of-mass and relative
+motion separate. The relative kernel uses the reduced mass
+\(\mu=m_1m_2/(m_1+m_2)\). A fixed heavy target is the limit
+\(m_2\gg m_1\); momentum need not be conserved for the probe alone.
+\end{remarkbox}
+
+\module{Energy space and the resolvent}
+Let \(T=t_f-t_i\). The unit-source retarded inverse from Lecture 17 is
+\(G_R(T)=\theta(T)e^{-\ii HT/\hbar}/(\ii\hbar)\).
+Use the energy Fourier transform
+\begin{equation}
+ \widetilde G_R(E)=\int_{-\infty}^{\infty}\dd T\,
+ e^{\ii ET/\hbar}G_R(T),\qquad
+ G_R(T)=\int\frac{\dd E}{2\pi\hbar}
+ e^{-\ii ET/\hbar}\widetilde G_R(E).
+\end{equation}
+For an energy eigenvalue \(E_n\), damping the positive-time integral
+by \(e^{-\varepsilon T/\hbar}\) gives
+\begin{equation}
+ \frac1{\ii\hbar}\int_0^\infty\dd T\,
+ e^{\ii(E-E_n+\ii\varepsilon)T/\hbar}
+ =\frac1{E-E_n+\ii\varepsilon}.
+\end{equation}
+Thus
+\begin{equation}
+ R^+(E)\equiv\widetilde G_R(E)=(E-H+\ii0)^{-1}.        \label{eq:resolvent}
+\end{equation}
+The Fourier transform of \(\theta(T)K\), in contrast, is \(\ii\hbar\)
+times this resolvent. The prescription is fixed by positive-time
+evolution; writing a formal inverse without it leaves boundary
+conditions unspecified.
+
+For a free particle,
+\begin{equation}
+ R_0^+(E;\bm q_f,\bm q_i)=\int\frac{\dd^d p}{(2\pi\hbar)^d}
+ \frac{e^{\ii\bm p\cdot(\bm q_f-\bm q_i)/\hbar}}
+ {E-\bm p^2/(2m)+\ii0}.
+\end{equation}
+The distribution identity
+\(1/(x+\ii0)=\operatorname{PV}(1/x)-\ii\pi\delta(x)\)
+separates the off-shell principal value from the on-shell part.
+The intermediate momentum is integrated freely; it is not constrained
+to satisfy \(E=\bm p^2/(2m)\) at every insertion.
+
+The inverse-operator identity yields
+\begin{align}
+ R^+&=R_0^++R_0^+VR^+\\
+ &=R_0^++R_0^+VR_0^++R_0^+VR_0^+VR_0^++\cdots.
+                                                        \label{eq:resborn}
+\end{align}
+This is the energy-space version of the ordered kernel expansion.
+Each integration over an intermediate time has become another
+resolvent, and the interaction insertions remain in their operator order.
+
+\begin{keyidea}[Boundary conditions are part of an inverse]
+\((E-H)R=1\) has several distributional solutions on the continuous
+spectrum. The \(+\ii0\) in \eqref{eq:resolvent} selects the one obtained
+from retarded evolution, and becomes the outgoing-wave condition in
+stationary scattering.
+\end{keyidea}
+
+\module{From evolution to a scattering amplitude}
+For a localized, sufficiently short-range potential, scattering compares
+interacting motion with freely moving wave packets far before and after
+the encounter. The asymptotic free phases must be removed:
+\begin{equation}
+ S=\lim_{\substack{t_f\to+\infty\\t_i\to-\infty}}
+ e^{\ii H_0t_f/\hbar}e^{-\ii H(t_f-t_i)/\hbar}
+ e^{-\ii H_0t_i/\hbar}.                              \label{eq:smatrix}
+\end{equation}
+This limit is understood on the scattering subspace, with wave packets
+or an adiabatic switching prescription. Long-range Coulomb scattering
+needs a modification of the simplest free asymptotic description.
+A bare infinite-time limit of the Schr\"odinger-picture kernel is not
+the scattering operator.
+
+Use \(\langle\bm p|\bm p'\rangle=(2\pi\hbar)^d
+\delta^{(d)}(\bm p-\bm p')\). At first order,
+\begin{align}
+ S_{fi}^{(1)}&=-\frac{\ii}{\hbar}
+ \int_{-\infty}^{\infty}\dd t\,
+ e^{\ii(E_f-E_i)t/\hbar}\langle\bm p_f|V|\bm p_i\rangle\\
+ &=-2\pi\ii\,\delta(E_f-E_i)\widetilde V(\bm p_f-\bm p_i),\\
+ \widetilde V(\bm Q)&=\int\dd^d q\,
+ e^{-\ii\bm Q\cdot\bm q/\hbar}V(\bm q).
+\end{align}
+The time integral is \(2\pi\hbar\delta(E_f-E_i)\), so the
+\(\hbar\) cancels the vertex factor. A static target conserves the
+probe energy while absorbing momentum. The angular dependence of the
+first Born amplitude samples spatial Fourier components of the potential.
+
+Introduce a transition operator \(\mathcal T(E)\), distinct from the
+time-ordering symbol \(\Tord\):
+\begin{align}
+ \mathcal T(E)&=V+VR_0^+(E)V+\cdots=V+VR_0^+(E)\mathcal T(E),\\
+ S_{fi}&=(2\pi\hbar)^d\delta^{(d)}(\bm p_f-\bm p_i)
+ -2\pi\ii\delta(E_f-E_i)
+ \langle\bm p_f|\mathcal T(E_i)|\bm p_i\rangle.       \label{eq:transition}
+\end{align}
+For example, its second term contains
+\begin{equation}
+ \int\frac{\dd^d k}{(2\pi\hbar)^d}
+ \frac{\widetilde V(\bm p_f-\bm k)\widetilde V(\bm k-\bm p_i)}
+ {E_i-\bm k^2/(2m)+\ii0}.
+\end{equation}
+This denominator encodes propagation between insertions. It does not
+describe an observable intermediate particle violating energy
+conservation. The measurable statement is the full on-shell amplitude.
+
+\module{Imaginary time and the heat kernel}
+Continue a positive real-time interval to \(T=-\ii\tau\), with
+\(\tau>0\). Spectrally, the oscillatory factor becomes a damping factor:
+\begin{equation}
+ K_E(q_f,q_i;\tau)=\bra{q_f}e^{-H\tau/\hbar}\ket{q_i}
+ =\sum_n\psi_n(q_f)\psi_n(q_i)^*e^{-E_n\tau/\hbar}.  \label{eq:spectral}
+\end{equation}
+For a continuous spectrum the sum includes an integral. Assuming the
+Hamiltonian is bounded below, this evolution is a well-defined
+semigroup. It is not unitary and need not preserve the norm of a state.
+
+With \(t=-\ii\tau\), \(\dot q=\ii q'\), so
+\begin{equation}
+ \frac{\ii S}{\hbar}=-\frac{S_E}{\hbar},\qquad
+ S_E[q]=\int\dd\tau\left[\frac m2(q')^2+V(q)\right].
+                                                        \label{eq:euclaction}
+\end{equation}
+The potential changes sign relative to the real-time Lagrangian;
+it is added to the Euclidean kinetic term. The regulated kernel is
+\begin{equation}
+ K_E=\lim_{N\to\infty}\left(\frac{m}{2\pi\hbar a}\right)^{N/2}
+ \int\prod_{j=1}^{N-1}\dd q_j\,
+ e^{-\frac1\hbar\sum_j[\frac{m(q_{j+1}-q_j)^2}{2a}+aV(q_j)]},
+ \qquad a=\frac{\tau}{N}.
+\end{equation}
+For a real scalar potential the weight is nonnegative, when the
+regulated integral exists. The action need not itself be positive:
+shifting \(V\) by a constant changes the energy zero and multiplies
+the kernel by an overall exponential.
+
+Differentiating the operator definition gives a heat-type equation,
+\begin{equation}
+ \hbar\partial_\tau K_E
+ =\left(\frac{\hbar^2}{2m}\partial_{q_f}^2-V(q_f)\right)K_E,
+ \qquad K_E(0)=\delta(q_f-q_i).
+\end{equation}
+In particular,
+\begin{equation}
+ K_{E,0}(q_f,q_i;\tau)
+ =\left(\frac{m}{2\pi\hbar\tau}\right)^{1/2}
+ e^{-m(q_f-q_i)^2/(2\hbar\tau)}.
+\end{equation}
+Its spreading is diffusive, with variance \(\hbar\tau/m\). Imaginary
+time is an analytic and computational tool; it is not a second
+physical time coordinate. In interacting continuum theories the
+analytic continuation and the regulator require care, rather than a
+purely formal substitution into divergent expressions.
+
+\module{Thermal traces and periodic bosonic paths}
+Let \(\beta=1/(k_BT_{\rm phys})\). The thermal partition function is
+\begin{equation}
+ Z_\beta=\Tr e^{-\beta H}
+ =\int\dd q\,K_E(q,q;\beta\hbar)
+ =\int_{q(\beta\hbar)=q(0)}\D q\,e^{-S_E[q]/\hbar}.  \label{eq:thermal}
+\end{equation}
+The starting point of the loop is integrated. Fixing it would give a
+diagonal matrix element, not a trace. The circumference of the
+Euclidean time circle is \(\beta\hbar\). Periodic Fourier modes have
+\(\omega_n=2\pi n/(\beta\hbar)\).
+
+\subsection{An oscillator checks both the measure and the trace}
+For \(V(q)=m\omega^2q^2/2\), the Euclidean classical path with fixed
+endpoints is
+\begin{equation}
+ q_{\rm cl}(s)=
+ \frac{q_i\sinh[\omega(\tau-s)]+q_f\sinh(\omega s)}{\sinh(\omega\tau)}.
+\end{equation}
+Using its equation of motion, the on-shell action is the boundary
+term \(\frac m2[qq']_0^\tau\). The fluctuation determinant is
+endpoint independent. Fixing it by the short-time free limit gives
+\begin{align}
+ K_{E,\omega}(q_f,q_i;\tau)
+ &=\sqrt{\frac{m\omega}{2\pi\hbar\sinh(\omega\tau)}}\,
+ e^{-S_{E,\rm cl}/\hbar},\\
+ S_{E,\rm cl}&=\frac{m\omega}{2\sinh(\omega\tau)}
+ [(q_f^2+q_i^2)\cosh(\omega\tau)-2q_fq_i].
+\end{align}
+To determine the prefactor, insert \(K_E=\mathcal N(\tau)e^{-S_{E,\rm cl}/\hbar}\)
+into the heat equation. The classical Hamilton--Jacobi equation cancels
+the terms independent of \(\hbar\), leaving
+\[
+ \frac{\mathcal N'}{\mathcal N}
+ =-\frac1{2m}\partial_{q_f}^2S_{E,\rm cl}
+ =-\frac\omega2\coth(\omega\tau).
+\]
+Thus \(\mathcal N\propto[\sinh(\omega\tau)]^{-1/2}\); the short-time
+free limit fixes its constant to the value displayed above.
+
+Setting \(q_f=q_i=q\) and doing one ordinary Gaussian integral yields
+\begin{equation}
+ Z_\beta=\frac{1}{2\sinh(\beta\hbar\omega/2)}
+ =\frac{e^{-\beta\hbar\omega/2}}{1-e^{-\beta\hbar\omega}}.
+                                                        \label{eq:hoz}
+\end{equation}
+This agrees with \(\sum_{n\geq0}e^{-\beta\hbar\omega(n+1/2)}\),
+including the ground-state energy. A normal-ordered Hamiltonian
+\(\hbar\omega a^\dagger a\) would instead omit the numerator.
+
+\begin{keyidea}[What the classical statistical analogy means]
+A regulated Euclidean path integral resembles a statistical sum with
+local couplings between neighboring time slices. In field theory this
+adds one Euclidean coordinate to the spatial lattice. At finite
+temperature that coordinate is compact; its circumference determines
+the temperature. This analogy does not identify real-time dynamics
+with a classical equilibrium process.
+\end{keyidea}
+
+\module{Vacuum projection and Feynman boundary conditions}
+Suppose there is a unique ground state \(\ket0\) and a gap above it.
+For a trial state with \(c_0=\langle0|\chi\rangle\neq0\),
+\begin{equation}
+ e^{-H\tau/\hbar}\ket\chi
+ =e^{-E_0\tau/\hbar}
+ \left[c_0\ket0+\sum_{n>0}c_ne^{-(E_n-E_0)\tau/\hbar}\ket n\right].
+\end{equation}
+Dividing by the appropriate normalization projects onto the vacuum.
+If the vacuum is degenerate, it projects onto the ground-state
+subspace, and the surviving state depends on the boundary data.
+
+For \(\tau_2>\tau_1\), a normalized insertion formula is
+\begin{equation}
+ \lim_{L\to\infty}
+ \frac{\bra\chi e^{-H(L-\tau_2)/\hbar}q
+ e^{-H(\tau_2-\tau_1)/\hbar}q
+ e^{-H(\tau_1+L)/\hbar}\ket\chi}
+ {\bra\chi e^{-2LH/\hbar}\ket\chi}
+ =\langle0|q_E(\tau_2)q_E(\tau_1)|0\rangle,
+                                                        \label{eq:projection}
+\end{equation}
+where \(q_E(\tau)=e^{H\tau/\hbar}qe^{-H\tau/\hbar}\).
+The denominator cancels the vacuum energy and the trial-state overlap.
+It also explains why vacuum generating functionals are conventionally
+normalized to equal one at zero source.
+
+Real-time projection can be implemented by taking a long interval
+along a slightly downward-tilted contour:
+\begin{equation}
+ e^{-\ii H T(1-\ii\epsilon)/\hbar}
+ =e^{-\ii HT/\hbar}e^{-\epsilon HT/\hbar},\qquad\epsilon>0.
+\end{equation}
+Subtract \(E_0\) if convenient. First send \(T\to\infty\) at fixed
+\(\epsilon\), then remove the tilt. States with energy above \(E_0\)
+are suppressed. The resulting vacuum insertions are time ordered.
+
+For the harmonic oscillator,
+\begin{equation}
+ C_F(t)=\frac{\hbar}{2m\omega}e^{-\ii\omega|t|}
+ =\int\frac{\dd\nu}{2\pi}\,
+ \frac{\ii\hbar\,e^{-\ii\nu t}}{m(\nu^2-\omega^2+\ii0)}.
+\end{equation}
+For \(t>0\), the positive-frequency pole lies below the real axis;
+for \(t<0\), the negative-frequency pole lies above it. These are
+Feynman boundary conditions. They differ from the retarded inverse
+of a first-order Schr\"odinger operator in Section 2.
+
+The endpoint kernel, the vacuum generating functional, and the thermal
+trace use closely related actions but different boundary data. Keeping
+these three constructions distinct prevents many normalization errors.
+
+\module{Euclidean correlations and the energy gap}
+Insert an energy basis into a vacuum two-point function of a Hermitian
+operator \(O\). For \(\tau>0\), its connected part is
+\begin{equation}
+ C_{E,c}(\tau)=
+ \sum_{n>0}|\langle0|O|n\rangle|^2
+ e^{-(E_n-E_0)\tau/\hbar}.                           \label{eq:gap}
+\end{equation}
+The large-\(\tau\) decay measures the smallest excitation energy to
+which \(O\) couples. A symmetry can make the overlap with the first
+excited state vanish. It is therefore more precise to speak of the
+gap in this operator's channel. A continuum of states can add a power
+of \(\tau\) multiplying the exponential.
+
+For the oscillator coordinate, only the first excited state contributes:
+\begin{equation}
+ C_E(\tau)=\frac{\hbar}{2m\omega}e^{-\omega|\tau|},\qquad
+ m(-\partial_\tau^2+\omega^2)C_E(\tau)=\hbar\delta(\tau).
+\end{equation}
+The derivative jump at zero fixes the normalization. Fourier
+transformation gives \(\widetilde C_E(\nu)=\hbar/[m(\nu^2+\omega^2)]\).
+This is a positive inverse of the Euclidean quadratic operator.
+
+\subsection{Gaussian sources anticipate field theory}
+Write \(A_E=m(-\partial_\tau^2+\omega^2)\) and use vacuum boundary
+conditions at infinite Euclidean time. Define
+\begin{equation}
+ Z_E[J]=\frac{\int\D q\,e^{-\frac1{2\hbar}qA_Eq+
+                                    \frac1\hbar Jq}}
+ {\int\D q\,e^{-\frac1{2\hbar}qA_Eq}}
+ =\exp\!\left[\frac1{2\hbar}JA_E^{-1}J\right].
+                                                        \label{eq:gaussiansource}
+\end{equation}
+Here products include time integrations. Completing the square by
+\(q=q'+A_E^{-1}J\) proves the second equality. Derivatives with
+\(\hbar\delta/\delta J\) insert \(q\), so
+\(C_E=\hbar A_E^{-1}\). In particular,
+\begin{equation}
+ \langle\Tord_E q_1q_2q_3q_4\rangle
+ =C_{12}C_{34}+C_{13}C_{24}+C_{14}C_{23}.
+\end{equation}
+All higher Gaussian moments reduce to pairings. The logarithm of
+\(Z_E\) is quadratic, so connected moments of order greater than two
+vanish, even though the full even moments do not.
+
+At finite temperature the same differential operator acts on periodic
+functions on a circle. Its inverse is a periodic image sum of
+\(C_E\), not the infinite-line kernel above. Boundary conditions
+therefore remain part of the definition even for a Gaussian integral.
+
+\module{Euclidean saddles and tunneling}
+Euclidean variation gives
+\begin{equation}
+ m q''=V'(q),\qquad
+ \frac m2(q')^2-V(q)=\text{constant}.                \label{eq:euclmotion}
+\end{equation}
+This is formally motion in the inverted potential. It is not the
+real-time Newton equation. For two degenerate minima \(q_\pm\) with
+\(V(q_\pm)=0\), a finite-action interpolating saddle on the infinite
+line has \(q'\to0\) at both ends. Its first integral is
+\begin{equation}
+ q'=\sqrt{\frac{2V(q)}{m}},\qquad
+ S_I=\int_{q_-}^{q_+}\dd q\,\sqrt{2mV(q)}.           \label{eq:instanton}
+\end{equation}
+The reversed solution has the opposite sign for \(q'\) and the same
+action. Such Euclidean saddles are called instantons and anti-instantons.
+They provide a controlled starting point for weak tunneling when
+\(S_I/\hbar\gg1\).
+
+For the quartic double well \(V(q)=\lambda(q^2-a^2)^2\), ordinary
+perturbation theory about one minimum describes local oscillations.
+Paths connecting the wells add contributions proportional to
+\(e^{-S_I/\hbar}\). The prefactor requires a fluctuation determinant.
+Translations of the instanton center are a zero mode; its integration
+must replace a naive zero eigenvalue in that determinant.
+
+In a dilute-instanton regime the leading splitting has the form
+\begin{equation}
+ \Delta E\simeq2\hbar\kappa e^{-S_I/\hbar},
+\end{equation}
+where \(\kappa\) has units of inverse time and contains the fluctuation
+factor. Summing many well-separated transitions is needed to obtain
+the long-time spectrum. Neither the instanton exponential alone nor
+one finite-time saddle is the exact double-well path integral. Problem
+Set 6 asks for the trajectory and action, and supplies this framework
+without requiring the determinant calculation.
+
+\subsection*{Questions to check understanding}
+\begin{enumerate}
+\item Why does restricting insertion times remove a factorial?
+\item Which factors of \(\hbar\) enter the energy delta function in
+\eqref{eq:transition}?
+\item Why must free evolution be removed before taking a scattering limit?
+\item What changes between fixed endpoints, a vacuum projection, and a trace?
+\item How do the short-time and large-time limits test the oscillator kernel?
+\item Why can a Euclidean two-point function miss the lowest excitation?
+\end{enumerate}
+The scalar field will be a collection of coupled oscillators, with
+the same Gaussian, boundary-condition, and source machinery.
+\end{document}

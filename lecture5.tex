@@ -1,0 +1,659 @@
+\documentclass[11pt]{article}
+
+\usepackage[letterpaper,margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb,mathtools,bm}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{hyperref}
+\usepackage[most]{tcolorbox}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{parskip}
+
+\definecolor{qftblue}{HTML}{245A8D}
+\definecolor{qftgreen}{HTML}{2F6B4F}
+\definecolor{qftred}{HTML}{A23B3B}
+\definecolor{qftgray}{HTML}{F4F6F8}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=qftblue,
+  urlcolor=qftblue,
+  citecolor=qftgreen,
+  pdftitle={PHYS 662 Lecture 5: Lagrangians and the Action Principle},
+  pdfauthor={Nima Lashkari}
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{PHYS 662: Quantum Field Theory I}
+\rhead{Lecture 5}
+\cfoot{\thepage}
+\setlength{\headheight}{14pt}
+
+\titleformat{\section}{\Large\bfseries\color{qftblue}}{\thesection.}{0.6em}{}
+\titleformat{\subsection}{\large\bfseries\color{qftgreen}}{\thesubsection}{0.6em}{}
+\titleformat{\subsubsection}{\normalsize\bfseries\color{qftred}}{\thesubsubsection}{0.6em}{}
+
+\setlist[itemize]{leftmargin=2em,itemsep=0.25em,topsep=0.4em}
+\setlist[enumerate]{leftmargin=2em,itemsep=0.25em,topsep=0.4em}
+
+\newcommand{\dd}{\mathrm{d}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Lag}{\mathcal{L}}
+\newcommand{\cM}{\mathcal{M}}
+\newcommand{\SO}{\mathrm{SO}}
+\newcommand{\OO}{\mathrm{O}}
+
+\newtcolorbox{keyidea}[1][]{
+  enhanced, breakable, colback=qftgray, colframe=qftblue,
+  boxrule=0.8pt, arc=1.5mm, title={#1}, fonttitle=\bfseries,
+  coltitle=white
+}
+\newtcolorbox{remarkbox}[1][]{
+  enhanced, breakable, colback=white, colframe=qftgreen,
+  boxrule=0.7pt, arc=1.5mm, title={#1}, fonttitle=\bfseries,
+  coltitle=white
+}
+\newtcolorbox{warningbox}[1][]{
+  enhanced, breakable, colback=white, colframe=qftred,
+  boxrule=0.7pt, arc=1.5mm, title={#1}, fonttitle=\bfseries,
+  coltitle=white
+}
+
+\begin{document}
+\pagenumbering{gobble}
+\begin{titlepage}
+\centering
+\vspace*{1.2in}
+{\scshape\Large PHYS 662 --- Quantum Field Theory I\par}
+\vspace{0.35in}
+{\Huge\bfseries\color{qftblue} Lecture 5\par}
+\vspace{0.15in}
+{\LARGE\bfseries Lagrangians and the Action Principle\par}
+\vspace{0.12in}
+{\Large\color{qftgreen} From Particle Mechanics to Local Field Theory\par}
+\vspace{0.6in}
+{\large Nima Lashkari\par}
+{\large Fall 2026\par}
+\vfill
+\begin{minipage}{0.86\textwidth}
+\small
+This lecture reformulates classical dynamics in terms of an action. After a
+brief review of Lorentz covariance, we derive the Euler--Lagrange equations
+for finitely many coordinates, identify the role of endpoint terms, and
+connect time-translation symmetry to energy conservation. We then pass from
+particle trajectories to local fields, define functional derivatives, and
+derive the field-theory Euler--Lagrange equations.
+
+\medskip
+Course page: \url{https://nimalashkari.com/quantum-field-theory-2026-part-i/}
+\end{minipage}
+\vspace{0.5in}
+\end{titlepage}
+
+\pagenumbering{roman}
+\tableofcontents
+\newpage
+\pagenumbering{arabic}
+
+\section*{Roadmap}
+\addcontentsline{toc}{section}{Roadmap}
+
+The action principle packages dynamics, symmetry, conservation laws, and
+locality into a single object. The progression of the slides is
+\begin{enumerate}
+  \item review Minkowski geometry, Lorentz transformations, and covariant
+  fields;
+  \item formulate stationary action for a mechanical trajectory;
+  \item derive the Euler--Lagrange equations and isolate the endpoint term;
+  \item introduce canonical momentum, the Hamiltonian, and energy
+  conservation;
+  \item replace particle coordinates by fields and a mechanical Lagrangian by
+  a local Lagrangian density;
+  \item define functional derivatives from a regulated set of variables; and
+  \item derive the Euler--Lagrange field equations.
+\end{enumerate}
+
+Two distinctions will be important throughout. First, a classical solution
+makes the action \emph{stationary}; it need not minimize it. Second, locality
+means that the Lagrangian density at a point depends on fields and finitely
+many derivatives at that same point, even though the action is a functional
+of the complete field configuration.
+
+\section{Relativity and covariance: a compact review}
+
+\subsection{Minkowski vectors and the invariant metric}
+
+Let spacetime have one time and \(d\) spatial dimensions, so \(D=d+1\). We use
+units \(c=1\), coordinates
+\begin{equation}
+  x^\mu=(x^0,\bm{x})=(t,\bm{x}),
+\end{equation}
+and the mostly-minus metric
+\begin{equation}
+  \eta_{\mu\nu}=\operatorname{diag}(1,-1,\ldots,-1).
+  \label{eq:metric}
+\end{equation}
+Indices are raised and lowered with \(\eta\):
+\begin{equation}
+  v_\mu=\eta_{\mu\nu}v^\nu,
+  \qquad
+  \eta^{\mu\rho}\eta_{\rho\nu}=\delta^\mu{}_\nu.
+\end{equation}
+Thus, if \(v^\mu=(v^0,\bm v)\), then
+\begin{equation}
+  v_\mu=(v^0,-\bm v),
+  \qquad
+  v^2:=v_\mu v^\mu=(v^0)^2-|\bm v|^2.
+  \label{eq:MinkowskiNorm}
+\end{equation}
+For two vectors,
+\begin{equation}
+  v\cdot w:=\eta_{\mu\nu}v^\mu w^\nu
+  =v^0w^0-\bm v\cdot\bm w.
+\end{equation}
+For four-momentum,
+\begin{equation}
+  p^\mu=(E,\bm p),
+  \qquad
+  p_\mu=(E,-\bm p),
+  \qquad
+  p^2=E^2-|\bm p|^2=m^2.
+  \label{eq:massshell}
+\end{equation}
+
+\begin{warningbox}[Index placement carries a sign]
+With the metric in Eq.~\eqref{eq:metric}, the statement
+\(p_\mu=(E,\bm p)\) is incorrect: those are the components of \(p^\mu\).
+Lowering the index reverses the spatial signs.
+\end{warningbox}
+
+\subsection{Lorentz transformations and the Poincare group}
+
+A Lorentz transformation satisfies
+\begin{equation}
+  \Lambda^T\eta\Lambda=\eta,
+  \qquad \Lambda\in\OO(1,d).
+  \label{eq:Lorentz}
+\end{equation}
+It preserves Eq.~\eqref{eq:MinkowskiNorm}. A spatial rotation lies in the
+\(\SO(d)\) subgroup. A boost in the \(x^1\) direction can be written
+\begin{equation}
+  \begin{pmatrix}x'^0\\x'^1\end{pmatrix}
+  =
+  \begin{pmatrix}
+    \cosh\chi&-\sinh\chi\\
+    -\sinh\chi&\cosh\chi
+  \end{pmatrix}
+  \begin{pmatrix}x^0\\x^1\end{pmatrix},
+  \quad
+  \beta=\tanh\chi,
+  \quad
+  \gamma=\cosh\chi.
+  \label{eq:boost}
+\end{equation}
+Changing both off-diagonal signs corresponds to \(\chi\mapsto-\chi\); either
+choice is valid if the velocity convention is stated.
+
+Rotations and boosts connected continuously to the identity generate
+\(\SO^+(1,d)\), not every disconnected component of \(\OO(1,d)\). Adding
+translations gives the Poincare group
+\begin{equation}
+  \operatorname{ISO}(1,d)
+  =\R^{1,d}\rtimes\OO(1,d),
+  \label{eq:Poincare}
+\end{equation}
+or \(\R^{1,d}\rtimes\SO^+(1,d)\) when only the identity component is intended.
+The product is semidirect because Lorentz transformations act on translation
+vectors.
+
+\subsection{Derivatives and covariant fields}
+
+The partial derivative is a covector,
+\begin{equation}
+  \partial_\mu:=\frac{\partial}{\partial x^\mu},
+  \qquad
+  \Box:=\partial_\mu\partial^\mu
+  =\partial_t^2-\nabla^2.
+\end{equation}
+For a passive Poincare transformation \(x'=\Lambda x+a\), a scalar obeys
+\begin{equation}
+  \phi'(x')=\phi(x)
+  =\phi\!\left(\Lambda^{-1}(x'-a)\right),
+  \label{eq:scalarPassive}
+\end{equation}
+whereas a contravariant vector obeys
+\begin{equation}
+  V'^\mu(x')=\Lambda^\mu{}_\nu V^\nu(x).
+  \label{eq:vectorPassive}
+\end{equation}
+More generally, for a multiplet in a representation \(S(\Lambda)\),
+\begin{equation}
+  \Phi'(x')=S(\Lambda)\Phi(x).
+  \label{eq:generalPassive}
+\end{equation}
+The corresponding active transformation at a fixed coordinate is
+\begin{equation}
+  (U(\Lambda,a)\Phi)(x)
+  =S(\Lambda)\Phi\!\left(\Lambda^{-1}(x-a)\right).
+  \label{eq:generalActive}
+\end{equation}
+
+\begin{remarkbox}[Covariance versus invariance]
+Coordinates and field components generally change. A law is covariant when
+the transformed fields satisfy equations of the same form. An action is
+invariant when its numerical value is unchanged. These related statements
+should not be conflated with the claim that every component is unchanged.
+\end{remarkbox}
+
+\section{The action principle in particle mechanics}
+
+\subsection{The action is a functional of a path}
+
+For generalized coordinates \(q^i(t)\), a path connects prescribed endpoints
+over \([t_i,t_f]\). The action is
+\begin{equation}
+  S[q]=\int_{t_i}^{t_f}\dd t\,L(q^i,\dot q^i,t).
+  \label{eq:mechanicalAction}
+\end{equation}
+It is a \emph{functional}: its input is the entire path, and its output is a
+number. A neighboring path is
+\begin{equation}
+  q^i(t)\longmapsto q^i(t)+\varepsilon\eta^i(t),
+\end{equation}
+where \(\eta^i\) is arbitrary in the interior. For the standard fixed-endpoint
+problem,
+\begin{equation}
+  \eta^i(t_i)=\eta^i(t_f)=0.
+  \label{eq:fixedendpoints}
+\end{equation}
+The physical path obeys
+\begin{equation}
+  \left.\frac{\dd}{\dd\varepsilon}
+  S[q+\varepsilon\eta]\right|_{\varepsilon=0}=0
+  \qquad\text{for all allowed }\eta.
+  \label{eq:stationary}
+\end{equation}
+
+\begin{warningbox}[Stationary, not necessarily least]
+Equation~\eqref{eq:stationary} states stationarity. A classical path can be a
+local minimum, a local maximum, or a saddle point of the action. The
+traditional phrase principle of least action is mathematically too strong.
+\end{warningbox}
+
+\subsection{Variation and the Euler--Lagrange equations}
+
+Varying Eq.~\eqref{eq:mechanicalAction} gives
+\begin{align}
+  \delta S
+  &=\int_{t_i}^{t_f}\dd t\,
+  \left(
+    \frac{\partial L}{\partial q^i}\delta q^i
+    +\frac{\partial L}{\partial\dot q^i}\delta\dot q^i
+  \right)\notag\\
+  &=\int_{t_i}^{t_f}\dd t\,
+  \left[
+    \frac{\partial L}{\partial q^i}
+    -\frac{\dd}{\dd t}
+      \left(\frac{\partial L}{\partial\dot q^i}\right)
+  \right]\delta q^i
+  +\left[
+    \frac{\partial L}{\partial\dot q^i}\delta q^i
+  \right]_{t_i}^{t_f}.
+  \label{eq:variationMechanics}
+\end{align}
+Repeated configuration indices are summed. Under
+Eq.~\eqref{eq:fixedendpoints}, the endpoint term vanishes. Since the interior
+variation is arbitrary,
+\begin{equation}
+  \boxed{
+  \frac{\dd}{\dd t}\left(\frac{\partial L}{\partial\dot q^i}\right)
+  -\frac{\partial L}{\partial q^i}=0.}
+  \label{eq:ELmechanics}
+\end{equation}
+
+\subsection{Endpoint terms and well-posed variations}
+
+Adding a total derivative,
+\begin{equation}
+  L'(q,\dot q,t)=L(q,\dot q,t)+\frac{\dd F(q,t)}{\dd t},
+\end{equation}
+changes the action only by
+\begin{equation}
+  S'[q]=S[q]+F(q(t_f),t_f)-F(q(t_i),t_i).
+\end{equation}
+It therefore leaves Eq.~\eqref{eq:ELmechanics} unchanged for fixed endpoints.
+More general boundary terms are allowed only together with boundary
+conditions that make the variational problem well posed. For a first-order
+Lagrangian, a boundary term depending on \(\dot q\) generally introduces
+\(\delta\dot q\) at the endpoint and cannot simply be ignored.
+
+\section{Momentum, energy, and the boundary one-form}
+
+\subsection{Canonical momentum and the Legendre transform}
+
+Define the canonical momentum
+\begin{equation}
+  p_i:=\frac{\partial L}{\partial\dot q^i}.
+  \label{eq:momentum}
+\end{equation}
+If the Hessian \(\partial^2L/\partial\dot q^i\partial\dot q^j\) is invertible,
+the velocities can be expressed in terms of \((q,p,t)\), and the Hamiltonian is
+the Legendre transform
+\begin{equation}
+  H(q,p,t)=p_i\dot q^i-L(q,\dot q,t).
+  \label{eq:Hamiltonian}
+\end{equation}
+Singular Lagrangians require a constrained Hamiltonian analysis; this is the
+generic situation in gauge theory.
+
+Along an Euler--Lagrange trajectory,
+\begin{align}
+  \frac{\dd H}{\dd t}
+  &=\dot p_i\dot q^i+p_i\ddot q^i
+  -\frac{\partial L}{\partial q^i}\dot q^i
+  -\frac{\partial L}{\partial\dot q^i}\ddot q^i
+  -\frac{\partial L}{\partial t}\notag\\
+  &=-\frac{\partial L}{\partial t}.
+  \label{eq:energyidentity}
+\end{align}
+Hence \(\partial L/\partial t=0\) implies \(\dd H/\dd t=0\). This is the
+time-translation case of Noether's theorem.
+
+\subsection{Noether's theorem: a preview}
+
+Suppose an infinitesimal transformation
+\(\delta q^i=\varepsilon\Delta q^i\) changes the Lagrangian by a total
+derivative,
+\begin{equation}
+  \delta L=\varepsilon\frac{\dd F}{\dd t}.
+\end{equation}
+Then, on shell,
+\begin{equation}
+  Q=p_i\Delta q^i-F,
+  \qquad
+  \frac{\dd Q}{\dd t}=0.
+  \label{eq:NoetherMechanics}
+\end{equation}
+Thus it is invariance of the action, possibly up to an endpoint term, that
+produces a conserved charge.
+
+\subsection{The endpoint term and symplectic geometry}
+
+Without setting endpoint variations to zero, Eq.~\eqref{eq:variationMechanics}
+contains
+\begin{equation}
+  \left[p_i\delta q^i\right]_{t_i}^{t_f}.
+\end{equation}
+The phase-space one-form
+\begin{equation}
+  \vartheta=p_i\dd q^i
+  \label{eq:symplecticPotential}
+\end{equation}
+is called the canonical one-form or symplectic potential. Its exterior
+derivative determines the symplectic two-form; with our convention,
+\begin{equation}
+  \omega=-\dd\vartheta=\dd q^i\wedge\dd p_i.
+\end{equation}
+The boundary contribution is the evaluation of \(\vartheta\) on the endpoint
+variation, not itself the symplectic two-form.
+
+\section{From particle coordinates to local fields}
+
+\subsection{Fields and the principle of locality}
+
+A mechanical system has finitely many coordinates \(q^i(t)\). A field theory
+has functions \(\phi^a(x)\) on spacetime; the label \(a\) may denote an
+internal multiplet, a spacetime tensor index, or both. The local action is
+\begin{equation}
+  S[\phi]=\int_\cM \dd^D x\,
+  \Lag\bigl(\phi^a(x),\partial_\mu\phi^a(x),x\bigr),
+  \qquad D=d+1.
+  \label{eq:fieldAction}
+\end{equation}
+Locality means that the integrand at \(x\) depends on the fields and a finite
+number of derivatives at \(x\), rather than on independent fields at distant
+points. Higher derivatives can be included systematically in an effective
+field theory.
+
+For Lorentz invariance, \(\Lag\) should be a Lorentz scalar (more precisely, a
+scalar density on a general spacetime), with all indices contracted. For a
+Lorentz transformation, \(|\det\Lambda|=1\), so \(\dd^D x\) is invariant.
+
+\begin{keyidea}[Local density, global functional]
+The action is global because it integrates over all spacetime. Its
+construction is local because each contribution is built from fields and
+derivatives evaluated at one point.
+\end{keyidea}
+
+\subsection{Dimensional analysis}
+
+In natural units \(\hbar=c=1\), the action is dimensionless. If mass dimension
+is denoted by square brackets,
+\begin{equation}
+  [\dd^D x]=-D,
+  \qquad
+  [\partial_\mu]=1,
+  \qquad
+  [\Lag]=D.
+  \label{eq:dimensions}
+\end{equation}
+For a canonically normalized real scalar kinetic term
+\begin{equation}
+  \Lag_{\rm kin}=\frac12\partial_\mu\phi\,\partial^\mu\phi,
+\end{equation}
+one finds
+\begin{equation}
+  [\phi]=\frac{D-2}{2}.
+  \label{eq:scalardimension}
+\end{equation}
+Dimensions depend on the unit convention; without \(\hbar=c=1\), the action
+has dimensions of angular momentum rather than zero.
+
+\section{Functional derivatives}
+
+\subsection{From ordinary derivatives to functional derivatives}
+
+For an ordinary function \(f:\R^n\to\R\),
+\begin{equation}
+  n^i\partial_i f(x)
+  =\lim_{\varepsilon\to0}
+  \frac{f(x+\varepsilon n)-f(x)}{\varepsilon}.
+\end{equation}
+A functional \(F[\phi]\) assigns a number to an entire function. Its first
+variation defines the functional derivative:
+\begin{equation}
+  \delta F[\phi]
+  =\int \dd^D x\,
+  \frac{\delta F}{\delta\phi^a(x)}\,
+  \delta\phi^a(x).
+  \label{eq:functionalDerivativeDefinition}
+\end{equation}
+Equivalently,
+\begin{equation}
+  \frac{\delta\phi^a(x)}{\delta\phi^b(y)}
+  =\delta^a{}_b\,\delta^{(D)}(x-y).
+  \label{eq:functionalDelta}
+\end{equation}
+
+A lattice regulator makes this definition concrete. If cells have volume
+\(\Delta V\) and \(\phi_i\approx\phi(x_i)\), then
+\begin{equation}
+  \delta F=\sum_i\frac{\partial F}{\partial\phi_i}\delta\phi_i
+  \longrightarrow
+  \int\dd^D x\,
+  \frac{\delta F}{\delta\phi(x)}\delta\phi(x),
+\end{equation}
+so
+\begin{equation}
+  \frac{\partial F}{\partial\phi_i}
+  \simeq \Delta V\,
+  \left.\frac{\delta F}{\delta\phi(x)}\right|_{x=x_i}.
+  \label{eq:latticeFunctionalDerivative}
+\end{equation}
+This cell-volume factor accompanies the transition from a Kronecker delta to
+a Dirac delta.
+
+\subsection{Examples}
+
+For the linear functional
+\begin{equation}
+  F[f]=\int\dd^D y\,f(y),
+\end{equation}
+Eq.~\eqref{eq:functionalDelta} gives
+\begin{equation}
+  \frac{\delta F}{\delta f(x)}=1.
+\end{equation}
+For an integral kernel,
+\begin{equation}
+  F_x[f]=\int\dd^D y\,G(x,y)f(y),
+  \qquad
+  \frac{\delta F_x}{\delta f(z)}=G(x,z).
+\end{equation}
+Finally, in one dimension,
+\begin{equation}
+  F[\phi]=\int\dd x\,(\partial_x\phi)^2
+\end{equation}
+has variation
+\begin{align}
+  \delta F
+  &=2\int\dd x\,\partial_x\phi\,\partial_x\delta\phi\notag\\
+  &=-2\int\dd x\,(\partial_x^2\phi)\delta\phi
+  +\left[2\partial_x\phi\,\delta\phi\right]_{\partial\cM}.
+\end{align}
+For variations that vanish at the boundary,
+\begin{equation}
+  \frac{\delta F}{\delta\phi(x)}=-2\partial_x^2\phi(x).
+  \label{eq:derivativeFunctional}
+\end{equation}
+
+\begin{remarkbox}[General versus local functionals]
+A generic functional need not possess a convergent polynomial expansion in
+discretized field values. When an expansion exists, locality restricts its
+kernels to coincident points and their derivatives. A kernel \(G(x,y)\) with
+support far from \(x=y\) describes a nonlocal functional.
+\end{remarkbox}
+
+\section{Euler--Lagrange equations for fields}
+
+Consider the first-derivative action in Eq.~\eqref{eq:fieldAction}. Its
+variation is
+\begin{align}
+  \delta S
+  &=\int_\cM\dd^D x\,
+  \left[
+    \frac{\partial\Lag}{\partial\phi^a}\delta\phi^a
+    +\frac{\partial\Lag}{\partial(\partial_\mu\phi^a)}
+      \partial_\mu\delta\phi^a
+  \right]\notag\\
+  &=\int_\cM\dd^D x\,
+  \left[
+    \frac{\partial\Lag}{\partial\phi^a}
+    -\partial_\mu\left(
+      \frac{\partial\Lag}{\partial(\partial_\mu\phi^a)}
+    \right)
+  \right]\delta\phi^a\notag\\
+  &\quad+
+  \int_{\partial\cM}\dd\Sigma_\mu\,
+  \frac{\partial\Lag}{\partial(\partial_\mu\phi^a)}
+  \delta\phi^a.
+  \label{eq:variationField}
+\end{align}
+If variations vanish on \(\partial\cM\), or if suitable boundary conditions
+cancel the last term, stationarity gives
+\begin{equation}
+  \boxed{
+  \frac{\partial\Lag}{\partial\phi^a}
+  -\partial_\mu\left(
+    \frac{\partial\Lag}{\partial(\partial_\mu\phi^a)}
+  \right)=0.}
+  \label{eq:ELfield}
+\end{equation}
+Equivalently, the bulk functional derivative is
+\begin{equation}
+  \frac{\delta S}{\delta\phi^a(x)}
+  =
+  \frac{\partial\Lag}{\partial\phi^a}
+  -\partial_\mu\left(
+    \frac{\partial\Lag}{\partial(\partial_\mu\phi^a)}
+  \right).
+\end{equation}
+
+\subsection{Example: a real scalar field}
+
+For
+\begin{equation}
+  \Lag
+  =\frac12\partial_\mu\phi\,\partial^\mu\phi
+  -\frac12m^2\phi^2-V_{\rm int}(\phi),
+  \label{eq:scalarLag}
+\end{equation}
+the derivatives are
+\begin{equation}
+  \frac{\partial\Lag}{\partial\phi}
+  =-m^2\phi-V_{\rm int}'(\phi),
+  \qquad
+  \frac{\partial\Lag}{\partial(\partial_\mu\phi)}
+  =\partial^\mu\phi.
+\end{equation}
+Equation~\eqref{eq:ELfield} becomes
+\begin{equation}
+  (\Box+m^2)\phi+V_{\rm int}'(\phi)=0.
+  \label{eq:scalarEOM}
+\end{equation}
+This example displays the complete logic of the lecture: a local scalar
+Lagrangian produces a covariant differential equation through stationary
+action.
+
+\section{Questions to think about}
+
+\begin{enumerate}
+  \item Why does lowering the index of \(p^\mu\) change the signs of its
+  spatial components?
+  \item Why is the Poincaré group a semidirect rather than a direct product?
+  \item Give an example for which a stationary trajectory is not a local
+  minimum of the action.
+  \item Which boundary condition makes the endpoint term in
+  Eq.~\eqref{eq:variationMechanics} vanish?
+  \item Why does adding \(\dd F/\dd t\) leave the bulk equations unchanged?
+  \item What assumption is needed to solve \(p_i=\partial L/\partial\dot q^i\)
+  for the velocities?
+  \item How does Eq.~\eqref{eq:energyidentity} encode time-translation
+  symmetry?
+  \item In what sense is \(S[\phi]\) global while \(\Lag(x)\) is local?
+  \item Why does the lattice definition of a functional derivative contain a
+  cell-volume factor?
+  \item What boundary data are needed in deriving Eq.~\eqref{eq:ELfield}?
+\end{enumerate}
+
+\section*{Summary}
+\addcontentsline{toc}{section}{Summary}
+
+Minkowski geometry organizes relativistic covariance through an invariant
+metric. Lorentz transformations preserve that metric, and their semidirect
+product with translations is the Poincare group. Scalars, vectors, and
+general multiplets transform through representations of this spacetime
+symmetry.
+
+In mechanics, the action is a functional of a path. Requiring its first
+variation to vanish for all allowed interior variations gives the
+Euler--Lagrange equations. Integration by parts separates the bulk equations
+from an endpoint one-form. The Legendre transform introduces canonical
+momenta and the Hamiltonian, while continuous variational symmetries lead to
+conserved quantities.
+
+In field theory, finitely many coordinates are replaced by functions on
+spacetime, and the action is the integral of a local Lagrangian density.
+Functional derivatives are the continuum analogues of partial derivatives
+with respect to regulated field values. Applying them to a local action
+produces the field-theory Euler--Lagrange equations together with a boundary
+term that records the required boundary conditions.
+
+\end{document}

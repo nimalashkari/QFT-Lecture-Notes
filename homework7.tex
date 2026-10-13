@@ -1,0 +1,304 @@
+\documentclass[11pt]{article}
+\usepackage[letterpaper,margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern,microtype}
+\usepackage{amsmath,amssymb,mathtools,bm,slashed}
+\usepackage{xcolor,enumitem,booktabs,array,needspace}
+\usepackage[most]{tcolorbox}
+\usepackage{fancyhdr,titlesec,parskip,hyperref}
+\definecolor{qftblue}{HTML}{245A8D}
+\definecolor{qftgreen}{HTML}{2F6B4F}
+\definecolor{qftgray}{HTML}{F4F6F8}
+\hypersetup{colorlinks=true,linkcolor=qftblue,urlcolor=qftblue,pdfauthor={Nima Lashkari}}
+\pagestyle{fancy}\fancyhf{}
+\lhead{PHYS 662: Quantum Field Theory I}\cfoot{\thepage}
+\setlength{\headheight}{14pt}
+\titleformat{\section}{\Large\bfseries\color{qftblue}}{\thesection.}{0.6em}{}
+\titleformat{\subsection}{\large\bfseries\color{qftgreen}}{\thesubsection}{0.6em}{}
+\setlist[enumerate]{leftmargin=2em,itemsep=0.25em,topsep=0.35em}
+\setlist[itemize]{leftmargin=2em,itemsep=0.2em,topsep=0.35em}
+\newcommand{\dd}{\mathrm d}
+\newcommand{\ii}{\mathrm i}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\tr}{\operatorname{tr}}
+\newcommand{\Tr}{\operatorname{Tr}}
+\newcommand{\diag}{\operatorname{diag}}
+\newcommand{\Lag}{\mathcal L}
+\newcommand{\D}{\mathcal D}
+\newcommand{\vac}{\lvert0\rangle}
+\newcommand{\vbra}{\langle0\rvert}
+\newcommand{\Tord}{\mathrm T}
+\newcommand{\ket}[1]{\lvert#1\rangle}
+\newcommand{\bra}[1]{\langle#1\rvert}
+\newtcolorbox{keyidea}[1][]{enhanced,breakable,colback=qftgray,colframe=qftblue,
+ boxrule=0.7pt,arc=1.5mm,title={#1},fonttitle=\bfseries,coltitle=white}
+\newtcolorbox{remarkbox}[1][]{enhanced,breakable,colback=white,colframe=qftgreen,
+ boxrule=0.6pt,arc=1.5mm,title={#1},fonttitle=\bfseries,coltitle=white}
+\newcommand{\intp}{\int\!\frac{\dd^4p}{(2\pi)^4}}
+\newcommand{\MSbar}{\overline{\mathrm{MS}}}
+\newcommand{\module}[1]{\clearpage\section{#1}}
+\rhead{Homework Set 7}
+\hypersetup{pdftitle={PHYS 662 Homework Set 7: Interactions and One Loop}}
+\newlist{parts}{enumerate}{1}
+\setlist[parts]{label=\textbf{(\alph*)},leftmargin=2.3em,itemsep=0.65em,topsep=0.5em}
+\newcommand{\problem}[2]{\clearpage\section*{\color{qftblue}Problem #1: #2}}
+\newcommand{\connection}[1]{{\small\textit{Lecture connection: #1}\par}\medskip}
+\begin{document}
+\begin{center}
+{\scshape\Large PHYS 662 --- Quantum Field Theory I\par}
+\vspace{0.3em}{\Huge\bfseries\color{qftblue}Homework Set 7\par}
+\vspace{0.3em}{\large Interactions and Scalar Theory at One Loop\par}
+\vspace{0.3em}{\large Lectures 21--22 \quad Fall 2026\par}
+\end{center}\medskip
+\textbf{Name:} \rule{0.43\textwidth}{0.4pt}\hfill
+\textbf{Due:} \rule{0.24\textwidth}{0.4pt}
+
+\textbf{Instructions.} Complete all four problems, worth 25 points each.
+Show the derivation of each requested result, distinguish connected
+from 1PI graphs, and display symmetry factors. Label external legs
+and loop momenta on diagrams. Retain the Feynman prescription through
+analytic continuation. Results from earlier parts may be reused.
+
+\begin{keyidea}[Common conventions]
+Use \(\hbar=c=1\), \(\eta=\diag(1,-1,-1,-1)\), the symmetric massive
+vacuum, and
+\[
+ \Lag=\tfrac12(\partial\phi)^2-\tfrac12m^2\phi^2-\tfrac{\lambda}{4!}\phi^4,
+ \quad m^2>0,\quad\lambda>0,\qquad
+ D_F(p)=\frac{\ii}{p^2-m^2+\ii0}.
+\]
+The line already includes \(\ii\). Set \(Z[0]=1\),
+\(W[J]=-\ii\log Z[J]\), and
+\(G_n=\left.\ii^{-n}\delta_J^n Z\right|_0\).
+Use \(Z_0[J]=\exp(-\tfrac12 JD_FJ)\), with spacetime integrations
+implicit. Regulate coincident contractions before manipulating them.
+
+For loop calculations use \(d=4-2\eps\) and
+\(1/\bar\eps=1/\eps-\gamma_E+\log4\pi\). The counterterms are
+\[
+ \Lag_{\rm ct}=\frac{\delta Z_\phi}{2}(\partial\phi)^2
+ -\frac{\delta m^2}{2}\phi^2
+ -\frac{\mu^{2\eps}\delta\lambda}{4!}\phi^4.
+\]
+Write a two-point insertion as \(-\ii\Sigma_R\), where
+\(\Sigma_R=\Sigma_{\rm loop}+\delta m^2-\delta Z_\phi p^2\).
+Use \(M\) for the physical pole mass and \(m(\mu)\) for the
+\(\MSbar\) mass. Remove the overall \(\mu^{2\eps}\) before quoting
+the four-dimensional four-point amplitude.
+
+Normalize particle states by
+\(\langle\bm p|\bm q\rangle=2E_{\bm p}(2\pi)^3\delta^{(3)}(\bm p-\bm q)\),
+and define \(\langle f|S-1|i\rangle=\ii(2\pi)^4
+\delta^{(4)}(P_f-P_i)\mathcal M_{fi}\).
+\end{keyidea}
+
+\textbf{Coverage}
+\begin{enumerate}
+\item Source perturbation theory, normalization, and connected functions.
+\item Diagram counting, momentum-space rules, and amputation.
+\item The tadpole, regulators, and mass renormalization.
+\item The bubble, coupling renormalization, running, and unitarity.
+\end{enumerate}
+Each problem is cumulative. The six-point tree in Problem 2 extends
+the lecture's four-point examples without introducing a new interaction.
+
+\problem{1}{From the Gaussian to interacting correlators}
+\connection{Lecture 21, Sections 1--5.}
+Let \(f(z)=\int\dd^4x\,D_F(z-x)J(x)\). In this problem do not
+evaluate the divergent constant \(D_F(0)\); keep the same regulator
+in numerator and denominator.
+\begin{parts}
+\item \textbf{(4 points)} Starting from the normalized interacting
+path integral, derive
+\[
+ Z[J]=\frac{\exp\!\left[-\dfrac{\ii\lambda}{4!}\int\dd^4z
+ (\delta/\ii\delta J(z))^4\right]Z_0[J]}
+ {\left.\exp\!\left[-\dfrac{\ii\lambda}{4!}\int\dd^4z
+ (\delta/\ii\delta J(z))^4\right]Z_0[J]\right|_{J=0}}.
+\]
+Explain why the denominator has no source dependence and why it must
+be expanded to the same order as the numerator.
+
+\item \textbf{(5 points)} Compute
+\(Z_0^{-1}(\delta/\ii\delta J(z))^4Z_0\) explicitly. Identify the
+terms with zero, two, and four sources and explain their combinatorial
+coefficients. Expand the ratio through \(O(\lambda)\) and demonstrate
+the cancellation of the source-independent vacuum term.
+
+\item \textbf{(5 points)} Extract \(G_2(x,y)\) through
+\(O(\lambda)\). Check it by applying \(\Box_x+m^2\) and using
+\[
+ (\Box_x+m^2)G_2(x,y)+\frac{\lambda}{3!}G_4(x,x,x,y)
+ =-\ii\delta^{(4)}(x-y)
+\]
+with the free value of \(G_4\) in the second term. Track every factor
+of \(\ii\), including the contact term.
+
+\item \textbf{(4 points)} Extract the connected four-point function
+at its leading nonzero order. Write the full four-point function
+through \(O(\lambda)\) as its connected part plus three products of
+full two-point functions, expanded consistently. Explain why
+normalizing \(Z\) does not remove these products.
+
+\item \textbf{(4 points)} Count contractions directly for the
+one-vertex vacuum graph, the two-point tadpole, and the four-point
+tree. Divide by the interaction factorial and give the three symmetry
+factors. Keep the external labels fixed throughout the count.
+
+\item \textbf{(3 points)} Show that
+\(\left.\delta_J^nW\right|_0=\ii^{n-1}G_{n,c}\).
+Use \(n=4\) to explain the subtraction in part (d). State why the
+exact one-point Schwinger--Dyson equation does not generally imply
+\(V'(\langle\phi\rangle)=0\), where
+\(V(\phi)=m^2\phi^2/2+\lambda\phi^4/4!\).
+\end{parts}
+
+\problem{2}{Counting diagrams and amputating external legs}
+\connection{Lecture 21, Sections 4--8.}
+Use distinct labels for all external momenta and take them all incoming.
+A reduced momentum-space correlator has its overall
+\((2\pi)^4\delta^{(4)}(\sum_a p_a)\) removed. In parts (b)--(c), the
+external momenta may be off shell and should be generic.
+\begin{parts}
+\item \textbf{(4 points)} For a connected quartic graph with \(E\)
+external legs, \(I\) internal lines, \(V\) vertices, and \(L\)
+independent loops, derive
+\(4V=2I+E\) and \(L=I-V+1\). Determine \(V,I,L\) for the leading
+connected six-point function and for the one-loop four-point function.
+Explain why one loop does not mean one power of \(\lambda\).
+
+\item \textbf{(4 points)} Enumerate all distinct six-point tree graphs
+by partitioning the six external labels between the two vertices.
+Explain why exchanging the two groups does not give a new graph.
+Find the weight of one labeled graph by counting Wick contractions
+in the order-\(\lambda^2\) source expansion, including its \(1/2!\).
+
+\item \textbf{(5 points)} Write the amputated connected six-point
+kernel as a sum over those partitions. For a three-element subset
+\(A\), define \(P_A=\sum_{a\in A}p_a\). Display the internal
+propagator and the overall phase in each term. Restore the external
+propagators to obtain the reduced correlator. Are these trees 1PI?
+What further conditions are needed to interpret the amputated result
+as a physical \(3\to3\) amplitude?
+
+\item \textbf{(5 points)} For the four-point partition \((12|34)\),
+count the contractions that join two quartic vertices by two internal
+lines. Derive the bubble's symmetry factor. Then write its amputated
+momentum integral, assigning \(q=p_1+p_2\) through the bubble.
+List the other external partitions without evaluating an integral.
+
+\item \textbf{(3 points)} Besides those bubbles, draw the other
+connected order-\(\lambda^2\) four-point topology and enumerate its
+external assignments. Identify a line whose cut makes it disconnected.
+Explain how using full external propagators accounts for this class
+and why a logarithm alone does not eliminate it.
+
+\item \textbf{(4 points)} Derive the superficial degree of divergence
+\(\omega=dL-2I\), and reduce it in four dimensions to an expression
+in \(E\) alone. Apply it to the tadpole and bubble. Explain why a
+negative superficial degree for a higher-loop graph does not by
+itself guarantee convergence of every subintegration.
+\end{parts}
+
+\problem{3}{A mass shift, two regulators, and one physical pole}
+\connection{Lecture 22, Sections 1--4 and 7.}
+At one loop the scalar self-energy is
+\[
+ -\ii\Sigma_{\rm tad}=\frac{-\ii\lambda}{2}
+ \int\frac{\dd^4k}{(2\pi)^4}\frac{\ii}{k^2-m^2+\ii0}.
+\]
+You may use the area \(2\pi^2\) of the unit three-sphere and
+\(\int\dd^dk_E\,e^{-t k_E^2}/(2\pi)^d=(4\pi t)^{-d/2}\).
+\begin{parts}
+\item \textbf{(5 points)} Wick rotate the integral, displaying the
+factors from the contour and the propagator. Evaluate it with the
+Euclidean cutoff \(k_E^2\leq\Lambda^2\), and extract the quadratic
+and logarithmic terms at large \(\Lambda\). Check the mass dimension
+and state why the result is independent of external momentum.
+
+\item \textbf{(4 points)} Sum repeated 1PI insertions to identify the
+pole equation for \(G_2(p)\). Choose the mass parameter to equal the
+measured mass \(M\), and determine the one-loop cutoff counterterm
+that keeps that pole fixed as \(\Lambda\) changes. Explain what this
+says about the regulator dependence of the bare mass.
+
+\item \textbf{(4 points)} Use the Schwinger-parameter representation
+of \(1/(k_E^2+m^2)\) to obtain its integral as a gamma function in
+\(d\) dimensions. Insert \(\mu^{2\eps}\), set \(d=4-2\eps\), and
+expand through the finite term. You may use
+\[
+ \Gamma(\eps)=\eps^{-1}-\gamma_E+O(\eps),\qquad
+ \Gamma(\eps-1)=\frac{\Gamma(\eps)}{\eps-1}.
+\]
+Explain why the analytically continued answer need not be positive.
+
+\item \textbf{(5 points)} Determine \(\delta m^2\) and
+\(\delta Z_\phi\) in \(\MSbar\) at one loop. Derive the relation
+between \(M^2\) and \(m^2(\mu)\), including the finite constant.
+Use the counterterm vertex to check the sign of the pole cancellation.
+
+\item \textbf{(4 points)} Derive
+\(Z_{\rm pole}=[1-\Sigma_R'(M^2)]^{-1}\) and evaluate it at this
+order. Compare the finite part of the on-shell mass counterterm with
+that of \(\MSbar\). Explain why the two prescriptions do not predict
+different measured masses after matching.
+
+\item \textbf{(3 points)} Impose \(\mu\,\dd M^2/\dd\mu=0\) on your
+answer in part (d) and determine the leading running of \(m^2(\mu)\).
+In taking the derivative, identify which implicit scale dependences
+inside the loop term contribute only at higher order.
+\end{parts}
+
+\problem{4}{The bubble, running coupling, and two-particle unitarity}
+\connection{Lecture 22, Sections 5--8.}
+Use on-shell external momenta with pole mass \(M\), so
+\(s+t+u=4M^2\). Use \(M\) in the loop integrals as an on-shell mass
+organization, and define the coupling in \(\MSbar\). Set
+\[
+ F(q^2;\mu)=\int_0^1\dd x\log\frac{M^2-x(1-x)q^2-\ii0}{\mu^2}.
+\]
+No closed form for the real part of \(F\) at general momentum is required.
+\begin{parts}
+\item \textbf{(4 points)} Prove the Feynman-parameter identity for
+\(1/(AB)\). Apply it to the bubble, shift the loop momentum, and use
+the Gaussian method of Problem 3 to derive its pole and finite
+logarithm. Include the symmetry factor and the phases from both
+vertices and propagators.
+
+\item \textbf{(4 points)} Sum the three channels and determine the
+\(\MSbar\) coupling counterterm. Write the finite amplitude through
+\(O(\lambda^2)\). Explain why its entire pole can be removed by one
+momentum-independent \(\phi^4\) counterterm.
+
+\item \textbf{(5 points)} Define \(g\) by
+\(\mathcal M(4M^2,0,0)=-g\). Evaluate the parameter integrals at this
+point, derive the finite conversion between \(g\) and \(\lambda(\mu)\),
+and express the amplitude in terms of \(g,M\) with no arbitrary scale.
+Check that the one-loop correction vanishes at the subtraction point.
+
+\item \textbf{(4 points)} Require scale independence of the amplitude
+in part (b) to derive \(\beta_\lambda\) at leading order. Solve for
+\(\lambda(\mu)\) in terms of \(\lambda(\mu_0)\). Identify the formal
+Landau scale and explain the limitation of drawing conclusions there
+from a one-loop calculation.
+
+\item \textbf{(4 points)} For \(s>4M^2\), find the interval in \(x\)
+where the logarithm has a negative real argument. Determine
+\(\operatorname{Im}\mathcal M\), including its sign, using
+\(\log(-a-\ii0)=\log a-\ii\pi\). Explain why the \(t\)- and
+\(u\)-channel bubbles are real in the physical scattering region.
+
+\item \textbf{(4 points)} Evaluate the integrated two-body phase space
+in the center-of-mass frame and verify
+\[
+ 2\operatorname{Im}\mathcal M_{ii}^{(1)}
+ =\frac1{2!}\int\dd\Phi_2\,|\mathcal M_{i\to2}^{\rm tree}|^2,
+ \quad
+ \dd\Phi_2=(2\pi)^4\delta^{(4)}(P-k_1-k_2)
+ \prod_{a=1}^2\frac{\dd^3\bm k_a}{(2\pi)^3,2E_a}.
+\]
+Explain the identical-particle factorial and why a real local
+counterterm cannot change this imaginary part.
+\end{parts}
+\end{document}

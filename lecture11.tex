@@ -1,0 +1,772 @@
+\documentclass[11pt]{article}
+
+\usepackage[letterpaper,margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb,mathtools,bm}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{hyperref}
+\usepackage[most]{tcolorbox}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{parskip}
+\usepackage{needspace}
+
+\definecolor{qftblue}{HTML}{245A8D}
+\definecolor{qftgreen}{HTML}{2F6B4F}
+\definecolor{qftred}{HTML}{A23B3B}
+\definecolor{qftgray}{HTML}{F4F6F8}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=qftblue,
+  urlcolor=qftblue,
+  citecolor=qftgreen,
+  pdftitle={PHYS 662 Lecture 11: Lorentz Symmetry and Its Representations},
+  pdfauthor={Nima Lashkari}
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{PHYS 662: Quantum Field Theory I}
+\rhead{Lecture 11}
+\cfoot{\thepage}
+\setlength{\headheight}{14pt}
+
+\titleformat{\section}{\Large\bfseries\color{qftblue}}{\thesection.}{0.6em}{}
+\titleformat{\subsection}{\large\bfseries\color{qftgreen}}{\thesubsection}{0.6em}{}
+\titleformat{\subsubsection}{\normalsize\bfseries\color{qftred}}{\thesubsubsection}{0.6em}{}
+
+\setlist[itemize]{leftmargin=2em,itemsep=0.25em,topsep=0.4em}
+\setlist[enumerate]{leftmargin=2em,itemsep=0.25em,topsep=0.4em}
+
+\newcommand{\dd}{\mathrm{d}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Lag}{\mathcal{L}}
+\newcommand{\cM}{\mathcal{M}}
+\newcommand{\SO}{\mathrm{SO}}
+\newcommand{\OO}{\mathrm{O}}
+
+\newtcolorbox{keyidea}[1][]{
+  enhanced, breakable, colback=qftgray, colframe=qftblue,
+  boxrule=0.8pt, arc=1.5mm, title={#1}, fonttitle=\bfseries,
+  coltitle=white
+}
+\newtcolorbox{remarkbox}[1][]{
+  enhanced, breakable, colback=white, colframe=qftgreen,
+  boxrule=0.7pt, arc=1.5mm, title={#1}, fonttitle=\bfseries,
+  coltitle=white
+}
+\newtcolorbox{warningbox}[1][]{
+  enhanced, breakable, colback=white, colframe=qftred,
+  boxrule=0.7pt, arc=1.5mm, title={#1}, fonttitle=\bfseries,
+  coltitle=white
+}
+
+
+\newcommand{\Th}{\Theta}
+\newcommand{\Eul}{\mathcal E}
+\newcommand{\Lie}{\mathscr L}
+
+\newcommand{\C}{\mathbb C}
+\newcommand{\Z}{\mathbb Z}
+\newcommand{\SU}{\mathrm{SU}}
+\newcommand{\UU}{\mathrm{U}}
+\newcommand{\GL}{\mathrm{GL}}
+\newcommand{\SL}{\mathrm{SL}}
+\newcommand{\Sp}{\mathrm{Sp}}
+\newcommand{\tr}{\operatorname{tr}}
+\newcommand{\Ad}{\operatorname{Ad}}
+\newcommand{\ad}{\operatorname{ad}}
+\newcommand{\lieg}{\mathfrak g}
+\newcommand{\lieh}{\mathfrak h}
+\newcommand{\su}{\mathfrak{su}}
+\newcommand{\so}{\mathfrak{so}}
+\newcommand{\slie}{\mathfrak{sl}}
+
+
+\newcommand{\cH}{\mathcal H}
+\newcommand{\Spin}{\operatorname{Spin}}
+\newcommand{\id}{\mathrm{id}}
+\newcommand{\Lor}{\SO^+(1,3)}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\one}{\mathbf 1}
+\begin{document}
+\pagenumbering{gobble}
+\begin{titlepage}
+\centering
+\vspace*{1.2in}
+{\scshape\Large PHYS 662 --- Quantum Field Theory I\par}
+\vspace{0.35in}
+{\Huge\bfseries\color{qftblue} Lecture 11\par}
+\vspace{0.15in}
+{\LARGE\bfseries Lorentz Symmetry\par}
+\vspace{0.06in}
+{\LARGE\bfseries and Its Representations\par}
+\vspace{0.16in}
+{\large\color{qftgreen} From Spacetime Isometries to Two Spin Labels\par}
+\vspace{0.6in}
+{\large Nima Lashkari\par}
+{\large Fall 2026\par}
+\vfill
+\begin{minipage}{0.86\textwidth}
+\small
+The representation theory of rotations gave us spin. We now include
+boosts and ask which kinds of fields can transform covariantly under
+Lorentz symmetry. The double cover of the connected Lorentz group and
+the complexified Lie algebra lead to two spin labels, Weyl spinors,
+and four-vectors. We establish the classification and its limits,
+keeping field components, quantum states, and conserved charges distinct.
+The explicit spinor calculus begins in Lecture 12.
+
+\medskip
+Course page: \url{https://nimalashkari.com/quantum-field-theory-2026-part-i/}
+\end{minipage}
+\vspace{0.5in}
+\end{titlepage}
+\pagenumbering{roman}
+\begingroup\small
+\tableofcontents
+\endgroup
+\newpage
+\pagenumbering{arabic}
+
+\section*{Roadmap}
+\addcontentsline{toc}{section}{Roadmap}
+Lectures 8--10 developed Lie algebras, spin multiplets, covering groups,
+projective phases, and Noether charges. This lecture applies those tools
+to spacetime symmetry. The central question is: \emph{what changes when
+a spin multiplet must also transform under boosts?}
+\begin{enumerate}
+\item Describe the Poincar\'e group and identify its connected Lorentz subgroup.
+\item Construct the map \(\SL(2,\C)\to\Lor\), including its kernel and topology.
+\item Derive the rotation--boost algebra and classify its finite-dimensional
+complex representations by \((j_L,j_R)\).
+\item Determine rotation content and descent to the Lorentz group,
+and distinguish component representations from unitary state representations.
+\end{enumerate}
+The opening Noether and representation-theory review in the source slides
+is already developed in Lectures 8--10. We recall its conclusions here
+and concentrate on the Lorentz group and its representations.
+Lecture 12 develops Weyl spinors and invariant tensors, Lecture 13 builds
+their actions, and Lecture 14 classifies particle states by little groups.
+
+\begin{keyidea}[Conventions]
+We use \(c=\hbar=1\), \(\eta_{\mu\nu}=\operatorname{diag}(1,-1,-1,-1)\),
+\(\eps_{123}=+1\), and \(x^\mu=(t,\bm x)\). Greek spacetime indices run
+from 0 to 3; Latin spatial indices run from 1 to 3. Write
+\[
+ D(\bm\theta,\bm\rho)=\exp[-i(\theta_iJ_i+\rho_iK_i)]
+\]
+for a Lorentz representation near the identity. Our active boost along
+\(z\) is \(t'=t\cosh\rho-z\sinh\rho\),
+\(z'=z\cosh\rho-t\sinh\rho\); reversing \(\rho\) reverses the boost.
+The names left and right below refer to the explicitly defined
+\((j_L,j_R)\) convention. They are not labels for the sign of a field's momentum.
+\end{keyidea}
+
+\section{Spacetime symmetry and the spaces on which it acts}
+\subsection{The Poincar\'e group law}
+A global isometry of Minkowski space has the form
+\begin{equation}
+ x'^\mu=\Lambda^\mu{}_{\nu}x^\nu+a^\mu,
+ \qquad \Lambda^T\eta\Lambda=\eta.
+ \label{eq:isometry}
+\end{equation}
+Here \(\Lambda\) is a real matrix and \(a\) is a constant displacement.
+The isometry condition concerns the metric, not a particular field
+configuration. For example, it preserves both spacetime intervals and
+\(p_\mu p^\mu=E^2-|\bm p|^2\).
+
+Apply \((\Lambda_2,a_2)\) first and \((\Lambda_1,a_1)\) second:
+\[
+ x\longmapsto\Lambda_2x+a_2
+ \longmapsto\Lambda_1\Lambda_2x+\Lambda_1a_2+a_1.
+\]
+Therefore
+\begin{equation}
+ \begin{split}
+ (\Lambda_1,a_1)(\Lambda_2,a_2)
+   &=(\Lambda_1\Lambda_2,a_1+\Lambda_1a_2),\\
+ (\Lambda,a)^{-1}&=(\Lambda^{-1},-\Lambda^{-1}a).
+ \end{split}
+ \label{eq:group-law}
+\end{equation}
+The translations form a normal abelian subgroup, but Lorentz
+transformations rotate and boost their parameters:
+\[
+ (\Lambda,0)(I,a)(\Lambda,0)^{-1}=(I,\Lambda a).
+\]
+This is why the Poincar\'e group is the \emph{semidirect} product
+\(\R^{1,3}\rtimes\OO(1,3)\). A direct product would have commuting
+translation and Lorentz factors, which this calculation rules out.
+
+\subsection{Field components versus quantum states}
+For an active transformation, the old field at \(x\) becomes the new
+field at \(x'=\Lambda x+a\). If its components transform by \(D\), then
+\begin{equation}
+ \phi'_A(x')=D(\Lambda)_A{}^B\phi_B(x),\qquad
+ \boxed{\phi'_A(x)=D(\Lambda)_A{}^B
+ \phi_B\bigl(\Lambda^{-1}(x-a)\bigr).}
+ \label{eq:field-action}
+\end{equation}
+For spinors we must specify a lift of \(\Lambda\) to the covering group;
+we will then write \(D(A)\). The inverse argument is required even for
+a scalar, whose component matrix is just 1. The component matrix and the
+pullback of the spacetime argument together give the full field transformation.
+
+There are three related but different objects:
+\begin{itemize}
+\item \(D\) acts on finitely many field components at each spacetime point.
+Its boost matrices generally are not unitary.
+\item The action on field configurations includes the spacetime argument
+and is already infinite-dimensional.
+\item A quantum symmetry acts on the Hilbert space of states. The connected
+Poincar\'e group is implemented unitarily, possibly projectively before
+passing to its cover; its charges are self-adjoint.
+\end{itemize}
+Thus Wigner's theorem does not require the two-by-two matrices of a
+Weyl field to be unitary. It applies to symmetry transformations of
+quantum rays. A finite list of field components is not the full space of states.
+\subsection{What the Noether review supplies}
+For a complex scalar multiplet with internal symmetry
+\(\Phi\mapsto e^{-i\epsilon^at_a}\Phi\) in the fundamental representation, Lecture 10 found
+\begin{equation}
+ \begin{split}
+ j_a^\mu&=i\bigl(\Phi^\dagger t_a\partial^\mu\Phi
+             -\partial^\mu\Phi^\dagger t_a\Phi\bigr),\qquad
+ Q_a=\int\dd^3x\,j_a^0,\\
+ \{\Phi,Q_a\}_{\rm PB}&=-it_a\Phi,\qquad
+ \{Q_a,Q_b\}_{\rm PB}=f_{ab}{}^cQ_c.
+ \end{split}
+ \label{eq:review-charges}
+\end{equation}
+The field equations and vanishing boundary flux give charge conservation.
+Quantization supplies \([\widehat Q_a,\widehat Q_b]=if_{ab}{}^c\widehat Q_c\)
+under the assumptions stated there. For U(N), the number of generators is
+\(N^2\), whereas a fundamental field has only \(N\) components.
+
+This calculation explains how an abstract Lie algebra becomes an algebra
+of charges. For spacetime symmetries the same logic applies, but the
+field variation also contains the displacement term in
+Eq.~\eqref{eq:field-action}. Energy, momentum, angular momentum, and
+boosts are the corresponding charges.
+
+Fields, however, are not restricted to the fundamental representation. In many physical contexts, such as non-Abelian gauge theories, fields take values directly in the Lie algebra. To see how these transform, suppose we arrange a set of $N^2$ field components $\phi^a$ into a matrix field using the fundamental representation matrices $(t_a)^i_{\: j}$:
+\begin{align}
+    \phi^i_{\: j} &= \sum_a \phi^a (t_a)^i_{\: j}\ .
+\end{align}
+Rather than a simple phase rotation, the finite transformation rule for such a matrix field is given by unitary conjugation:
+\begin{align}
+    \phi^i_{\: j} &\to U^i_{\: k}\phi^k_{\: l}(U^\dagger)^l_{\: j}\ ,
+\end{align}
+where $U = e^{-i \epsilon^a t_a}$. The field is acted on from the left by the fundamental representation and from the right by the anti-fundamental representation. 
+
+To find how the individual components $\phi^a$ transform, we expand $U\approx 1 - i \epsilon^a t_a$ and $U^\dagger\approx 1 + i \epsilon^a t_a$. The infinitesimal transformation of the matrix is then
+\begin{align}
+    \delta \phi^i_{\: j} &= -i \epsilon^a [t_a, \phi]^i_{\: j} = -i \epsilon^a \phi^b [t_a, t_b]^i_{\: j}\ .
+\end{align}
+Substituting the Lie algebra commutation relation $[t_a, t_b]=i f_{ab}^c t_c$, the variation evaluates to
+\begin{align}
+    \delta \phi^i_{\: j} &= -i \epsilon^a \phi^b (i f_{ab}^c) (t_c)^i_{\: j} = \epsilon^a f_{ab}^c \phi^b (t_c)^i_{\: j}\ .
+\end{align}
+By equating this result to the variation of the expansion, $\delta \phi^i_{\: j}=\delta \phi^c (t_c)^i_{\: j}$, we extract the transformation rule for the field components themselves:
+\begin{align}
+    \delta \phi^c &= \epsilon^a f_{ab}^c \phi^b = -i \epsilon^a (-i f_{ab}^c) \phi^b\ .
+\end{align}
+Defining the generators of the adjoint representation as $(T_a)^c_{\: b}=-i f_{ab}^c$, we recover $\delta \phi^c=-i \epsilon^a (T_a)^c_{\: b} \phi^b$. This explicitly confirms that while the matrix $\phi^i_{\: j}$ is constructed using fundamental matrices, its components $\phi^a$ transform in the adjoint representation.
+
+\section{The Lorentz group and its double cover}
+\subsection{Four connected components}
+Taking determinants in Eq.~\eqref{eq:isometry} gives
+\((\det\Lambda)^2=1\). It follows from the $00$-component of $\Lambda^T\eta\Lambda=\eta$ that
+\[
+ (\Lambda^0{}_0)^2-\sum_i(\Lambda^i{}_0)^2=1,
+ \qquad |\Lambda^0{}_0|\geq1.
+\]
+Consequently neither the determinant sign nor the time-orientation sign
+can change continuously within the group. In \(3+1\) dimensions the four
+components have representatives
+\begin{center}
+\begin{tabular}{lcc}
+\toprule
+Representative & \(\det\Lambda\) & \(\operatorname{sign}\Lambda^0{}_0\)\\
+\midrule
+\(I\) & \(+1\) & \(+1\)\\
+\(P=\operatorname{diag}(1,-1,-1,-1)\) & \(-1\) & \(+1\)\\
+\(T=\operatorname{diag}(-1,1,1,1)\) & \(-1\) & \(-1\)\\
+\(PT=-I\) & \(+1\) & \(-1\)\\
+\bottomrule
+\end{tabular}
+\end{center}
+The identity component is the \emph{proper orthochronous}, or restricted,
+Lorentz group
+\begin{equation}
+ \Lor=\{\Lambda:\Lambda^T\eta\Lambda=\eta,\ 
+ \det\Lambda=1,\ \Lambda^0{}_0\geq1\}.
+ \label{eq:restricted}
+\end{equation}
+The determinant condition alone does not exclude \(PT\).
+We write \(\OO(1,3)\) to match our metric; the notation \(\OO(3,1)\)
+in the slides describes an isomorphic group with the opposite signature ordering.
+
+\begin{remarkbox}[Discrete spacetime maps and quantum implementers]
+The real matrices \(P\) and \(T\) above describe maps of spacetime.
+If a positive-energy quantum theory has time-reversal symmetry, its
+Hilbert-space implementer is antiunitary. Conjugating \(i\) then changes
+its sign, allowing time evolution to reverse with the energy spectrum
+unchanged. Parity is normally unitary. Neither symmetry is guaranteed
+by invariance under \(\Lor\).
+
+Charge conjugation changes internal charges; it is not an extra component
+of the Lorentz group. The existence of a complex-conjugate representation
+does not by itself make charge conjugation a symmetry of the action.
+\end{remarkbox}
+
+In any \(d+1\) dimensions with \(d\geq1\), the full \(\OO(1,d)\)
+still has four components. For even \(d\), reversing \emph{all} spatial
+coordinates has determinant \(+1\); a reflection of just one spatial
+coordinate supplies a representative with determinant \(-1\). That is why in odd-dimensional QFT, we often talk about $RT$ (Reflection-Time reversal) operation, instead of $PT$.
+
+\subsection{Encode a four-vector in a Hermitian matrix}
+The Pauli matrices form a basis for traceless Hermitian two-by-two matrices.
+Adding the identity lets us encode all four real components of \(v\):
+\begin{equation}
+ V(v)=v^0I+v^i\sigma_i
+ =\begin{pmatrix}v^0+v^3&v^1-iv^2\\v^1+iv^2&v^0-v^3\end{pmatrix}.
+ \label{eq:vector-matrix}
+\end{equation}
+This is a real linear bijection, with inverse
+\begin{equation}
+ v^0=\tfrac12\tr V,\qquad v^i=\tfrac12\tr(\sigma_iV).
+ \label{eq:trace-inverse}
+\end{equation}
+The factor \(1/2\) follows from \(\tr I=2\) and
+\(\tr(\sigma_i\sigma_j)=2\delta_{ij}\).
+Most importantly,
+\begin{equation}
+ \det V(v)=(v^0)^2-(v^1)^2-(v^2)^2-(v^3)^2=v_\mu v^\mu.
+ \label{eq:det-metric}
+\end{equation}
+Thus, preservation of the Minkowski quadratic form can be expressed as
+preservation of a two-by-two determinant.
+
+For \(A\in\SL(2,\C)\), define
+\begin{equation}
+ V(v')=AV(v)A^\dagger,\qquad v'=\Lambda(A)v.
+ \label{eq:cover-map}
+\end{equation}
+The result is Hermitian, depends real-linearly on \(v\), and has the
+same determinant because \(\det A=1\). Since $\SL(2,\mathbb{C})$ matrices keep the determinant fixed, it follows from (\ref{eq:det-metric}) that the norm of a vector is preserved.
+Composition works in the required order:
+\[
+ A_1(A_2VA_2^\dagger)A_1^\dagger
+ =(A_1A_2)V(A_1A_2)^\dagger.
+\]
+Hence \(A\mapsto\Lambda(A)\) is a group homomorphism.
+
+\subsection{Rotations, boosts, and the kernel}
+For \(A_z(\theta)=e^{-i\theta\sigma_3/2}\), the upper off-diagonal
+entry of \(AVA^\dagger\) is \(e^{-i\theta}(v^1-iv^2)\). Thus
+\[
+ v'^1=v^1\cos\theta-v^2\sin\theta,\quad
+ v'^2=v^1\sin\theta+v^2\cos\theta,\quad v'^0=v^0,\quad v'^3=v^3.
+\]
+This recovers the rotation cover of Lecture 9. For a boost take instead
+\begin{equation}
+ A_z(\rho)=e^{-\rho\sigma_3/2}
+   =\begin{pmatrix}e^{-\rho/2}&0\\0&e^{\rho/2}\end{pmatrix}.
+ \label{eq:spinor-boost}
+\end{equation}
+The diagonal entries of \(V\) transform as
+\(v'^0+v'^3=e^{-\rho}(v^0+v^3)\) and
+\(v'^0-v'^3=e^{\rho}(v^0-v^3)\). Adding and subtracting gives
+\begin{equation}
+ \begin{pmatrix}v'^0\\v'^3\end{pmatrix}
+ =\begin{pmatrix}\cosh\rho&-\sinh\rho\\-\sinh\rho&\cosh\rho\end{pmatrix}
+ \begin{pmatrix}v^0\\v^3\end{pmatrix}.
+ \label{eq:vector-boost}
+\end{equation}
+The transverse components stay fixed. Rotating the axis produces any
+pure boost. Every proper orthochronous Lorentz transformation is a
+boost followed by a rotation: first match its action on the future unit
+time vector, then observe that the remaining transformation fixes that
+vector and is a spatial rotation. The map is therefore onto \(\Lor\).
+
+If \(A\) is in the kernel, applying Eq.~\eqref{eq:cover-map} to \(V=I\)
+gives \(AA^\dagger=I\). Applying it to the Pauli matrices then implies
+that \(A\) commutes with every two-by-two matrix. Hence \(A=cI\), and
+\(\det A=1\) gives \(c=\pm1\). We have proved
+\begin{equation}
+ \boxed{\Lor\cong\SL(2,\C)/\{I,-I\}.}
+ \label{eq:quotient}
+\end{equation}
+Merely observing that \(A\) and \(-A\) have the same image is not enough;
+the kernel argument also rules out any additional identifications.
+
+\subsection{Why this double cover is universal}
+Polar decomposition writes \(A=HU\), where \(U\in\SU(2)\) and
+\(H\) is positive Hermitian with determinant one. Uniquely,
+\(H=e^{\bm b\cdot\bm\sigma}\) for \(\bm b\in\R^3\).
+Consequently, as a manifold,
+\begin{equation}
+ \SL(2,\C)\simeq\R^3\times S^3.
+ \label{eq:polar-topology}
+\end{equation}
+This is a topological statement, not a direct-product group law.
+Both factors are simply connected. The map in Eq.~\eqref{eq:quotient}
+is a two-sheeted covering map (its differential is an isomorphism and
+its kernel is discrete), so it is the universal cover. Therefore
+\begin{equation}
+ \pi_1(\Lor)=\Z_2,\qquad
+ \Spin^+(1,3)\cong\SL(2,\C).
+ \label{eq:fundamental}
+\end{equation}
+Here the superscript on Spin specifies the cover of the identity
+component; it is often suppressed. A \(2\pi\) rotation lifts to a path
+from \(I\) to \(-I\), rather than a closed loop.
+
+\begin{remarkbox}[The dimension-dependent exception]
+The boost--rotation decomposition gives a deformation retraction of
+\(\SO^+(1,d)\) onto \(\SO(d)\): the boost parameters form a contractible
+\(\R^d\). Thus its fundamental group is \(\Z_2\) for \(d\geq3\),
+but \(\Z\) for \(d=2\). In \(2+1\) dimensions the spin double cover
+is not the universal cover. The universal cover has infinitely many
+sheets, a fact relevant to arbitrary-spin particle representations and
+anyons. In \(1+1\) dimensions the connected boost group is already
+isomorphic to \((\R,+)\).
+\end{remarkbox}
+
+\section{The Poincar\'e algebra and its charges}
+\subsection{Infinitesimal Lorentz transformations}
+Put \(\Lambda=I+\omega+O(\omega^2)\) in
+\(\Lambda^T\eta\Lambda=\eta\). The linear term is
+\begin{equation}
+ \omega^T\eta+\eta\omega=0,\qquad
+ \omega_{\mu\nu}:=\eta_{\mu\rho}\omega^\rho{}_{\nu}
+   =-\omega_{\nu\mu}.
+ \label{eq:antisym-omega}
+\end{equation}
+It is the matrix with its first index \emph{lowered} that is antisymmetric.
+There are six independent parameters in four dimensions: three rotations
+and three boosts. Adding four translations gives ten Poincar\'e generators.
+In \(D\) spacetime dimensions the counts are \(D(D-1)/2\) and
+\(D(D+1)/2\), respectively.
+
+Write \(D(\Lambda)=I-\tfrac i2\omega_{\mu\nu}M^{\mu\nu}+O(\omega^2)\),
+where \(M^{\mu\nu}=-M^{\nu\mu}\). In the four-vector representation,
+\begin{equation}
+ (M^{\mu\nu})^\rho{}_{\sigma}
+ =i\bigl(\eta^{\mu\rho}\delta^\nu{}_{\sigma}
+       -\eta^{\nu\rho}\delta^\mu{}_{\sigma}\bigr).
+ \label{eq:vector-generators}
+\end{equation}
+Substituting this into the infinitesimal transformation recovers
+\(D(\Lambda)=I+\omega\). Multiplication of these matrices gives
+\begin{equation}
+ \begin{split}
+ [M^{\mu\nu},M^{\rho\sigma}]
+ =i\bigl(&\eta^{\nu\rho}M^{\mu\sigma}
+          -\eta^{\mu\rho}M^{\nu\sigma}\\
+         &-\eta^{\nu\sigma}M^{\mu\rho}
+          +\eta^{\mu\sigma}M^{\nu\rho}\bigr).
+ \end{split}
+ \label{eq:lorentz-covariant}
+\end{equation}
+The translation part of the semidirect product adds
+\begin{equation}
+ [P^\mu,P^\nu]=0,\qquad
+ [M^{\mu\nu},P^\rho]
+ =i\bigl(\eta^{\nu\rho}P^\mu-\eta^{\mu\rho}P^\nu\bigr).
+ \label{eq:translations}
+\end{equation}
+These are representation-independent algebra relations. In a unitary
+Hilbert-space representation their generators are self-adjoint; the
+finite matrices in Eq.~\eqref{eq:vector-generators} need not be.
+
+\subsection{Rotations and boosts in three-vector notation}
+Define
+\begin{equation}
+ J_i=\tfrac12\eps_{ijk}M^{jk},\qquad K_i=M^{i0},\qquad H=P^0,
+ \qquad p_i:=P^i.
+ \label{eq:JK-def}
+\end{equation}
+The symbol \(p_i\) here denotes Cartesian spatial momentum components;
+the covariant four-momentum component is \(P_i=-p_i\).
+With these definitions Eqs.~\eqref{eq:lorentz-covariant}--\eqref{eq:translations}
+become
+\begin{equation}
+ \boxed{[J_i,J_j]=i\eps_{ijk}J_k,\quad
+ [J_i,K_j]=i\eps_{ijk}K_k,\quad
+ [K_i,K_j]=-i\eps_{ijk}J_k.}
+ \label{eq:JK-algebra}
+\end{equation}
+The remaining brackets are
+\begin{equation}
+ \begin{gathered}
+ [J_i,p_j]=i\eps_{ijk}p_k,\qquad [J_i,H]=0,\\
+ [K_i,p_j]=i\delta_{ij}H,\qquad [K_i,H]=ip_i,\\
+ [p_i,p_j]=0,\qquad [H,p_i]=0.
+ \end{gathered}
+ \label{eq:poincare-three}
+\end{equation}
+The minus sign in the boost--boost bracket distinguishes Lorentz
+symmetry from four-dimensional Euclidean rotations. For an explicit
+check, \(K_1=-i(E_{01}+E_{10})\) and
+\(K_2=-i(E_{02}+E_{20})\), where \(E_{ab}\) has a single unit entry.
+Then
+\[
+ [K_1,K_2]=-(E_{12}-E_{21})=-iJ_3,
+ \qquad J_3=-i(E_{12}-E_{21}).
+\]
+Thus two boosts in different directions generate a rotation at second order.
+
+\subsection{Conserved boosts can depend explicitly on time}
+For fields with suitable falloff, let \(T^{\mu\nu}\) be a conserved
+symmetric stress tensor. A Belinfante improvement includes the intrinsic
+spin contribution when starting from a nonsymmetric canonical tensor.
+The charges can then be written
+\begin{equation}
+ P^\mu=\int\dd^3x\,T^{0\mu},\qquad
+ M^{\mu\nu}=\int\dd^3x\,(x^\mu T^{0\nu}-x^\nu T^{0\mu}).
+ \label{eq:stress-charges}
+\end{equation}
+Using the unimproved canonical tensor instead requires adding an
+explicit spin current to the second expression, as in Lecture 7.
+Our boost convention gives
+\begin{equation}
+ K_i=\int\dd^3x\,x^iT^{00}-tP^i.
+ \label{eq:boost-charge}
+\end{equation}
+Indeed, conservation and symmetry of \(T\), followed by integration by
+parts, imply
+\[
+ \frac{\dd}{\dd t}\int\dd^3x\,x^iT^{00}
+ =-\int\dd^3x\,x^i\partial_jT^{j0}
+ =\int\dd^3x\,T^{i0}=P^i.
+\]
+The explicit \(-tP^i\) term cancels this change. Equivalently,
+\(\partial_tK_i+i[H,K_i]=-p_i+p_i=0\), even though
+\([K_i,H]\ne0\).
+
+\begin{remarkbox}[A one-particle check of the signs]
+For a classical free relativistic particle, take
+\(H=\sqrt{m^2+\bm p^2}\), \(J_i=\eps_{ijk}x_jp_k\), and
+\(K_i=x_iH-tp_i\), with \(\{x_i,p_j\}=\delta_{ij}\).
+Since \(\partial H/\partial p_i=p_i/H\), direct differentiation gives
+\[
+ \{K_i,p_j\}=\delta_{ij}H,\quad
+ \{K_i,H\}=p_i,\quad
+ \{K_i,K_j\}=x_jp_i-x_ip_j=-\eps_{ijk}J_k.
+\]
+\end{remarkbox}
+
+\section{Why two spin labels appear}
+\subsection{Split the complexified algebra}
+The rotation subalgebra is familiar. To incorporate boosts, seek linear
+combinations that close by themselves. Define
+\begin{equation}
+ L_i=\tfrac12(J_i+iK_i),\qquad R_i=\tfrac12(J_i-iK_i).
+ \label{eq:LR-def}
+\end{equation}
+For example, using Eq.~\eqref{eq:JK-algebra},
+\begin{align*}
+ [L_i,L_j]
+ &=\tfrac14\bigl([J_i,J_j]+i[J_i,K_j]+i[K_i,J_j]-[K_i,K_j]\bigr)\\
+ &=\tfrac14\bigl(2i\eps_{ijk}J_k-2\eps_{ijk}K_k\bigr)
+ =i\eps_{ijk}L_k.
+\end{align*}
+The other brackets give
+\begin{equation}
+ \boxed{[L_i,L_j]=i\eps_{ijk}L_k,\quad
+ [R_i,R_j]=i\eps_{ijk}R_k,\quad [L_i,R_j]=0.}
+ \label{eq:LR-algebra}
+\end{equation}
+The inverse relations are
+\begin{equation}
+ J_i=L_i+R_i,\qquad K_i=-i(L_i-R_i).
+ \label{eq:JK-inverse}
+\end{equation}
+Thus the complex representation problem reduces to two commuting copies
+of the spin algebra already solved in Lecture 9.
+
+\begin{warningbox}[The real form still matters]
+The factors of \(i\) in Eq.~\eqref{eq:LR-def} require complexification.
+The precise algebra statement is
+\[
+ \so(1,3)\otimes_{\R}\C
+ \cong\slie(2,\C)\oplus\slie(2,\C).
+\]
+It does \emph{not} say that the real Lie algebra \(\so(1,3)\) is
+\(\su(2)\oplus\su(2)\), or that \(\SL(2,\C)\) is the compact group
+\(\SU(2)\times\SU(2)\). The latter group is \(\Spin(4)\), the Euclidean
+rotation cover. In a unitary Lorentz representation,
+\(J_i^\dagger=J_i\) and \(K_i^\dagger=K_i\) imply \(L_i^\dagger=R_i\);
+the two sets are not separately Hermitian spin generators.
+\end{warningbox}
+
+\subsection{Construct all finite-dimensional complex irreducibles}
+Let \(V_j\) denote the spin-\(j\) representation of the complexified
+rotation algebra. Because the two factors commute, each irreducible is
+a tensor product
+\begin{equation}
+ V_{(j_L,j_R)}=V_{j_L}\otimes V_{j_R},\qquad
+ j_L,j_R=0,\tfrac12,1,\tfrac32,\ldots,
+ \label{eq:irrep}
+\end{equation}
+with generators
+\[
+ L_i=J_i^{(j_L)}\otimes I,\qquad
+ R_i=I\otimes J_i^{(j_R)}.
+\]
+One way to see the tensor-product structure is to decompose under the
+first factor. The second acts on its multiplicity spaces because it
+commutes with the first. Irreducibility of the total action leaves one
+first-factor type and an irreducible second-factor multiplicity space.
+The dimension is consequently
+\begin{equation}
+ \boxed{\dim_\C(j_L,j_R)=(2j_L+1)(2j_R+1).}
+ \label{eq:dimension}
+\end{equation}
+These finite-dimensional Lie algebra representations integrate uniquely
+to the simply connected real group \(\SL(2,\C)\). The representations
+are complex-linear on their vector spaces, but need not depend
+holomorphically on \(A\); the second spin label allows dependence on
+complex-conjugate matrix entries.
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+Lorentz representation & Complex dimension & Example\\
+\midrule
+\((0,0)\) & 1 & Scalar\\
+\((\tfrac12,0)\) & 2 & Left Weyl spinor\\
+\((0,\tfrac12)\) & 2 & Right Weyl spinor\\
+\((\tfrac12,\tfrac12)\) & 4 & Four-vector\\
+\((1,0)\) or \((0,1)\) & 3 each & Chiral antisymmetric tensor\\
+\((\tfrac12,0)\oplus(0,\tfrac12)\) & 4 & Dirac spinor (reducible)\\
+\bottomrule
+\end{tabular}
+\end{center}
+Dimensions here count complex components before any reality condition.
+A real four-vector has four real components, while its complexified
+Lorentz representation has complex dimension four. The Dirac spinor is
+a \emph{direct sum}; the vector is a \emph{tensor product}.
+
+\subsection{Rotation content and descent to the Lorentz group}
+Spatial rotations are generated by \(J_i=L_i+R_i\), so they act
+diagonally on the two factors. The usual addition of angular momenta gives
+\begin{equation}
+ (j_L,j_R)\big|_{\SU(2)_{\rm rot}}
+ =\bigoplus_{j=|j_L-j_R|}^{j_L+j_R} V_j,
+ \qquad\text{in steps of one.}
+ \label{eq:rotation-content}
+\end{equation}
+For example, \((\tfrac12,\tfrac12)\) restricts to spin zero plus spin
+one: its time component is a rotational scalar and its spatial
+components form a three-vector. Boosts mix them, so this split is not
+a decomposition into Lorentz-invariant subspaces.
+
+The nontrivial kernel element of the cover is a lifted \(2\pi\) rotation.
+On the tensor product it acts as
+\begin{equation}
+ D_{(j_L,j_R)}(-I)=(-1)^{2j_L+2j_R}I.
+ \label{eq:kernel-action}
+\end{equation}
+It follows that
+\begin{itemize}
+\item \(j_L+j_R\in\Z\): the representation descends to an ordinary
+representation of \(\Lor\);
+\item \(j_L+j_R\in\Z+\tfrac12\): it is an ordinary representation of
+the cover, and only a projective representation of \(\Lor\).
+\end{itemize}
+For a reducible sum, projective descent requires the kernel to act by
+one common scalar on the whole space. The Dirac sum meets this condition
+because both summands give \(-I\); a scalar plus a Weyl spinor does not.
+
+\subsection{Topology and central extensions}
+The real Lorentz algebra \(\so(1,3)\) is semisimple. Whitehead's lemma,
+used in Lecture 10, says that its scalar central Lie algebra extensions
+are removable by shifting generators. This is a statement about
+two-cocycles, not a consequence of the identity matrix being absent
+from a chosen matrix realization. A central extension adds a new
+generator outside the original algebra.
+
+The surviving sign in Eq.~\eqref{eq:kernel-action} is global: it comes
+from the nontrivial fundamental group. Under the usual continuity and
+integrability assumptions for quantum symmetry representations, passing
+to \(\SL(2,\C)\) removes this projective ambiguity. For an arbitrary
+Lie group, passing to its universal cover need not remove nontrivial
+\emph{local} central terms; the Galilean mass example in Lecture 10
+already demonstrates this distinction. The Poincar\'e algebra itself
+is not semisimple because it contains the translation ideal; its lack
+of nontrivial scalar central extensions in \(3+1\) dimensions needs
+the separate argument given in Lecture 10.
+
+The nonunitarity of nontrivial finite-dimensional component representations
+will be proved alongside the explicit Weyl boosts in Lecture 12.
+
+\section*{Summary}
+\addcontentsline{toc}{section}{Summary}
+Poincar\'e transformations combine translations and Lorentz transformations
+in a semidirect product. The connected Lorentz group has universal cover
+\(\SL(2,\C)\), acting on four-vectors through \(V\mapsto AVA^\dagger\).
+Its rotation--boost algebra becomes two commuting spin algebras after
+complexification. The labels \((j_L,j_R)\) classify finite-dimensional
+complex component representations, with dimension
+\((2j_L+1)(2j_R+1)\) and rotation spins
+\(|j_L-j_R|,\ldots,j_L+j_R\).
+
+The covering kernel determines which representations descend to the
+Lorentz group. This global issue is distinct from a local central
+extension. Nontrivial finite-dimensional Lorentz representations are
+nonunitary, although quantum spacetime symmetries act unitarily on the
+infinite-dimensional state space. Lecture 12 turns this classification
+into explicit spinor transformations and invariant contractions.
+
+\newpage
+\section*{Questions and checks}
+\addcontentsline{toc}{section}{Questions and checks}
+\begin{enumerate}
+\item Derive the Poincar\'e composition and inverse laws by acting on a
+point. Verify the field transformation in Eq.~\eqref{eq:field-action}.
+\item Show that \(\det\Lambda=1\) does not select the identity component.
+Why does \(\OO(1,2)\) still have four components even though reversal of
+both spatial coordinates has determinant \(+1\)?
+\item Starting from \(V(v)\), derive the trace inverse, determinant,
+rotation about \(z\), and boost along \(z\). Prove that the covering
+kernel is exactly \(\{I,-I\}\).
+\item Explain why polar decomposition makes \(\SL(2,\C)\) simply
+connected. Contrast the universal covers in \(3+1\) and \(2+1\) dimensions.
+\item Use the four-vector matrices to check
+\([J_3,K_1]=iK_2\) and \([K_1,K_2]=-iJ_3\).
+Derive \([K_i,H]\) and \([K_i,p_j]\) with \(K_i=M^{i0}\).
+\item Verify the boost Poisson brackets in the relativistic-particle
+example. How can \(K_i\) be conserved without commuting with \(H\)?
+\item Compute \([R_i,R_j]\) and \([L_i,R_j]\). Why do these equations
+not identify the real Lorentz group with \(\SU(2)\times\SU(2)\)?
+\item Find the dimension, rotation content, and kernel action for
+\((1,\tfrac12)\) and \((1,1)\). Which descends to \(\Lor\)?
+Does their direct sum define a projective representation on all its rays?
+\item Explain why absence of the identity in a matrix algebra does not
+prove absence of abstract central extensions. What does the universal
+cover remove in this example?
+\item Distinguish the spaces on which component matrices, field transformations,
+and quantum symmetry operators act. Which of these must be unitary?
+\end{enumerate}
+
+\section*{Sources and reading}
+\addcontentsline{toc}{section}{Sources and reading}
+This lecture develops the group-theoretic material of the supplied
+\emph{Lecture 10: Representations of the Lorentz Group} (2025),
+especially pp.\ 10--20. Lectures 9 and 10 supply the spin-ladder,
+covering-group, central-extension, and Noether-charge prerequisites.
+The source's explicit Weyl representations, vector constructions,
+epsilon contractions, and statistics discussion continue in Lecture 12;
+they have been moved there rather than omitted.
+\end{document}

@@ -1,0 +1,650 @@
+\documentclass[11pt]{article}
+
+\usepackage[letterpaper,margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb,mathtools,bm}
+\usepackage{xcolor,slashed,needspace}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage[most]{tcolorbox}
+\usepackage{fancyhdr}
+\usepackage{parskip}
+
+\definecolor{qftblue}{HTML}{245A8D}
+\definecolor{qftgray}{HTML}{F4F6F8}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=qftblue,
+  urlcolor=qftblue,
+  pdftitle={PHYS 662 Homework 4 Solutions},
+  pdfauthor={Nima Lashkari}
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{PHYS 662: Quantum Field Theory I}
+\rhead{Homework 4 Solutions}
+\cfoot{\thepage}
+\setlength{\headheight}{14pt}
+
+\setlist[enumerate]{leftmargin=2.2em,itemsep=0.55em,topsep=0.5em}
+\newlist{parts}{enumerate}{1}
+\setlist[parts]{label=\textbf{(\alph*)},leftmargin=2.3em,itemsep=0.65em}
+
+\newcommand{\dd}{\mathrm{d}}
+\newcommand{\ii}{\mathrm{i}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Lag}{\mathcal L}
+\newcommand{\tr}{\operatorname{tr}}
+\newcommand{\Ad}{\operatorname{Ad}}
+
+\newtcolorbox{conventionbox}[1][]{
+  enhanced,breakable,
+  colback=qftgray,colframe=qftblue,
+  boxrule=0.8pt,arc=1.5mm,
+  title={#1},fonttitle=\bfseries,coltitle=white
+}
+\newcommand{\problem}[2]{%
+  \Needspace{10\baselineskip}
+  \section*{\color{qftblue}Problem #1: #2}
+  \addcontentsline{toc}{section}{Problem #1: #2}
+}
+\newcommand{\lectureconnection}[1]{%
+  {\small\textit{Lecture connection: #1.}\par}\medskip
+}
+
+
+\newcommand{\diag}{\operatorname{diag}}
+\newcommand{\SO}{\mathrm{SO}}
+\newcommand{\SU}{\mathrm{SU}}
+\newcommand{\SL}{\mathrm{SL}}
+\newcommand{\ISO}{\mathrm{ISO}}
+\newcommand{\ddPi}{\dd\Pi}
+\newcommand{\vac}{\lvert0\rangle}
+\newcommand{\vbra}{\langle0\rvert}
+\newcommand{\Dc}{\mathcal C}
+\newcommand{\one}{\mathbf1}
+
+\usepackage{booktabs,tikz}
+\newcommand{\hc}{\mathrm{h.c.}}
+\newcommand{\partsol}[2]{\par\Needspace{4\baselineskip}\medskip\noindent\textbf{(#1) #2.}\quad}
+\begin{document}
+\begin{center}
+{\scshape\Large PHYS 662 --- Quantum Field Theory I\par}
+\medskip
+{\Huge\bfseries\color{qftblue} Homework 4 Solutions\par}
+\medskip
+{\large Lectures 11--14 \quad Fall 2026\par}
+\end{center}
+\begin{conventionbox}[Conventions and scope]
+These worked solutions cover every part of all eight problems in the
+written Homework Set 4, including the two added problems. Use
+\(\eta=(+---)\), \(\epsilon^{0123}=1\), \(\epsilon_{123}=1\),
+\(J_i=\epsilon_{ijk}M^{jk}/2\), and \(K_i=M^{i0}\).
+The mode spinors have ordinary complex entries, while classical field
+components in the mass-action problem are Grassmann odd.
+\[
+ s^\mu=(I,\bm\sigma),\quad \widetilde s^\mu=(I,-\bm\sigma),\quad
+ \gamma^\mu=\begin{pmatrix}0&\widetilde s^\mu\\s^\mu&0\end{pmatrix},
+ \quad E=i\sigma_2,\quad \gamma_*=-i\gamma^0\gamma^1\gamma^2\gamma^3.
+\]
+Signs follow these definitions, rather than a change of basis or a
+convention for boosts imported from another text. The numbering matches
+the question sheet exactly.
+\end{conventionbox}
+\begingroup\small\tableofcontents\endgroup
+\clearpage
+\problem{1}{Deriving the Poincar\'e algebra from the group law}
+\partsol{a}{Identity, inverse, and dimension}
+Expanding \(\Lambda^T\eta\Lambda=\eta\) gives
+\(\omega^T\eta+\eta\omega=0\), or \(\omega_{\mu\nu}=-\omega_{\nu\mu}\).
+The identity is \((I,0)\), and direct composition gives
+\[
+ (\Lambda,a)^{-1}=(\Lambda^{-1},-\Lambda^{-1}a).
+\]
+There are \(D(D-1)/2\) independent Lorentz generators and \(D\)
+translations, hence \(D(D+1)/2\) generators (ten for \(D=4\)).
+
+\partsol{b}{Translations and the mixed bracket}
+The translation subgroup is additive and abelian, so \([P^\mu,P^\nu]=0\).
+The group law gives
+\[
+ S(\Lambda,0)S(I,a)S(\Lambda,0)^{-1}=S(I,\Lambda a).
+\]
+Because the exponent is \(-ia_\mu P^\mu\), comparison of coefficients
+of the arbitrary covector \(a_\mu\) gives
+\(S(\Lambda,0)P^\rho S(\Lambda,0)^{-1}
+=(\Lambda^{-1})^\rho{}_{\sigma}P^\sigma\).
+Expand this conjugation using the problem's convention for S. One obtains
+\begin{equation}
+ [M^{\mu\nu},P^\rho]
+ =i(\eta^{\nu\rho}P^\mu-\eta^{\mu\rho}P^\nu).
+ \label{sol4:MP}
+\end{equation}
+The inverse in the finite adjoint formula is consistent with the specified
+order of conjugation; reversing that order gives the forward matrix.
+
+\partsol{c}{Lorentz brackets}
+Write \(X_j=-\frac i2\omega_{j\mu\nu}M^{\mu\nu}\).
+The group commutator is
+\((1+X_2)(1+X_1)(1-X_2)(1-X_1)
+=1+[X_2,X_1]+O(\omega^3)\).
+On coordinates the corresponding term is \([\omega_2,\omega_1]\).
+Equating its independent coefficients yields
+\begin{equation}
+ [M^{\mu\nu},M^{\rho\sigma}]
+ =i(\eta^{\nu\rho}M^{\mu\sigma}-\eta^{\mu\rho}M^{\nu\sigma}
+       -\eta^{\nu\sigma}M^{\mu\rho}+\eta^{\mu\sigma}M^{\nu\rho}).
+ \label{sol4:MM}
+\end{equation}
+This also follows by multiplying the supplied vector matrices: in
+matrix-unit notation their entries are sums of \(E_{ab}\), and
+\(E_{ab}E_{cd}=\delta_{bc}E_{ad}\) gives precisely the four terms above.
+For example \([M^{12},M^{23}]=-iM^{13}\). Terms quadratic in only
+\(\omega_1\) or only \(\omega_2\) cancel in the group commutator; the
+mixed second-order term comes from their two first-order pieces.
+
+\partsol{d}{Rotation and boost form}
+With \(p_i=P^i\), the complete nonzero brackets are
+\begin{align*}
+ [J_i,J_j]&=i\epsilon_{ijk}J_k,&[J_i,K_j]&=i\epsilon_{ijk}K_k,
+ &[K_i,K_j]&=-i\epsilon_{ijk}J_k,\\
+ [J_i,p_j]&=i\epsilon_{ijk}p_k,&[K_i,H]&=ip_i,
+ &[K_i,p_j]&=i\delta_{ij}H.
+\end{align*}
+Also \([J_i,H]=[H,p_i]=[p_i,p_j]=0\).
+Thus \([K_1,K_2]=-iJ_3\). For \(K'_i=-K_i\), both brackets with
+\(H,p_j\) reverse sign, while the boost--boost bracket and the form of
+\([J_i,K'_j]\) do not. Reverse the boost parameter too to keep S unchanged.
+
+\partsol{e}{Covering groups and projective phases}
+The assumed exact multiplication law excludes a multiplier
+\(e^{i\alpha(g_2,g_1)}\). A half-integer-spin representation is an ordinary
+representation of the spin cover; the nontrivial covering element acts as
+\(-1\). This global sign does not change the local Lie algebra or require
+an added central generator. A projective representation of the quotient
+and a Lie-algebra central extension are different issues.
+
+\problem{2}{Euclidean rotations and translations}
+\partsol{a}{Group law and generators}
+Composition gives \((R_2,a_2)(R_1,a_1)=(R_2R_1,a_2+R_2a_1)\).
+The specified pullback action has the same product law. Translations act
+as \(e^{-ia^bP_b}f(x)=f(x-a)\). Choose a positive rotation in the
+\(ab\) plane to send \(e_a\) toward \(e_b\). Then
+\(U(R_{ab}(\theta),0)=e^{-i\theta L_{ab}}\): its first variation is
+\(-\theta(x_a\partial_b-x_b\partial_a)f\), as required by \(R^{-1}x\).
+
+\partsol{b}{Differential-operator brackets}
+Using \([x_a,\partial_b]=-\delta_{ab}\), while derivatives commute,
+\begin{align*}
+ [P_a,P_b]&=0,\\
+ [L_{ab},P_c]&=i(\delta_{ac}P_b-\delta_{bc}P_a),\\
+ [L_{ab},L_{cd}]&=i(\delta_{ac}L_{bd}-\delta_{ad}L_{bc}
+                       -\delta_{bc}L_{ad}+\delta_{bd}L_{ac}).
+\end{align*}
+For instance the mixed bracket follows by applying the product rule to
+\(-i(x_a\partial_b-x_b\partial_a)(-i\partial_c)f\) and subtracting the
+opposite order. The second derivatives cancel. The same product rule in
+the rotation bracket cancels second-order differential operators and
+leaves the four displayed first-order terms. There are \(n(n-1)/2\)
+rotations and \(n\) translations. The latter form an abelian ideal,
+because commutation with any generator returns a translation.
+
+\partsol{c}{Checks and the missing translation sector}
+The three requested tests are
+\[
+ [L_{12},P_1]=iP_2,\qquad [L_{12},P_2]=-iP_1,\qquad
+ [L_{12},L_{23}]=-iL_{13}.
+\]
+Rotations fix the origin, whereas translations do not. No linear
+combination of the rotation generators can supply a constant vector
+field everywhere. The connected isometry group is \(ISO(n)\), not \(SO(n)\).
+
+\partsol{d}{The Laplacian and action}
+Let \(\Delta=\partial_c\partial_c\). Clearly \([P_a,\Delta]=0\), and
+\[
+ [x_a\partial_b-x_b\partial_a,\Delta]
+ =-2\partial_a\partial_b+2\partial_b\partial_a=0.
+\]
+Under \(x'=Rx+a\), \(\phi'(x')=\phi(x)\), the gradient norm is invariant
+by \(R^TR=I\) and the integration measure is unchanged. Hence \(S_E\)
+is invariant. The same proof uses \(|\det R|=1\) and also covers
+reflections for this scalar action, but a reflection is not generated
+by the connected Lie algebra. Invariance of this particular action under
+reflections must not be inferred from connected invariance alone.
+
+\partsol{e}{Rotations versus boosts}
+Writing \(B_i=L_{in}\) for the extra Euclidean plane gives
+\([B_i,B_j]=+iL_{ij}\). With a timelike direction, the Lorentz metric
+instead gives \([K_i,K_j]=-iM^{ij}\). Euclidean rotations have bounded,
+periodic one-parameter subgroups; boosts have unbounded rapidity and
+preserve an indefinite form. Dimension alone cannot identify the groups.
+
+\problem{3}{The invariant norm of a vector in spinor notation}
+\partsol{a}{Determinant, invariance, and inverse map}
+Direct evaluation gives
+\[
+ \det V=(v^0+v^3)(v^0-v^3)-(v^1-iv^2)(v^1+iv^2)
+       =(v^0)^2-|\bm v|^2.
+\]
+Since \(\det A=1\), \(\det(AVA^\dagger)=\det V\).
+The trace identities of the Pauli matrices invert the map:
+\(v^0=\tfrac12\tr V\), \(v^i=\tfrac12\tr(\sigma_iV)\).
+Hermiticity makes these four numbers real.
+
+\partsol{b}{Epsilon contraction and causal type}
+Only the 12 and 21 components of each epsilon contribute. Expanding
+all four terms gives
+\[
+ \tfrac12\varepsilon^{\alpha\beta}\varepsilon^{\dot\alpha\dot\beta}
+ V_{\alpha\dot\alpha}V_{\beta\dot\beta}
+ =\tfrac12(2V_{1\dot1}V_{2\dot2}-2V_{1\dot2}V_{2\dot1})=\det V.
+\]
+The two choices \(\varepsilon^{12}=-1\) multiply, so there is no
+additional minus sign. Positive, negative, and zero determinant describe
+timelike, spacelike, and null vectors, respectively (with the zero vector
+separated if a nonzero null direction is meant). This is an invariant
+quadratic form, not a positive Hilbert-space norm.
+
+\partsol{c}{One spinor makes a null vector}
+For \(\lambda=(a,b)^T\neq0\), \(\lambda\lambda^\dagger\) is positive
+semidefinite of rank one, with determinant zero and positive trace.
+Its vector is
+\[
+ v^0=\frac{|a|^2+|b|^2}{2},\quad v^1=\Re(a^*b),\quad
+ v^2=\Im(a^*b),\quad v^3=\frac{|a|^2-|b|^2}{2}.
+\]
+It is future null. A timelike or spacelike vector cannot be represented
+by this one outer product; nor can a past-directed nonzero null vector.
+
+\partsol{d}{Two spinors distinguish causal types}
+Let \(X=(\lambda\ \mu)\). Then
+\(V_+=XX^\dagger\), \(V_-=X\diag(1,-1)X^\dagger\), and
+\(\det X=\lambda^TE\mu\). Therefore
+\[
+ \det V_+=|\lambda^TE\mu|^2>0,\qquad
+ \det V_-=-|\lambda^TE\mu|^2<0
+\]
+for independent columns. The first matrix is positive definite, so its
+vector is future timelike. The second is spacelike. Dependent columns
+instead give a zero determinant and include null or zero cases.
+
+\partsol{e}{Tensor products and reality}
+The first index transforms with A and the dotted index with its complex
+conjugate, giving \((\tfrac12,0)\otimes(0,\tfrac12)=(\tfrac12,\tfrac12)\).
+The tensor-product space consists of sums of decomposable tensors; a
+single rank-one tensor is a special element, not a general one. The
+complexified representation has four complex components. The condition
+\(V^\dagger=V\) selects the four-real-dimensional vector representation.
+
+\problem{4}{The rotation double cover and its Lorentz extension}
+\partsol{a}{Orthogonality and orientation}
+Unitary conjugation preserves Hermiticity and trace, so the image of
+\(\bm v\cdot\bm\sigma\) again has real coefficients in the Pauli basis.
+Since \(\tfrac12\tr[(\bm v\cdot\bm\sigma)^2]=|\bm v|^2\), it preserves
+lengths and, by polarization, all dot products. Thus \(R(U)^TR(U)=I\).
+The determinant is continuously valued in \(\{\pm1\}\), equals +1 at
+U=I, and is +1 everywhere because \(SU(2)\) is connected.
+
+\partsol{b}{Homomorphism and surjectivity}
+Successive conjugations give \(R(U_2U_1)=R(U_2)R(U_1)\).
+Use \(U=\cos(\theta/2)I-i\sin(\theta/2)\bm n\cdot\bm\sigma\)
+and \((\bm a\cdot\bm\sigma)(\bm b\cdot\bm\sigma)
+=\bm a\cdot\bm b+i(\bm a\times\bm b)\cdot\bm\sigma\). Multiplication yields
+\[
+ R(U)\bm v=\bm v\cos\theta+(\bm n\times\bm v)\sin\theta
+       +\bm n(\bm n\cdot\bm v)(1-\cos\theta).
+\]
+This is Rodrigues' formula. Every proper three-dimensional rotation has
+an axis and angle, so every such rotation is in the image.
+
+\partsol{c}{Kernel and covering}
+A matrix in the kernel commutes with all three Pauli matrices and hence
+with the full matrix algebra. It is \(cI\); unitarity and determinant one
+give \(c=\pm1\). The differential is an isomorphism between the
+three-dimensional Lie algebras. A neighborhood of each of these two
+kernel points maps diffeomorphically onto a neighborhood of the identity,
+and translation gives the same local property elsewhere. Thus this is
+a two-sheeted cover. At \(\theta=2\pi\), U is \(-I\) while R is I;
+at \(4\pi\), U returns to I.
+
+\partsol{d}{The Lorentz extension}
+The map \(V\mapsto AVA^\dagger\) preserves Hermiticity and determinant,
+so it preserves the Minkowski quadratic form. Continuity places its image
+in the proper orthochronous component. In \(A=UH\), write
+\(H=\exp(\rho\bm n\cdot\bm\sigma/2)\): positivity and determinant one
+make its two eigenvalues reciprocal positive numbers. Conjugation by H
+mixes \(v^0\) with \(\bm n\cdot\bm v\) by a hyperbolic rotation of rapidity
+\(\rho\), while U gives the spatial rotation. Rotations and boosts generate
+\(SO^+(1,3)\), proving surjectivity. If A acts trivially on every Hermitian
+V, first use V=I to obtain unitarity, then the Pauli matrices to obtain
+A=\(\pm I\). The kernel is again \(\mathbb Z_2\).
+
+\partsol{e}{Which representations descend?}
+A \(2\pi\) rotation acts in \((j_L,j_R)\) as
+\((-1)^{2j_L+2j_R}\). Descent requires this to equal +1, equivalently
+\(j_L+j_R\in\mathbb Z\). Scalars \((0,0)\) and vectors
+\((\tfrac12,\tfrac12)\) descend; either Weyl representation does not.
+The Dirac direct sum has \(-I\) on each block and also does not descend
+as an ordinary representation of the Lorentz quotient.
+
+\problem{5}{Sigma identities and the Clifford algebra}
+\partsol{a}{Mixed identities}
+For \(\mu=\nu=0\) the sum is \(2I\). For one time and one spatial index,
+\(I(-\sigma_i)+\sigma_iI=0\). For two spatial indices,
+\(-\sigma_i\sigma_j-\sigma_j\sigma_i=-2\delta_{ij}I\).
+Reversing the order of the two sets gives the same answers. The mixed
+products compose maps between the two Weyl spaces and return to one
+space. An unmixed anticommutator would fail already for the time--space
+case, where it would give \(2\sigma_i\).
+
+\partsol{b}{Four-component consequences}
+Multiplying the off-diagonal blocks of \(\gamma^\mu\) gives the two mixed
+identities on its diagonal. Thus \(\{\gamma^\mu,\gamma^\nu\}=2\eta^{\mu\nu}I_4\).
+Symmetric \(p_\mu p_\nu\) annihilates the antisymmetric gamma product, giving
+\((\slashed p)^2=p^2I_4\). Similarly the derivatives commute, so
+\[
+ (i\slashed\partial-m)(i\slashed\partial+m)
+ =-\gamma^\mu\gamma^\nu\partial_\mu\partial_\nu-m^2
+ =-(\Box+m^2)I_4.
+\]
+
+\partsol{c}{The spin generator and vector bilinear}
+Anticommuting one gamma through two others yields
+\[
+ [[\gamma^\mu,\gamma^\nu],\gamma^\rho]
+ =4(\eta^{\nu\rho}\gamma^\mu-\eta^{\mu\rho}\gamma^\nu),\qquad
+ [S^{\mu\nu},\gamma^\rho]
+ =i(\eta^{\nu\rho}\gamma^\mu-\eta^{\mu\rho}\gamma^\nu).
+\]
+For \(\mathcal S=\exp[-\frac i2\omega_{\mu\nu}S^{\mu\nu}]\), this gives
+\(\mathcal S^{-1}\gamma^\rho\mathcal S=\Lambda^\rho{}_{\sigma}\gamma^\sigma\).
+Also \(\mathcal S^\dagger\gamma^0=\gamma^0\mathcal S^{-1}\).
+Consequently \(\bar\Psi=\Psi^\dagger\gamma^0\) transforms as
+\(\bar\Psi\mathcal S^{-1}\), and its gamma bilinear transforms as a vector.
+Using \(\Psi^\dagger\) alone would not give the Lorentz adjoint for boosts.
+
+\partsol{d}{Rotations and boosts in the two blocks}
+Direct multiplication gives
+\[
+ S^{ij}=\frac12\epsilon_{ijk}\begin{pmatrix}\sigma_k&0\\0&\sigma_k\end{pmatrix},
+ \qquad S^{i0}=\frac i2\begin{pmatrix}-\sigma_i&0\\0&\sigma_i\end{pmatrix}.
+\]
+Thus J is \(\bm\sigma/2\) in each block, whereas K has opposite imaginary
+signs. The rotation generators are Hermitian, but these finite-dimensional
+boost generators are not. This is consistent with the field representation
+being nonunitary, not with a failure of unitarity of the particle Hilbert space.
+
+\partsol{e}{Chirality and the mass term}
+In this basis \(\gamma_*=\diag(-I,I)\). Hence \(\gamma_*^2=I\), it
+anticommutes with each off-diagonal gamma, and it commutes with every
+product of two gammas, including S. The projectors are
+\(P_L=(I-\gamma_*)/2\), \(P_R=(I+\gamma_*)/2\).
+Since \(\gamma^0\) anticommutes with \(\gamma_*\),
+\(\overline{P_L\Psi}=\bar\Psi P_R\). Therefore
+\[
+ \bar\Psi\Psi=\overline{\Psi_L}\Psi_R+\overline{\Psi_R}\Psi_L;
+ \qquad \overline{\Psi_L}\Psi_L=\overline{\Psi_R}\Psi_R=0.
+\]
+The scalar Dirac mass couples opposite chiralities.
+
+\problem{6}{Pauli--Lubanski invariants and massless little groups}
+\partsol{a}{Commuting invariants}
+Translation commutativity gives \([P^2,P^\rho]=0\). Contracting
+\eqref{sol4:MP} with \(P_\rho\) gives \([M^{\mu\nu},P^2]=0\), since the
+antisymmetric combination \(P^\mu P^\nu-P^\nu P^\mu\) vanishes.
+Likewise
+\[
+ [W^\mu,P^\lambda]=-\tfrac i2\epsilon^{\mu\nu\rho\sigma}P_\nu
+ (\delta_\sigma{}^\lambda P_\rho-\delta_\rho{}^\lambda P_\sigma)=0,
+ \qquad P_\mu W^\mu=0.
+\]
+In both equations a symmetric pair of momenta contracts with epsilon.
+Applying \eqref{sol4:MP} and \eqref{sol4:MM} to the two factors in W,
+the terms on the three contracted indices cancel by invariance of the
+four-index epsilon tensor under infinitesimal proper Lorentz transformations.
+The remaining free-index transformation is
+\[
+ [M^{\alpha\beta},W^\mu]
+ =i(\eta^{\beta\mu}W^\alpha-\eta^{\alpha\mu}W^\beta).
+\]
+Contraction then gives \([M^{\alpha\beta},W_\mu W^\mu]=0\), even though
+the W components need not commute: the two symmetric anticommutators
+cancel. Since W also commutes with P, \(W^2\) is a Casimir.
+
+\partsol{b}{The epsilon contraction and ordering}
+When moving the second momentum past the first M in \(W^2\), the
+commutator contributes a term of the form
+\(\epsilon^{\mu\nu\rho\sigma}P_\nu
+(\delta_\sigma{}^\lambda P_\rho-\delta_\rho{}^\lambda P_\sigma)\),
+which vanishes before the second epsilon is contracted. Thus the momenta
+may both be placed on the left in this particular expression. Now use
+\[
+ \epsilon^{\mu\nu\rho\sigma}\epsilon_{\mu\alpha\beta\gamma}
+ =-\delta^{\nu\rho\sigma}_{\alpha\beta\gamma}.
+\]
+Expanding the six terms of the generalized Kronecker delta and using
+antisymmetry of each M, the two terms pairing \(\nu\) with \(\alpha\)
+give \(2P^2M^{\rho\sigma}M_{\rho\sigma}\); the remaining four give
+\(-4P_\mu P_\nu M^{\mu\rho}M^\nu{}_{\rho}\).
+Multiplication by \(-1/4\) gives
+\[
+ \boxed{W^2=-\tfrac12P^2M^{\mu\nu}M_{\mu\nu}
+             +P_\mu P_\nu M^{\mu\rho}M^\nu{}_{\rho}.}
+\]
+No general license to commute P through M was used. The cancellation is
+specific to the antisymmetric contractions.
+
+\partsol{c}{Massive representations}
+In the rest frame only \(P_0=m\) is nonzero, so \(W^0=0\) and
+\(W^i=mJ_i\). Hence \(P^2=m^2\), \(W^2=-m^2\bm J^2=-m^2j(j+1)\).
+These label mass and spin in a positive-energy massive irreducible
+sector. They do not resolve extra internal multiplicities or, without
+an energy-orientation assumption, the sign of energy.
+
+\partsol{d}{The massless little algebra}
+The brackets from Problem 1 give
+\[
+ [J,N_1]=iN_2,\quad [J,N_2]=-iN_1,\quad [N_1,N_2]=0.
+\]
+For example \([K_1,K_2]=-iJ_3\) cancels \([J_2,-J_1]=+iJ_3\)
+in the last bracket. These are the \(\mathfrak{iso}(2)\) relations.
+The general component formula is
+\(W^0=\bm p\cdot\bm J\), \(\bm W=H\bm J+\bm p\times\bm K\).
+At \(k=(\kappa,0,0,\kappa)\) it reduces to
+\[
+ W^\mu=\kappa(J,-N_2,N_1,J),\qquad
+ W^2=-\kappa^2(N_1^2+N_2^2).
+\]
+These combinations stabilize k; for example the actions of K and the
+corresponding transverse rotation on its components cancel.
+
+\partsol{e}{Helicity and the finite-polarization assumption}
+In a finite-dimensional unitary space the commuting Hermitian matrices
+\(N_1,N_2\) can be simultaneously diagonalized. Conjugation by
+\(e^{-i\theta J}\) rotates their joint eigenvalue pairs. A finite set of
+points in a plane cannot contain the full circular orbit of a nonzero
+point. Hence every pair is zero, and \(N_1=N_2=0\).
+An irreducible polarization sector is then a character of rotations,
+J=h, and \(W^\mu=hP^\mu\). All these helicities have \(P^2=W^2=0\);
+the Casimir values do not determine h. For the spin cover, a \(4\pi\)
+rotation is the identity and \(h\in\tfrac12\mathbb Z\).
+Continuous-spin representations allow an infinite-dimensional polarization
+space with nonzero translation orbit, and have \(W^2<0\).
+
+\problem{7}{Weyl masses and a conserved Dirac charge}
+\partsol{a}{Grassmann signs and Hermiticity}
+Antisymmetry of E and the exchange of two odd components cancel:
+\(B(\chi,\xi)=\chi_aE_{ab}\xi_b=-\xi_bE_{ab}\chi_a=B(\xi,\chi)\).
+Thus \(B(\xi,\xi)=2\xi_1\xi_2\); for commuting spinors it would be zero
+and the mixed bilinear would instead be antisymmetric.
+Since \((s^\mu)^\dagger=s^\mu\),
+\[
+ (i\xi^\dagger s^\mu\partial_\mu\xi)^\dagger
+ =-i(\partial_\mu\xi^\dagger)s^\mu\xi
+ =i\xi^\dagger s^\mu\partial_\mu\xi
+  -i\partial_\mu(\xi^\dagger s^\mu\xi).
+\]
+The action is Hermitian after the stated boundary term is dropped.
+
+\partsol{b}{Mass phase and first-order equations}
+Put \(\xi_{\rm old}=e^{-i\alpha/2}\xi_{\rm new}\). The two fields in
+B supply \(e^{-i\alpha}\), so m becomes \(|m|\) while the kinetic term
+is unchanged. A full-angle rotation would overcompensate the phase.
+Before rephasing, \(B^\dagger=-2\xi_1^*\xi_2^*\), so
+\(\Lag_m=-m\xi_1\xi_2+m^*\xi_1^*\xi_2^*\).
+Putting each odd variation on the left gives
+\[
+ is^\mu\partial_\mu\xi+m^*E\xi^*=0.
+\]
+Varying the unconjugated variables after integration by parts gives its
+conjugate. Define \(r=-E\xi^*\); using \(E(s^\mu)^*=\widetilde s^\mu E\)
+the pair is
+\[
+ is^\mu\partial_\mu\xi-m^*r=0,\qquad
+ i\widetilde s^\mu\partial_\mu r-m\xi=0.
+\]
+Acting on the first with \(i\widetilde s^\nu\partial_\nu\) and using the
+second gives \((\Box+|m|^2)\xi=0\). The squared equation gives the
+mass shell but loses the first-order relation between components and
+the conjugate field; its arbitrary solutions are not all Weyl solutions.
+
+\partsol{c}{Two equal masses and the flavor rotation}
+The kinetic flavor metric and mass matrix are both proportional to the
+identity, so a real orthogonal rotation of \((\xi_1,\xi_2)\) preserves
+the free action. Choose
+\(R(\alpha)=\left(\begin{smallmatrix}\cos\alpha&\sin\alpha\\
+-\sin\alpha&\cos\alpha\end{smallmatrix}\right)\).
+Then \(\chi\mapsto e^{-i\alpha}\chi\),
+\(\zeta\mapsto e^{i\alpha}\zeta\), and
+\[
+ B(\xi_1,\xi_1)+B(\xi_2,\xi_2)=2B(\chi,\zeta).
+\]
+The kinetic term is \(i\chi^\dagger s\cdot\partial\chi+
+ i\zeta^\dagger s\cdot\partial\zeta\); the mass term is
+\(-m[B(\chi,\zeta)+B(\chi,\zeta)^\dagger]\).
+The transformation between the two pairs of fields is invertible and
+complex linear. Since \(\xi_1,\xi_2\) are independent complex Weyl fields,
+\(\zeta\) is not constrained to be \(\chi^*\).
+
+\partsol{d}{Dirac packaging and current}
+For \(r=-E\zeta^*\), \(\bar\Psi=(r^\dagger,\chi^\dagger)\).
+One finds \(\bar\Psi\Psi=B(\chi,\zeta)+B(\chi,\zeta)^\dagger\).
+The lower kinetic block obeys
+\[
+ r^\dagger\widetilde s^\mu\partial_\mu r
+ =\zeta^T(s^\mu)^T\partial_\mu\zeta^*
+ =-(\partial_\mu\zeta^\dagger)s^\mu\zeta,
+\]
+where the last step exchanges odd variables. Integration by parts
+therefore supplies the \(\zeta\) kinetic action. This proves
+\(S=\int d^4x\,\bar\Psi(i\slashed\partial-m)\Psi\).
+Both blocks of \(\Psi\) transform by \(e^{-i\alpha}\); Noether's current is
+\[
+ j^\mu=\bar\Psi\gamma^\mu\Psi
+       =\chi^\dagger s^\mu\chi-\zeta^\dagger s^\mu\zeta.
+\]
+The minus sign follows from the same odd reordering without a derivative.
+The Dirac equation and its adjoint give \(\partial_\mu j^\mu=0\).
+
+\partsol{e}{When the charge is broken}
+A term \(\mu B(\chi,\chi)+\hc\) acquires \(e^{-2i\alpha}\), so a
+nonzero fixed \(\mu\) breaks this continuous phase symmetry, leaving
+its sign subgroup. More generally \(\Xi\mapsto e^{-i\alpha Q}\Xi\)
+changes a symmetric Weyl mass matrix to
+\(e^{-i\alpha Q^T}Me^{-i\alpha Q}\). Its first variation vanishes exactly if
+\[
+ Q^TM+MQ=0.
+\]
+The kinetic term also requires Hermitian Q. For the Dirac pair,
+\(Q=\diag(1,-1)\) and \(M=\left(\begin{smallmatrix}0&m\\m&0\end{smallmatrix}\right)\)
+satisfy the condition; a nonzero 11 entry does not. Interactions must
+separately respect the symmetry, so a degenerate free mass spectrum
+alone is insufficient to conserve the charge in the full theory.
+
+\problem{8}{Free spinors, spin sums, and the one-particle inner product}
+\partsol{a}{Square roots and the Dirac equations}
+Let \(X=\bm p\cdot\bm\sigma\), so \(X^2=\bm p^2I\).
+Squaring the given numerators and using \(E^2-\bm p^2=m^2\) gives
+\(A^2=EI+X\), \(B^2=EI-X\), and \(AB=BA=mI\).
+Both matrices are Hermitian and positive for \(m>0\). In block form,
+\[
+ \slashed p=\begin{pmatrix}0&A^2\\B^2&0\end{pmatrix}.
+\]
+It sends \((A\xi,B\xi)^T\) to \(m(A\xi,B\xi)^T\), and
+\((A\eta,-B\eta)^T\) to \(-m(A\eta,-B\eta)^T\).
+This proves both required equations.
+
+\partsol{b}{Three different orthogonality statements}
+Matrix multiplication and orthonormality of each two-spinor basis give
+\begin{align*}
+ \bar u_su_t&=2m\delta_{st},&\bar v_sv_t&=-2m\delta_{st},
+ &\bar u_sv_t&=0,\\
+ u_s^\dagger u_t&=2E\delta_{st},&v_s^\dagger v_t&=2E\delta_{st},
+ &u_s^\dagger(p)v_t(p)&=2\xi_s^\dagger X\eta_t.
+\end{align*}
+The last expression need not vanish. But \(A_{-p}=B_p\),
+\(B_{-p}=A_p\), so \(u_s^\dagger(\bm p)v_t(-\bm p)=0\).
+The vectors \(u(\bm p)\) and \(v(-\bm p)\) are eigenvectors of the same
+Hermitian \(h_D(\bm p)\) with eigenvalues \(E\) and \(-E\). This is the
+orthogonality implied by Hermiticity; \(v(\bm p)e^{-i\bm p\cdot\bm x}\)
+has spatial Fourier momentum \(-\bm p\).
+
+\partsol{c}{Spin sums and projectors}
+Completeness \(\sum_s\xi_s\xi_s^\dagger=\sum_s\eta_s\eta_s^\dagger=I\)
+gives
+\[
+ \sum_su_s\bar u_s=\begin{pmatrix}mI&A^2\\B^2&mI\end{pmatrix}
+ =\slashed p+m,
+ \quad
+ \sum_sv_s\bar v_s=\begin{pmatrix}-mI&A^2\\B^2&-mI\end{pmatrix}
+ =\slashed p-m.
+\]
+The slash-eigenvalue projectors are
+\(\Pi_+=(m+\slashed p)/(2m)\), \(\Pi_-=(m-\slashed p)/(2m)\).
+They sum to I and square to themselves by \(\slashed p^2=m^2\), but
+are generally not Hermitian in the ordinary component inner product.
+In particular the v sum must be divided by \(-2m\), not \(+2m\), to give
+\(\Pi_-\). In contrast, the Hermitian energy projectors are
+\[
+ P_+(\bm p)=\frac{\sum_su_s(p)u_s^\dagger(p)}{2E}
+   =\frac12\left(I+\frac{h_D(\bm p)}E\right),\qquad
+ P_-(\bm p)=\frac{\sum_sv_s(p_-)v_s^\dagger(p_-)}{2E}
+   =\frac12\left(I-\frac{h_D(\bm p)}E\right).
+\]
+
+\partsol{d}{The one-particle Hilbert space}
+The invariant measure cancels the state normalization:
+\[
+ I_1=\sum_s\int d\Pi_p\,|\bm p,s\rangle\langle\bm p,s|,\quad
+ |f\rangle=\sum_s\int d\Pi_p\,f_s(\bm p)|\bm p,s\rangle,\quad
+ \|f\|^2=\sum_s\int d\Pi_p\,|f_s|^2.
+\]
+A normalized wave packet sets the last expression to one. This is a
+positive norm of particle states with their invariant integration measure.
+The invariant component bilinear \(\bar u u\) has a different role; its
+v analogue is negative without implying negative-norm antiparticle states.
+
+\Needspace{18\baselineskip}
+\partsol{e}{The intertwiner}
+Choose rest spinors \(u_s(k)\) and define
+\(u_s(p)=\mathcal S(L(p))u_s(k)\). Insert the identity
+\(L(\Lambda p)L(\Lambda p)^{-1}\) into \(\Lambda L(p)\), and write
+\(W=L(\Lambda p)^{-1}\Lambda L(p)\). Since W fixes k, it is a rest-frame
+rotation and acts on its spinors by the unitary matrix \(D^{(1/2)}(W)\).
+Therefore
+\[
+ \mathcal S(\Lambda)u_s(p)
+ =\sum_tu_t(\Lambda p)D^{(1/2)}_{ts}(W).
+\]
+Although \(\mathcal S\) on four components is nonunitary for boosts,
+D is unitary and the mass-shell measure is invariant. The induced action
+on f thus preserves the Hilbert-space norm in part (d). Covariantly
+normalized states need no additional square-root energy factor.
+
+\end{document}

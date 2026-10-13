@@ -1,0 +1,442 @@
+\documentclass[11pt]{article}
+
+\usepackage[letterpaper,margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb,mathtools,bm}
+\usepackage{xcolor,slashed,needspace}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage[most]{tcolorbox}
+\usepackage{fancyhdr}
+\usepackage{parskip}
+
+\definecolor{qftblue}{HTML}{245A8D}
+\definecolor{qftgray}{HTML}{F4F6F8}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=qftblue,
+  urlcolor=qftblue,
+  pdftitle={PHYS 662 Homework Set 5},
+  pdfauthor={Nima Lashkari}
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{PHYS 662: Quantum Field Theory I}
+\rhead{Homework Set 5}
+\cfoot{\thepage}
+\setlength{\headheight}{14pt}
+
+\setlist[enumerate]{leftmargin=2.2em,itemsep=0.55em,topsep=0.5em}
+\newlist{parts}{enumerate}{1}
+\setlist[parts]{label=\textbf{(\alph*)},leftmargin=2.3em,itemsep=0.65em}
+
+\newcommand{\dd}{\mathrm{d}}
+\newcommand{\ii}{\mathrm{i}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Lag}{\mathcal L}
+\newcommand{\tr}{\operatorname{tr}}
+\newcommand{\Ad}{\operatorname{Ad}}
+
+\newtcolorbox{conventionbox}[1][]{
+  enhanced,breakable,
+  colback=qftgray,colframe=qftblue,
+  boxrule=0.8pt,arc=1.5mm,
+  title={#1},fonttitle=\bfseries,coltitle=white
+}
+\newcommand{\problem}[2]{%
+  \clearpage
+  \section*{\color{qftblue}Problem #1: #2}
+  \addcontentsline{toc}{section}{Problem #1: #2}
+}
+\newcommand{\lectureconnection}[1]{%
+  {\small\textit{Lecture connection: #1.}\par}\medskip
+}
+
+
+\newcommand{\diag}{\operatorname{diag}}
+\newcommand{\SO}{\mathrm{SO}}
+\newcommand{\SU}{\mathrm{SU}}
+\newcommand{\SL}{\mathrm{SL}}
+\newcommand{\ISO}{\mathrm{ISO}}
+\newcommand{\ddPi}{\dd\Pi}
+\newcommand{\vac}{\lvert0\rangle}
+\newcommand{\vbra}{\langle0\rvert}
+\newcommand{\Dc}{\mathcal C}
+\newcommand{\one}{\mathbf1}
+\begin{document}
+\begin{center}
+{\scshape\Large PHYS 662 --- Quantum Field Theory I\par}
+\vspace{0.25em}
+{\Huge\bfseries\color{qftblue} Homework Set 5\par}
+\vspace{0.25em}
+{\large Lectures 15--17 \quad Fall 2026\par}
+\end{center}
+\vspace{0.5em}
+\textbf{Name:} \rule{0.44\textwidth}{0.4pt}\hfill
+\textbf{Due:} \rule{0.24\textwidth}{0.4pt}
+
+\begin{conventionbox}[Instructions and conventions]
+Show derivations and state distributional prescriptions. Set
+\(\hbar=c=1\) and use the mostly-minus metric. Our notation is
+\[
+\eta=\diag(1,-1,-1,-1),\qquad p\cdot x=E_{\bm p}t-\bm p\cdot\bm x,
+\qquad \dd\Pi_p=\frac{\dd^dp}{(2\pi)^d2E_{\bm p}},
+\]
+where \(E_{\bm p}=\sqrt{\bm p^2+m^2}\).
+Take \(m>0\) unless a massless limit is requested.
+
+For the real scalar field, use
+\[
+ D^+(z)=\langle0|\phi(x)\phi(y)|0\rangle,\qquad
+ \mathcal K(z)=D^+(z)-D^+(-z)=[\phi(x),\phi(y)],\quad z=x-y.
+\]
+Set \(L=\Box+m^2\), \(G_R=i\theta(t)\mathcal K\),
+\(G_A=-i\theta(-t)\mathcal K\), and
+\(D_F=\langle0|T\phi(x)\phi(y)|0\rangle\).
+The scalar inverse with unit source is \(G_F=iD_F\).
+These definitions fix factors of \(i\) that differ among references.
+
+For spinors use the gamma matrices of Lectures 13--16,
+\(\bar\Psi=\Psi^\dagger\gamma^0\),
+\(S^{\mu\nu}=\frac i4[\gamma^\mu,\gamma^\nu]\), and
+\(\gamma_*=-i\gamma^0\gamma^1\gamma^2\gamma^3\).
+Normal ordering is relative to the free particle--antiparticle vacuum.
+\end{conventionbox}
+
+The six original prompts are numbered consecutively as Problems 1--6.
+Problems 7 and 8 are new. Work in three spatial dimensions except where
+Problem 3 explicitly asks for general \(d\).
+\begingroup\small\tableofcontents\endgroup
+
+\problem{1}{Retarded and advanced Green functions}
+\lectureconnection{17, Sections 1, 4, and 5}
+Start from the scalar commutator
+\begin{equation}
+ \mathcal K(t,\bm r)=\int\dd\Pi_p
+ [e^{-iE_{\bm p}t+i\bm p\cdot\bm r}-e^{iE_{\bm p}t-i\bm p\cdot\bm r}].
+ \label{eq:K}
+\end{equation}
+Do not replace the commutator by a retarded function before imposing a
+boundary condition.
+
+\begin{parts}
+\item Derive \(L\mathcal K=0\), \(\mathcal K(0,\bm r)=0\), and
+\(\partial_t\mathcal K(0,\bm r)=-i\delta^{(3)}(\bm r)\).
+Check the last sign directly against the canonical equal-time commutator.
+\item Differentiate \(G_R=i\theta(t)\mathcal K\) and
+\(G_A=-i\theta(-t)\mathcal K\) as distributions and show that both
+satisfy \(LG=\delta^{(4)}\). Explain why using the same prefactor for the
+two step functions would give opposite sources. Handle the
+\(\delta'\mathcal K\) term explicitly or use the jump of the first derivative.
+\item Fourier transform only the spatial coordinates and solve the
+resulting oscillator equation with the two respective support
+conditions. Recover
+\[
+ G_R(t,\bm p)=\theta(t)\frac{\sin(E_{\bm p}t)}{E_{\bm p}},\qquad
+ G_A(t,\bm p)=-\theta(-t)\frac{\sin(E_{\bm p}t)}{E_{\bm p}}.
+\]
+\item Derive the four-momentum pole prescriptions. Draw the poles in
+the complex \(p^0\) plane and show by residues why one answer vanishes
+for \(t<0\) and the other for \(t>0\).
+\item Couple a smooth source \(J\) of compact spacetime support through
+\(J\phi\). Express the solution with no incoming disturbance using
+\(G_R\), and prove that it cannot change outside the causal future of
+the source. What different boundary condition does \(G_A\) impose?
+\item Show that \(G_R-G_A=i\mathcal K\) solves the homogeneous equation.
+Explain why the differential equation for a Green function is insufficient
+without a boundary condition.
+\end{parts}
+
+\problem{2}{The Feynman function as an inverse wave operator}
+\lectureconnection{17, Sections 5--6}
+For a real scalar field,
+\begin{equation}
+ D_F(z)=\theta(t)D^+(z)+\theta(-t)D^+(-z),\qquad
+ D^+(z)=\int\dd\Pi_p e^{-ipz}.
+ \label{eq:DF}
+\end{equation}
+Keep the distinction between a time-ordered vacuum expectation and a
+Green function normalized to a unit delta-function source.
+
+\begin{parts}
+\item Apply \(L\) to \eqref{eq:DF} distributionally. Derive
+\(LD_F=-i\delta^{(4)}\), using the equal-time jump instead of appealing
+to a remembered propagator formula. Hence determine the source equation
+for \(G_F=iD_F\).
+\item Derive
+\[
+ D_F(z)=\lim_{\epsilon\downarrow0}\int\frac{\dd^4p}{(2\pi)^4}
+ \frac{i e^{-ipz}}{p^2-m^2+i\epsilon}.
+\]
+Locate both poles and evaluate the \(p^0\) contour separately for
+\(t>0\) and \(t<0\), keeping the contour orientation.
+\item Compare this pole prescription to those of Problem 1. Compute
+\(L(G_F-G_R)\). Is \(G_F\) a causal response kernel? Explain how a
+nonzero spacelike \(D_F\) is compatible with microcausality.
+\item For a Dirac field, start with fermionic time ordering and the
+spin sums to show
+\[
+ S_F(z)=\langle0|T\Psi(x)\bar\Psi(y)|0\rangle
+       =(i\slashed\partial+m)D_F(z).
+\]
+Explain the minus sign when the time ordering exchanges the two odd fields.
+\item Derive the momentum-space numerator and verify
+\((i\slashed\partial-m)S_F=i\delta^{(4)}I_4\).
+Why would omitting the fermionic time-ordering sign fail to give this
+local source equation?
+\end{parts}
+
+\problem{3}{Massive two-point functions in arbitrary dimension}
+\lectureconnection{15, Sections 2--3; 17, Section 2}
+In \(d+1\) dimensions define
+\begin{equation}
+ D_d^+(t,\bm r)=\lim_{\epsilon\downarrow0}\int
+ \frac{\dd^dp}{(2\pi)^d2E_{\bm p}}
+ e^{-iE_{\bm p}(t-i\epsilon)+i\bm p\cdot\bm r}.
+ \label{eq:Dd}
+\end{equation}
+Assume integer \(d\geq1\) and \(m>0\). You may use
+\begin{align*}
+ (p^2+m^2)^{-1/2}&=\frac1{\sqrt\pi}\int_0^\infty
+ \dd\alpha\,\alpha^{-1/2}e^{-\alpha(p^2+m^2)},\\
+ \int\frac{\dd^dp}{(2\pi)^d}e^{-\alpha p^2+i\bm p\cdot\bm r}
+ &=(4\pi\alpha)^{-d/2}e^{-r^2/(4\alpha)},\\
+ \int_0^\infty\dd\alpha\,\alpha^{-\nu-1}e^{-a\alpha-b/\alpha}
+ &=2(a/b)^{\nu/2}K_\nu(2\sqrt{ab}),\qquad a,b>0.
+\end{align*}
+
+\begin{parts}
+\item At spacelike separation use a frame with \(t=0\). Evaluate
+\eqref{eq:Dd} in terms of \(K_\nu(mr)\), giving both its coefficient and
+order \(\nu\) as functions of \(d\). Check the dimensions of the result
+using \([\phi]=(d-1)/2\).
+\item Verify the explicit answers for \(d=1,2,3\). You may use
+\(K_{1/2}(z)=\sqrt{\pi/(2z)}e^{-z}\).
+State why these formulas apply at \(r>0\) rather than as ordinary
+functions at coincident points.
+\item Use \(K_\nu(z)\sim\sqrt{\pi/(2z)}e^{-z}\) to derive the leading
+large-distance behavior for general \(d\). Identify the exponential
+length scale and the power-law prefactor.
+\item Continue the spacelike formula with
+\(r\mapsto\rho_\epsilon=\sqrt{r^2-(t-i\epsilon)^2}\), on the branch
+continued from real positive \(r\). Explain why the sign of the
+\(i\epsilon\) matters at timelike separation. Independently derive the
+large positive-time behavior at \(\bm r=0\) by a Gaussian stationary-phase
+approximation about \(\bm p=0\), keeping its phase and power of \(t\).
+\item For \(d>1\), find the massless limit at nonzero spacelike distance.
+Why does \(d=1\), where \(K_0(z)\sim-\log(z/2)-\gamma_E\), require a
+separate infrared prescription for the undifferentiated massless field?
+\end{parts}
+
+\problem{4}{The commutator, its light-cone terms, and locality}
+\lectureconnection{17, Sections 1--4}
+Use the boundary values from Problem 3 to calculate
+\(\mathcal K_d(z)=D_d^+(z)-D_d^+(-z)\).
+This problem concerns a distribution, so a formula that agrees away from
+the light cone is not yet a complete answer.
+
+\begin{parts}
+\item Show directly from the invariant mass-shell integral that
+\(\mathcal K_d\) is odd under \(z\mapsto-z\), solves the homogeneous
+Klein--Gordon equation, and vanishes at spacelike separation.
+Write its timelike expression as a difference of the two boundary
+values of the Bessel formula, retaining the time-orientation information.
+\item In \(3+1\) dimensions, evaluate the discontinuity, including the
+light-cone distribution, and determine the constants \(A,B\) in
+\[
+ \mathcal K(t,r)=-i\operatorname{sgn}(t)\left[
+ A\,\delta(t^2-r^2)+B\,\theta(t^2-r^2)
+ \frac{mJ_1(m\sqrt{t^2-r^2})}{\sqrt{t^2-r^2}}\right].
+\]
+Check the constants against the initial derivative
+\(-i\delta^{(3)}(\bm r)\). You may use
+\((x\pm i0)^{-1}=\operatorname{PV}(1/x)\mp i\pi\delta(x)\).
+\item Take \(m\to0\) in three spatial dimensions and determine whether
+the support is on or inside the light cone. Compare with the massless
+retarded wave equation in one spatial dimension by solving its
+initial-value problem. Is propagation only on the cone universal in
+all dimensions?
+\item For a complex scalar, calculate
+\([\Phi(x),\Phi^\dagger(y)]\) and \([\Phi(x),\Phi(y)]\) from the two mode
+families. Identify where the particle--antiparticle cancellation occurs.
+What remains if the creation term is discarded?
+\item Let \(A\) and \(B\) be local Hermitian observables in spacelike
+separated regions. Prove that applying \(e^{-i\lambda B}\) cannot change
+\(\langle A\rangle\), even when \(\langle AB\rangle\) does not factorize.
+Explain the distinction between vacuum correlation and signaling.
+\end{parts}
+
+\problem{5}{Charge conjugation of a quantized Dirac field}
+\lectureconnection{13, Section 6; 16, Sections 3 and 5}
+Use
+\[
+ C=\diag(E,-E)=i\gamma^0\gamma^2,\qquad
+ E=i\sigma_2,\qquad \Psi^c=C\bar\Psi^T.
+\]
+Distinguish this numerical matrix from the quantum symmetry operator
+\(\Dc\). The field has the mode expansion
+\begin{equation}
+ \Psi(x)=\sum_s\int\dd\Pi_p
+ [b_s(\bm p)u_s(p)e^{-ipx}+d_s^\dagger(\bm p)v_s(p)e^{ipx}],
+ \label{eq:Diracmodes}
+\end{equation}
+with the covariant CAR of Lecture 16. Choose an invariant vacuum and
+spinor phases satisfying \(v_s=C\bar u_s^T\).
+
+\begin{parts}
+\item Verify \(C^T=-C\), \(C^{-1}=-C\), and
+\(C(\gamma^\mu)^TC^{-1}=-\gamma^\mu\). Show that the charge-conjugate of
+a free solution satisfies the same real-mass Dirac equation.
+Why is the minus sign in the gamma-matrix identity essential?
+\item Show \((\Psi^c)^c=\Psi\). For the explicit wavefunctions of
+Lecture 14, determine the relation between their two-component bases
+\(\xi_s\) and \(\eta_s\) required by \(v_s=C\bar u_s^T\).
+\item Impose \(\Dc\Psi\Dc^{-1}=\Psi^c\). Derive the transformations of
+\(b_s,d_s\), their adjoints, and normalized one-particle states.
+Indicate how the answer changes under a rephasing or a change of spin basis.
+\item Transform the normal-ordered Hamiltonian and charge. Then
+establish the transformation of \(:\bar\Psi\Psi:\) and
+\(:\bar\Psi\gamma^\mu\Psi:\), keeping the fermionic reordering signs.
+\item Explain why \(\Psi\mapsto C\bar\Psi^T\) is antilinear on a
+classical complex spinor but \(\Dc\) is unitary on Fock space.
+Contrast with time reversal, including its action on \(i\), energy,
+momentum, and spin.
+\item Add a minimal coupling \(D_\mu=\partial_\mu+iqA_\mu\).
+Determine the accompanying transformation of \(A_\mu\) required for a
+charge-conjugation symmetry of the full system. Why is transforming
+only the spinor in a fixed generic background not a symmetry statement?
+\end{parts}
+
+\problem{6}{Gordon identities with fixed spin conventions}
+\lectureconnection{14, Sections 6--7; 16, Section 3}
+Let \(p^2=p'^2=m^2\), \(p^0,p'^0>0\), and \(m>0\). Define
+\(q=p'-p\), \(P=p'+p\), and
+\(S^{\mu\nu}=\frac i4[\gamma^\mu,\gamma^\nu]\).
+The spin labels \(s,s'\) need not agree. Use
+\[
+ (\slashed p-m)u_s(p)=0,\qquad
+ (\slashed p+m)v_s(p)=0,
+\]
+and their adjoint equations. If another source uses
+\(\sigma^{\mu\nu}=\frac i2[\gamma^\mu,\gamma^\nu]\), then
+\(\sigma^{\mu\nu}=2S^{\mu\nu}\).
+
+\begin{parts}
+\item Derive \(\gamma^\mu\gamma^\nu=\eta^{\mu\nu}-2iS^{\mu\nu}\).
+Using the external equations of motion, express
+\(2m\bar u_{s'}(p')\gamma^\mu u_s(p)\) in terms of \(P^\mu\),
+\(S^{\mu\nu}\), and \(q_\nu\). Derive the corresponding vector identity
+for two \(v\) spinors and explain its mass-sign difference.
+\item Starting from
+\(\bar u(p')[\slashed p'\gamma^\mu\gamma_*-
+\gamma^\mu\gamma_*\slashed p]u(p)=0\), prove
+\begin{equation}
+ \bar u_{s'}(p')\left[P^\mu+2iS^{\mu\nu}q_\nu\right]
+                        \gamma_*u_s(p)=0.
+ \label{eq:axialzero}
+\end{equation}
+Prove the same vanishing identity with both \(u\)'s replaced by \(v\)'s.
+Keep the ordering of \(\gamma_*\) explicit.
+\item Use the sum, rather than the difference, of the two external
+Dirac equations to derive the axial Gordon identity for
+\(2m\bar u(p')\gamma^\mu\gamma_*u(p)\).
+Express its right side using \(q^\mu\) and \(S^{\mu\nu}P_\nu\).
+What changes for the \(v\)-spinor identity?
+\item Contract the vector and axial currents with \(q_\mu\).
+Derive their on-shell divergences. Explain the different role of the
+mass in vector-current and axial-current conservation for the free theory.
+\item Check the formulas at \(p'=p\), and then at a nonzero momentum
+transfer using the explicit square-root spinors from Lecture 14.
+Would a sign error in front of \(S^{\mu\nu}q_\nu\) be detected by the
+zero-transfer check alone? Explain how the identities change if the
+momentum-transfer convention is reversed.
+\end{parts}
+
+\problem{7}{Scalar normalization, vacuum energy, and charge}
+\lectureconnection{15, Sections 2--6}
+\textit{New problem.}
+Quantize a complex scalar with
+\(\Lag=\partial_\mu\Phi^\dagger\partial^\mu\Phi-m^2\Phi^\dagger\Phi\).
+Use a periodic box of volume \(V=L^3\) when evaluating coincident
+momentum delta functions, and a spatial cutoff \(|\bm p|<\Lambda\) when
+summing vacuum energies.
+
+\begin{parts}
+\item Derive the two canonical momenta and write all nonzero
+equal-time commutators. Begin with the covariant expansion
+\[
+ \Phi(x)=\int\dd\Pi_p[a(\bm p)e^{-ipx}+b^\dagger(\bm p)e^{ipx}].
+\]
+Determine both mode commutators and verify the canonical brackets.
+Explain why the \(1/(2E)\) expansion and a mode commutator without
+\(2E\) cannot be combined.
+\item Define normalized box oscillators and construct a state with
+\(n\) particles in one mode and \(\bar n\) antiparticles in another.
+Calculate its energy, charge, and total particle number.
+Then describe a normalized one-particle wave packet in the continuum.
+\item Derive the un-normal-ordered Hamiltonian and Noether charge.
+After normal ordering, show that the Hamiltonian contains the sum of
+the two number densities and the charge their difference. Verify
+\([Q,\Phi]=-\Phi\) in the phase convention \(\delta\Phi=-i\alpha\Phi\).
+\item Calculate the leading \(\Lambda^4\) divergence of the vacuum
+energy density for one real scalar and for one complex scalar. Separate
+the volume dependence from the ultraviolet dependence. What is the
+relation between \((2\pi)^3\delta^{(3)}(0)\) and the box volume?
+\item Add \(-\lambda(\Phi^\dagger\Phi)^2\) to the Lagrangian. Which
+continuous charge remains conserved? Why need total particle number
+not remain conserved? State the energy-momentum constraint on pair
+production and why charge conservation alone does not make the vacuum
+unstable.
+\item Explain the limited role of normal ordering in this example.
+What additional information is needed to compare predictions obtained
+with two different ultraviolet regulators in an interacting theory?
+\end{parts}
+
+\problem{8}{Fermionic quantization, positivity, and local observables}
+\lectureconnection{16, Sections 1--4; 17, Section 3}
+\textit{New problem.}
+Use the free Dirac mode expansion \eqref{eq:Diracmodes}, with independent
+\(b,d\) CAR and vacuum annihilated by both families. You may use
+\(\sum_su_s\bar u_s=\slashed p+m\) and
+\(\sum_sv_s\bar v_s=\slashed p-m\).
+
+\begin{parts}
+\item For one normalized mode \(c\), show that \(n=c^\dagger c\) obeys
+\(n^2=n\). For two distinct modes, exhibit the exchange sign of their
+two-particle state. Explain why \((c^\dagger)^2\vac=0\) is an exclusion
+statement, not the statement that all two-fermion states vanish.
+\item Derive \(\{\Psi_\alpha(t,\bm x),\Psi_\beta^\dagger(t,\bm y)\}
+=\delta_{\alpha\beta}\delta^{(3)}(\bm x-\bm y)\).
+Display the change \(\bm p\mapsto-\bm p\) in the antiparticle integral
+and the cancellation of the mass and spatial gamma terms.
+\item Starting with \(H=\int\dd^3x\,\Psi^\dagger h_D\Psi\), derive
+\[
+ H=\sum_s\int\dd\Pi_p E_{\bm p}(b_s^\dagger b_s-d_sd_s^\dagger).
+\]
+Normal-order it and \(Q=\int\dd^3x:\Psi^\dagger\Psi:\).
+Verify directly the energy and charge of \(b_s^\dagger\vac\) and
+\(d_s^\dagger\vac\).
+\item Temporarily replace both CAR families by positive-norm bosonic
+oscillators in the preceding Hamiltonian. Show why the energy cannot
+be bounded below. Explain why a negative mode commutator is not a
+positive-Hilbert-space remedy with the same annihilation vacuum.
+\item Derive
+\[
+ \{\Psi_\alpha(x),\bar\Psi_\beta(y)\}
+ =(i\slashed\partial+m)_{\alpha\beta}\mathcal K(x-y)
+\]
+and establish its spacelike vanishing. For separated points, show why
+two even bilinears such as \(:\bar\Psi\Psi:\) commute outside the light
+cone. State the role of a composite-operator prescription at coincidence.
+\item At a finite regulator, set \(f_s=d_s^\dagger\) and reinterpret the
+vacuum as a filled set of negative-energy modes. Derive the energy and
+charge of a hole relative to that filled state. Which parts of this
+argument require care when the number of modes becomes infinite?
+\end{parts}
+\end{document}

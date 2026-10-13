@@ -1,0 +1,497 @@
+\documentclass[11pt]{article}
+\usepackage[letterpaper,margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern,microtype}
+\usepackage{amsmath,amssymb,mathtools,bm,slashed}
+\usepackage{xcolor,enumitem,booktabs,array,needspace}
+\usepackage[most]{tcolorbox}
+\usepackage{fancyhdr,titlesec,parskip,hyperref}
+\definecolor{qftblue}{HTML}{245A8D}
+\definecolor{qftgreen}{HTML}{2F6B4F}
+\definecolor{qftgray}{HTML}{F4F6F8}
+\hypersetup{colorlinks=true,linkcolor=qftblue,urlcolor=qftblue,pdfauthor={Nima Lashkari}}
+\pagestyle{fancy}\fancyhf{}
+\lhead{PHYS 662: Quantum Field Theory I}\cfoot{\thepage}
+\setlength{\headheight}{14pt}
+\titleformat{\section}{\Large\bfseries\color{qftblue}}{\thesection.}{0.6em}{}
+\titleformat{\subsection}{\large\bfseries\color{qftgreen}}{\thesubsection}{0.6em}{}
+\setlist[enumerate]{leftmargin=2em,itemsep=0.25em,topsep=0.35em}
+\setlist[itemize]{leftmargin=2em,itemsep=0.2em,topsep=0.35em}
+\newcommand{\dd}{\mathrm d}
+\newcommand{\ii}{\mathrm i}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\tr}{\operatorname{tr}}
+\newcommand{\Tr}{\operatorname{Tr}}
+\newcommand{\diag}{\operatorname{diag}}
+\newcommand{\Lag}{\mathcal L}
+\newcommand{\D}{\mathcal D}
+\newcommand{\vac}{\lvert0\rangle}
+\newcommand{\vbra}{\langle0\rvert}
+\newcommand{\Tord}{\mathrm T}
+\newcommand{\ket}[1]{\lvert#1\rangle}
+\newcommand{\bra}[1]{\langle#1\rvert}
+\newtcolorbox{keyidea}[1][]{enhanced,breakable,colback=qftgray,colframe=qftblue,
+ boxrule=0.7pt,arc=1.5mm,title={#1},fonttitle=\bfseries,coltitle=white}
+\newtcolorbox{remarkbox}[1][]{enhanced,breakable,colback=white,colframe=qftgreen,
+ boxrule=0.6pt,arc=1.5mm,title={#1},fonttitle=\bfseries,coltitle=white}
+\newcommand{\intp}{\int\!\frac{\dd^4p}{(2\pi)^4}}
+\newcommand{\MSbar}{\overline{\mathrm{MS}}}
+\newcommand{\module}[1]{\clearpage\section{#1}}
+\newcommand{\lecturefront}[4]{%
+\rhead{Lecture #1}\hypersetup{pdftitle={PHYS 662 Lecture #1: #2}}
+\begin{document}\pagenumbering{gobble}
+\begin{titlepage}\centering\vspace*{1.05in}
+{\scshape\Large PHYS 662 --- Quantum Field Theory I\par}
+\vspace{0.35in}{\Huge\bfseries\color{qftblue}Lecture #1\par}
+\vspace{0.2in}{\LARGE\bfseries #2\par}
+\vspace{0.2in}{\large\color{qftgreen}#3\par}
+\vspace{0.6in}{\large Nima Lashkari\par}{\large Fall 2026\par}
+\vfill\begin{minipage}{0.86\textwidth}\small #4\par\medskip
+Course page: \url{https://nimalashkari.com/quantum-field-theory-2026-part-i/}
+\end{minipage}\vspace{0.5in}\end{titlepage}
+\pagenumbering{roman}\setcounter{tocdepth}{1}\tableofcontents
+\vfill\begin{remarkbox}[Place in the course]
+Lectures 19--20 established free scalar and fermion path integrals.
+Lecture 21 turns the scalar source expansion into Feynman rules.
+Lecture 22 evaluates the first scalar loops and introduces renormalization.
+Problem Set 7 connects the diagram counting to these calculations.
+\end{remarkbox}\clearpage\pagenumbering{arabic}}
+\lecturefront{22}{Scalar Field Theory at One Loop}
+{Mass, coupling, and the first renormalized amplitudes}
+{We evaluate the tadpole and the three four-point bubbles of massive
+real scalar theory. A cutoff gives a first view of the mass correction;
+dimensional regularization then provides a common language for
+counterterms, running parameters, and the physical two-particle cut.}
+
+\section{Which quantities are being renormalized?}
+Continue with \(\eta=\diag(1,-1,-1,-1)\), \(\hbar=c=1\), and the
+unbroken \(\mathbb Z_2\)-symmetric theory. The line is
+\(D_F(p)=\ii/(p^2-m^2+\ii0)\) and the quartic vertex is
+\(-\ii\lambda\). Work perturbatively at \(m^2>0\). Our two targets
+are the pole of the two-point function and the connected \(2\to2\)
+scattering amplitude through one loop.
+
+The parameters in a regulated action are called \emph{bare}. They
+depend on the regulator if measured quantities are held fixed. Write
+that same action in terms of a renormalized field and parameters:
+\begin{align}
+ \Lag&=\frac12(\partial\phi)^2-\frac12m^2\phi^2
+ -\frac{\mu^{2\eps}\lambda}{4!}\phi^4+\Lag_{\rm ct},\notag\\
+ \Lag_{\rm ct}&=\frac{\delta Z_\phi}{2}(\partial\phi)^2
+ -\frac{\delta m^2}{2}\phi^2
+ -\frac{\mu^{2\eps}\delta\lambda}{4!}\phi^4-\delta\Lambda_{\rm vac}.
+ \label{eq:counterLag}
+\end{align}
+For dimensional regularization \(d=4-2\eps\); in strictly four
+dimensions set \(\eps=0\). The scale \(\mu\) makes \(\lambda\)
+dimensionless. If \(\phi_0=Z_\phi^{1/2}\phi\), then
+\begin{equation}
+ Z_\phi=1+\delta Z_\phi,\qquad
+ Z_\phi m_0^2=m^2+\delta m^2,\qquad
+ Z_\phi^2\lambda_0=\mu^{2\eps}(\lambda+\delta\lambda).
+ \label{eq:bare}
+\end{equation}
+Counterterms are interaction vertices in the perturbative expansion.
+The two-point vertex is \(\ii\delta Z_\phi p^2-\ii\delta m^2\);
+the four-point vertex is \(-\ii\mu^{2\eps}\delta\lambda\).
+The vacuum term cancels from our normalized correlators.
+
+Fix the self-energy convention by writing a 1PI insertion as
+\(-\ii\Sigma_R(p^2)\), including counterterms. Summing insertions gives
+\begin{align}
+ G_2(p)&=D_F+D_F(-\ii\Sigma_R)D_F+\cdots
+ =\frac{\ii}{p^2-m^2-\Sigma_R(p^2)+\ii0},\label{eq:Dyson}\\
+ \Sigma_R(p^2)&=\Sigma_{\rm loop}(p^2)+\delta m^2-\delta Z_\phi p^2.
+ \label{eq:SigmaR}
+\end{align}
+The geometric expression organizes the perturbation series; a
+one-loop insertion does not determine all higher-loop terms.
+\begin{keyidea}[A regulator and a renormalization condition do different jobs]
+A regulator makes intermediate expressions meaningful. A renormalization
+condition specifies how \(m\) and \(\lambda\) are defined. Physical
+predictions agree between schemes after those parameters are matched.
+The renormalized mass need not equal the propagator's pole mass.
+\end{keyidea}
+
+\module{The tadpole and a Euclidean momentum cutoff}
+Lecture 21 gave the one-loop two-point diagram with weight \(1/2\):
+\begin{equation}
+ -\ii\Sigma_{\rm tad}=\frac{-\ii\lambda}{2}
+ \int\frac{\dd^4k}{(2\pi)^4}\frac{\ii}{k^2-m^2+\ii0},
+ \qquad
+ \Sigma_{\rm tad}=\frac{\lambda}{2}\int\frac{\dd^4k_E}{(2\pi)^4}
+ \frac{1}{k_E^2+m^2}.                            \label{eq:tad}
+\end{equation}
+In the second expression rotate \(k^0=\ii k_E^0\) using the Feynman
+pole prescription. The factor \(\ii\) in the measure and the signs
+from the denominator and propagator combine to give the positive
+Euclidean integrand. There is no external momentum in the loop.
+
+A rotationally invariant Euclidean cutoff \(k_E^2\leq\Lambda^2\)
+makes the calculation elementary. The unit three-sphere has area
+\(2\pi^2\), hence
+\begin{align}
+ I_1^\Lambda(m^2)&=\frac{1}{8\pi^2}\int_0^\Lambda
+ \frac{k^3\dd k}{k^2+m^2}
+ =\frac{1}{16\pi^2}\left[\Lambda^2-m^2
+ \log\!\left(1+\frac{\Lambda^2}{m^2}\right)\right],\label{eq:cutoff}\\
+ \Sigma_{\rm tad}^\Lambda&=\frac{\lambda}{32\pi^2}
+ \left[\Lambda^2-m^2\log\frac{\Lambda^2}{m^2}
+ +O(m^4/\Lambda^2)\right].                        \label{eq:cutoffSigma}
+\end{align}
+The integral has mass dimension two, as a mass-squared correction
+must. The quadratic divergence comes from momenta much greater than
+\(m\); changing the ultraviolet regulator changes its coefficient.
+
+Without counterterms, the pole would satisfy
+\(M^2=m_0^2+\Sigma_{\rm tad}^\Lambda(m_0^2)+O(\lambda_0^2)\).
+Holding the measured \(M\) fixed therefore requires a
+cutoff-dependent \(m_0\). Equivalently, in an on-shell mass scheme
+one sets \(m=M\) in the free propagator and chooses
+\begin{equation}
+ \delta m^2_{\rm OS}=-\Sigma_{\rm tad}^\Lambda(M^2),
+ \qquad \delta Z_{\phi,\rm OS}=0\quad\hbox{at one loop}.
+ \label{eq:OSmass}
+\end{equation}
+This is a definition of the mass parameter. It does not assert that
+quantum corrections are absent. The relation between that parameter
+and the bare action carries the correction.
+
+\begin{remarkbox}[Normal ordering and momentum shifts]
+Normal ordering \(\phi^4\) relative to a chosen free vacuum subtracts
+its one-vertex self-contractions. This amounts to a particular mass
+and vacuum-energy subtraction; it does not remove the four-point
+bubble or the need for renormalization at higher orders.
+A sharp cutoff also changes under a shift of loop momentum. For the
+bubble we will use dimensional regularization, where such shifts are
+consistent with the regulated integral.
+\end{remarkbox}
+
+\module{Dimensional regularization from a Gaussian integral}
+Instead of imposing a boundary in momentum space, evaluate integrals
+where they converge and analytically continue their dependence on
+\(d\). For \(\Delta>0\) and \(\alpha>d/2\), the Schwinger identity
+\begin{equation}
+ \frac{1}{(k_E^2+\Delta)^\alpha}
+ =\frac{1}{\Gamma(\alpha)}\int_0^\infty\dd t\,
+ t^{\alpha-1}e^{-t(k_E^2+\Delta)}
+\end{equation}
+reduces the momentum integral to a Gaussian. Since
+\(\int\dd^d k_E\,e^{-t k_E^2}/(2\pi)^d=(4\pi t)^{-d/2}\),
+\begin{equation}
+ I_\alpha(\Delta)=\mu^{2\eps}\int\frac{\dd^d k_E}{(2\pi)^d}
+ \frac{1}{(k_E^2+\Delta)^\alpha}
+ =\frac{\mu^{2\eps}}{(4\pi)^{d/2}}
+ \frac{\Gamma(\alpha-d/2)}{\Gamma(\alpha)}
+ \Delta^{d/2-\alpha},\qquad d=4-2\eps.             \label{eq:master}
+\end{equation}
+The right-hand side defines the analytic continuation. Introduce
+\begin{equation}
+ \frac{1}{\bar\eps}\equiv\frac1\eps-\gamma_E+\log(4\pi),
+ \quad \Gamma(\eps)=\frac1\eps-\gamma_E+O(\eps),
+ \quad \Gamma(-1+\eps)=-\frac1\eps+\gamma_E-1+O(\eps).
+ \label{eq:epsbar}
+\end{equation}
+Also \(a^\eps=1+\eps\log a+O(\eps^2)\). Expanding \eqref{eq:master}
+for \(\alpha=1,2\) gives the two integrals needed in this lecture:
+\begin{align}
+ I_1(m^2)&=-\frac{m^2}{16\pi^2}
+ \left[\frac1{\bar\eps}+1-\log\frac{m^2}{\mu^2}\right]+O(\eps),
+ \label{eq:I1}\\
+ I_2(\Delta)&=\frac{1}{16\pi^2}
+ \left[\frac1{\bar\eps}-\log\frac{\Delta}{\mu^2}\right]+O(\eps).
+ \label{eq:I2}
+\end{align}
+The sign of \(I_1\) sometimes looks surprising. For \(d\) near four
+this is an analytically continued expression, not an ordinary
+convergent integral of a positive function. It need not have the
+positive sign of the cutoff integral. There is no \(\Lambda^2\) term
+in this scheme, but the mass-sensitive logarithm agrees after
+parameters are matched.
+
+\begin{keyidea}[Our subtraction convention]
+Modified minimal subtraction, \(\MSbar\), removes the combination
+\(1/\bar\eps\) and no additional finite term. All formulas use
+\(d=4-2\eps\). A convention \(d=4-\epsilon\) has pole coefficients
+twice as large when written as coefficients of \(1/\epsilon\).
+\end{keyidea}
+A scaleless integral is set to zero in dimensional regularization.
+This fact alone does not prove the absence of ultraviolet divergences:
+in a massless problem ultraviolet and infrared poles may cancel in a
+scaleless expression. Keeping \(m>0\) avoids that ambiguity here.
+
+\module{The renormalized mass and the pole residue}
+Multiplying \eqref{eq:I1} by \(\lambda/2\), the tadpole becomes
+\begin{equation}
+ \Sigma_{\rm tad}=-\frac{\lambda m^2}{32\pi^2}
+ \left[\frac1{\bar\eps}+1-\log\frac{m^2}{\mu^2}\right].
+\end{equation}
+It is independent of momentum, so it requires only a mass counterterm
+at this order. In \(\MSbar\),
+\begin{equation}
+ \delta m^2=\frac{\lambda m^2}{32\pi^2\bar\eps}+O(\lambda^2),
+ \qquad \delta Z_\phi=0+O(\lambda^2),\qquad
+ \Sigma_R=\frac{\lambda m^2}{32\pi^2}
+ \left[\log\frac{m^2}{\mu^2}-1\right]+O(\lambda^2).
+ \label{eq:renmass}
+\end{equation}
+There is a useful direct sign check: the counterterm vertex is
+\(-\ii\delta m^2\), so it adds \(+\delta m^2\) to our \(\Sigma\).
+It cancels the negative pole in \(\Sigma_{\rm tad}\).
+
+The pole and residue follow from the inverse propagator, not from
+reading off the coefficient \(m\) in the Lagrangian:
+\begin{align}
+ M^2-m^2-\Sigma_R(M^2)&=0,                         \label{eq:polemass}\\
+ Z_{\rm pole}&=\frac{1}{1-\Sigma_R'(M^2)}.         \label{eq:residue}
+\end{align}
+The prime differentiates with respect to \(p^2\). To first order,
+\begin{equation}
+ M^2=m^2(\mu)+\frac{\lambda(\mu)m^2(\mu)}{32\pi^2}
+ \left[\log\frac{m^2(\mu)}{\mu^2}-1\right]+O(\lambda^2),
+ \qquad Z_{\rm pole}=1+O(\lambda^2).              \label{eq:Mmass}
+\end{equation}
+Neither the scale-dependent \(\MSbar\) mass nor \(Z_\phi\) should be
+confused with the measured pole mass or the residue of a chosen
+renormalized field. Here both wavefunction corrections vanish at one
+loop, but that coincidence does not persist.
+
+If one instead defines \(m=M\), the on-shell counterterm in dimensional
+regularization includes a finite part:
+\begin{equation}
+ \delta m^2_{\rm OS}=\frac{\lambda M^2}{32\pi^2}
+ \left[\frac1{\bar\eps}+1-\log\frac{M^2}{\mu^2}\right]
+ +O(\lambda^2).                                  \label{eq:OSdimreg}
+\end{equation}
+Then the renormalized one-loop self-energy is zero. Equations
+\eqref{eq:renmass} and \eqref{eq:OSdimreg} describe different definitions
+of the mass parameter, with the same pole after matching.
+
+\begin{remarkbox}[What can be neglected in the next calculation?]
+The one-loop four-point amplitude is already order \(\lambda^2\).
+Replacing its internal \(m^2\) by \(M^2=m^2+O(\lambda)\) changes it
+only at higher order, away from nonuniform threshold expansions.
+The external kinematics must use \(p_a^2=M^2\).
+Since the tree amplitude is order \(\lambda\), its residue factor
+\(Z_{\rm pole}^2\) first matters at order \(\lambda^3\).
+\end{remarkbox}
+
+\module{Evaluating the four-point bubble}
+Write \(\langle f|S-1|i\rangle=\ii(2\pi)^4\delta^{(4)}(P_f-P_i)
+\mathcal M\), and define \(s,t,u\) as in Lecture 21. Each of the three
+1PI bubbles has weight \(1/2\). Factor out the overall
+\(\mu^{2\eps}\) of a four-point vertex before quoting its
+four-dimensional amplitude. One channel then contributes
+\begin{equation}
+ \ii\mathcal M_q^{(1)}=\frac{\lambda^2}{2}\,J(q^2),\qquad
+ J(q^2)=\mu^{2\eps}\int\frac{\dd^dk}{(2\pi)^d}
+ \frac{1}{(k^2-m^2+\ii0)((k+q)^2-m^2+\ii0)}.
+ \label{eq:bubbleintegral}
+\end{equation}
+The positive prefactor comes from the two vertices and the two
+propagator numerators: \((-\ii\lambda)^2\ii^2=+\lambda^2\).
+The integral itself supplies another factor of \(\ii\).
+
+For positive Euclidean denominators,
+\begin{equation}
+ \frac1{AB}=\int_0^1\frac{\dd x}{[xA+(1-x)B]^2}.
+\end{equation}
+Take \(A=k_E^2+m^2\), \(B=(k_E+q_E)^2+m^2\). Completing the square
+and shifting \(\ell_E=k_E+(1-x)q_E\) yields
+\begin{equation}
+ xA+(1-x)B=\ell_E^2+m^2+x(1-x)q_E^2.
+\end{equation}
+Use \eqref{eq:master} with \(\alpha=2\), then analytically continue
+\(q_E^2\to-q^2-\ii0\). With
+\(\Delta_x(q^2)=m^2-x(1-x)q^2-\ii0\),
+\begin{align}
+ J(q^2)&=\frac{\ii\mu^{2\eps}\Gamma(\eps)}{(4\pi)^{2-\eps}}
+ \int_0^1\dd x\,[\Delta_x(q^2)]^{-\eps}\notag\\
+ &=\frac{\ii}{16\pi^2}\left[\frac1{\bar\eps}-F(q^2;\mu)\right]
+ +O(\eps),\qquad
+ F(q^2;\mu)=\int_0^1\dd x\log\frac{\Delta_x(q^2)}{\mu^2}.
+ \label{eq:bubbleanswer}
+\end{align}
+The logarithm is on the branch fixed by \(-\ii0\). This prescription
+cannot be dropped when returning to physical timelike momenta.
+
+Including tree, all three channels, and the local counterterm gives
+\begin{equation}
+ \mathcal M=-\lambda-\delta\lambda+
+ \frac{\lambda^2}{32\pi^2}
+ \left[\frac3{\bar\eps}-F(s;\mu)-F(t;\mu)-F(u;\mu)\right]
+ +O(\lambda^3).                                  \label{eq:beforect}
+\end{equation}
+The pole is independent of \(s,t,u\). Its locality is why a single
+\(\phi^4\) counterterm can cancel it for every scattering angle and
+energy. The nonpolynomial momentum dependence in the finite logarithms
+is a prediction, not a new independent coupling at each momentum.
+
+\module{Coupling renormalization and a physical subtraction}
+The \(\MSbar\) coupling counterterm and finite amplitude are
+\begin{align}
+ \delta\lambda&=\frac{3\lambda^2}{32\pi^2\bar\eps}+O(\lambda^3),
+ \label{eq:deltalambda}\\
+ \mathcal M(s,t,u)&=-\lambda(\mu)
+ -\frac{\lambda(\mu)^2}{32\pi^2}
+ \sum_{q^2=s,t,u}\int_0^1\dd x\,
+ \log\frac{m^2-x(1-x)q^2-\ii0}{\mu^2}+O(\lambda^3).
+ \label{eq:MSamplitude}
+\end{align}
+At this order the internal mass can be replaced by the pole mass
+\(M\) as specified in Section 4, and physical kinematics obey
+\(s+t+u=4M^2\). The equality of the three channel coefficients
+makes the crossing symmetry of a real scalar manifest.
+
+To see what a coupling measures, define a threshold coupling \(g\)
+by \(\mathcal M(4M^2,0,0)=-g\), approached from the physical region.
+At threshold the imaginary part vanishes. The elementary integral
+\begin{equation}
+ \int_0^1\dd x\log[1-4x(1-x)]=-2
+\end{equation}
+follows by writing \(1-4x(1-x)=(2x-1)^2\); the logarithmic singularity
+at \(x=1/2\) is integrable. Hence
+\begin{equation}
+ g=\lambda(\mu)+\frac{\lambda(\mu)^2}{32\pi^2}
+ \left[3\log\frac{M^2}{\mu^2}-2\right]+O(\lambda^3).
+ \label{eq:matching}
+\end{equation}
+This finite conversion is required before comparing numerical values
+of couplings in different schemes. Substituting it back gives
+\begin{equation}
+ \begin{aligned}
+ \mathcal M(s,t,u)&=-g-\frac{g^2}{32\pi^2}
+ \left[\sum_{q^2=s,t,u}f(q^2)+2\right]+O(g^3),\\
+ f(q^2)&=\int_0^1\dd x\log\frac{M^2-x(1-x)q^2-\ii0}{M^2}.
+ \end{aligned}
+ \label{eq:thresholdamplitude}
+\end{equation}
+The bracket is zero at threshold. Neither the regulator nor \(\mu\)
+appears. After two measurements fix \(M\) and \(g\), this expression
+predicts a function of the scattering kinematics.
+
+\begin{keyidea}[What is scheme dependent?]
+Bare parameters, counterterms, and the numerical values of renormalized
+parameters depend on the chosen definitions. A scattering amplitude
+expressed in the same physical input data agrees between schemes,
+up to terms beyond the perturbative order retained.
+\end{keyidea}
+The three bubble graphs are vertex corrections. Adding the four
+external-leg tadpoles to \eqref{eq:MSamplitude} would double count the
+pole and external-state treatment of Lecture 21. They belong to the
+full correlator before LSZ reduction, not to this amputated scattering
+formula.
+
+\module{Scale independence and the one-loop beta function}
+The arbitrary scale \(\mu\) cannot change a scattering experiment.
+In \eqref{eq:MSamplitude}, each \(F\) has explicit derivative
+\(\mu\partial_\mu F=-2\). At order \(\lambda^2\), implicit mass
+running inside the loop contributes only at higher order. Therefore
+\begin{equation}
+ 0=\mu\frac{\dd\mathcal M}{\dd\mu}
+ =-\beta_\lambda+\frac{3\lambda^2}{16\pi^2}+O(\lambda^3),
+ \qquad
+ \boxed{\beta_\lambda\equiv\mu\frac{\dd\lambda}{\dd\mu}
+ =\frac{3\lambda^2}{16\pi^2}+O(\lambda^3).}        \label{eq:beta}
+\end{equation}
+The derivative holds the bare theory fixed. This definition refers
+to a renormalized coupling; it is not a derivative of a fixed bare
+parameter with respect to \(\mu\).
+
+The same result follows from
+\(\lambda_0=\mu^{2\eps}(\lambda+a\lambda^2/\bar\eps+\cdots)\),
+where \(a=3/(32\pi^2)\) and field renormalization enters this relation
+only at higher order. Write
+\(\beta_d=-2\eps\lambda+b\lambda^2+\cdots\). Differentiating gives
+\begin{equation}
+ 0=2\eps\left(\lambda+\frac{a\lambda^2}{\bar\eps}\right)
+ +\beta_d\left(1+\frac{2a\lambda}{\bar\eps}\right)+\cdots.
+\end{equation}
+The terms finite as \(\eps\to0\) imply \(b=2a\). Retaining the
+classical \(-2\eps\lambda\) term is essential; dropping it too early
+gives the wrong factor or sign.
+
+Integrating the leading beta function between two scales gives
+\begin{equation}
+ \lambda(\mu)=\frac{\lambda(\mu_0)}
+ {1-\dfrac{3\lambda(\mu_0)}{16\pi^2}\log(\mu/\mu_0)}.
+ \label{eq:running}
+\end{equation}
+This resums leading logarithms. For positive coupling it grows toward
+high energies. The formal denominator vanishes at
+\(\mu_L=\mu_0\exp[16\pi^2/(3\lambda(\mu_0))]\), the one-loop Landau
+scale. Perturbation theory fails before it can establish what happens
+there; this formula is not a nonperturbative proof about the theory.
+
+Scale independence also checks the mass calculation. Differentiating
+\eqref{eq:Mmass} at fixed \(M\) gives
+\begin{equation}
+ \mu\frac{\dd m^2}{\dd\mu}=\frac{\lambda m^2}{16\pi^2}+O(\lambda^2).
+\end{equation}
+\begin{remarkbox}[Choosing a useful scale]
+When kinematic invariants are of order \(Q^2\), choosing \(\mu\) of
+order \(Q\) reduces large logarithms in the fixed-order amplitude.
+In this mass-independent scheme, heavy particles do not automatically
+decouple from the beta function; low-energy matching is a separate
+step. The running parameter is a way of organizing predictions,
+not an additional measurable dependence on an arbitrary scale.
+\end{remarkbox}
+
+\module{The two-particle threshold and an independent sign check}
+The bubble logarithm develops an imaginary part when its two internal
+particles can be on shell. In the physical \(s\) channel, define
+\begin{equation}
+ v=\sqrt{1-\frac{4M^2}{s}},\qquad x_\pm=\frac{1\pm v}{2}.
+\end{equation}
+For \(s>4M^2\), the argument \(M^2-sx(1-x)\) is negative precisely
+for \(x_-<x<x_+\). On the Feynman branch
+\(\log(-a-\ii0)=\log a-\ii\pi\) for \(a>0\), so
+\begin{equation}
+ \operatorname{Im}F(s;\mu)=-\pi v,\qquad
+ \operatorname{Im}\mathcal M(s,t,u)
+ =\frac{\lambda^2}{32\pi}\sqrt{1-\frac{4M^2}{s}}+O(\lambda^3).
+ \label{eq:imag}
+\end{equation}
+In physical equal-mass \(2\to2\) scattering \(t,u\leq0\); their bubbles
+have no such imaginary part. Local real counterterms cannot change
+this discontinuity. Near threshold it is most useful to organize the
+expansion with the physical mass in the propagators.
+
+Unitarity gives an independent check of both the sign and the factor
+\(1/2\). With \(S=1+\ii T\),
+\begin{equation}
+ -\ii(T-T^\dagger)=T^\dagger T.
+\end{equation}
+Insert a complete set of two-particle states into the forward matrix
+element. At the first nontrivial order the optical theorem reads
+\begin{equation}
+ 2\operatorname{Im}\mathcal M_{ii}^{(1)}
+ =\frac1{2!}\int\dd\Phi_2\,
+ |\mathcal M_{i\to2}^{\rm tree}|^2,
+ \quad
+ \dd\Phi_2=(2\pi)^4\delta^{(4)}(P-k_1-k_2)
+ \prod_{a=1}^2\frac{\dd^3\bm k_a}{(2\pi)^3,2E_a}.
+\end{equation}
+In the center-of-mass frame the delta functions fix
+\(|\bm k|=\sqrt{s/4-M^2}\), giving
+\(\int\dd\Phi_2=v/(8\pi)\). Since
+\(|\mathcal M^{\rm tree}|^2=\lambda^2\), the right-hand side is
+\(\lambda^2v/(16\pi)\), exactly twice \eqref{eq:imag}.
+The factorial avoids counting the same pair of identical intermediate
+particles twice.
+
+\begin{keyidea}[Results to carry forward]
+The one-loop tadpole shifts the mass and has no momentum derivative.
+The three bubbles require one local coupling counterterm. Their finite
+parts depend on kinematics, their scale dependence gives
+\(\beta_\lambda=3\lambda^2/(16\pi^2)\), and their branch cut describes
+real two-particle intermediate states. Problem Set 7 checks these
+statements from the source expansion through the optical theorem.
+\end{keyidea}
+{\footnotesize\textbf{Reading.} R.~G.~Leigh, \emph{Quantum Field Theory},
+Sec.~6.5 and Sec.~6.7, for diagram organization and pole residues;
+D.~Harlow, \emph{Quantum Field Theory I} (2024), Secs.~10.1 and 11,
+for regulators, the tadpole, and the four-point bubble. All expressions
+here use the conventions of this course.}
+\end{document}

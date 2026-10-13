@@ -1,0 +1,763 @@
+\documentclass[11pt]{article}
+
+\usepackage[letterpaper,margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb,mathtools,bm}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{hyperref}
+\usepackage[most]{tcolorbox}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{parskip}
+\usepackage{needspace}
+
+\definecolor{qftblue}{HTML}{245A8D}
+\definecolor{qftgreen}{HTML}{2F6B4F}
+\definecolor{qftred}{HTML}{A23B3B}
+\definecolor{qftgray}{HTML}{F4F6F8}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=qftblue,
+  urlcolor=qftblue,
+  citecolor=qftgreen,
+  pdftitle={PHYS 662 Lecture 10: Projective Representations and Noether Charges},
+  pdfauthor={Nima Lashkari}
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{PHYS 662: Quantum Field Theory I}
+\rhead{Lecture 10}
+\cfoot{\thepage}
+\setlength{\headheight}{14pt}
+
+\titleformat{\section}{\Large\bfseries\color{qftblue}}{\thesection.}{0.6em}{}
+\titleformat{\subsection}{\large\bfseries\color{qftgreen}}{\thesubsection}{0.6em}{}
+\titleformat{\subsubsection}{\normalsize\bfseries\color{qftred}}{\thesubsubsection}{0.6em}{}
+
+\setlist[itemize]{leftmargin=2em,itemsep=0.25em,topsep=0.4em}
+\setlist[enumerate]{leftmargin=2em,itemsep=0.25em,topsep=0.4em}
+
+\newcommand{\dd}{\mathrm{d}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Lag}{\mathcal{L}}
+\newcommand{\cM}{\mathcal{M}}
+\newcommand{\SO}{\mathrm{SO}}
+\newcommand{\OO}{\mathrm{O}}
+
+\newtcolorbox{keyidea}[1][]{
+  enhanced, breakable, colback=qftgray, colframe=qftblue,
+  boxrule=0.8pt, arc=1.5mm, title={#1}, fonttitle=\bfseries,
+  coltitle=white
+}
+\newtcolorbox{remarkbox}[1][]{
+  enhanced, breakable, colback=white, colframe=qftgreen,
+  boxrule=0.7pt, arc=1.5mm, title={#1}, fonttitle=\bfseries,
+  coltitle=white
+}
+\newtcolorbox{warningbox}[1][]{
+  enhanced, breakable, colback=white, colframe=qftred,
+  boxrule=0.7pt, arc=1.5mm, title={#1}, fonttitle=\bfseries,
+  coltitle=white
+}
+
+
+\newcommand{\Th}{\Theta}
+\newcommand{\Eul}{\mathcal E}
+\newcommand{\Lie}{\mathscr L}
+
+\newcommand{\C}{\mathbb C}
+\newcommand{\Z}{\mathbb Z}
+\newcommand{\SU}{\mathrm{SU}}
+\newcommand{\UU}{\mathrm{U}}
+\newcommand{\GL}{\mathrm{GL}}
+\newcommand{\SL}{\mathrm{SL}}
+\newcommand{\Sp}{\mathrm{Sp}}
+\newcommand{\tr}{\operatorname{tr}}
+\newcommand{\Ad}{\operatorname{Ad}}
+\newcommand{\ad}{\operatorname{ad}}
+\newcommand{\lieg}{\mathfrak g}
+\newcommand{\lieh}{\mathfrak h}
+\newcommand{\su}{\mathfrak{su}}
+\newcommand{\so}{\mathfrak{so}}
+\newcommand{\slie}{\mathfrak{sl}}
+
+
+\newcommand{\cH}{\mathcal H}
+\newcommand{\Spin}{\operatorname{Spin}}
+\newcommand{\id}{\mathrm{id}}
+\begin{document}
+\pagenumbering{gobble}
+\begin{titlepage}
+\centering
+\vspace*{1.2in}
+{\scshape\Large PHYS 662 --- Quantum Field Theory I\par}
+\vspace{0.35in}
+{\Huge\bfseries\color{qftblue} Lecture 10\par}
+\vspace{0.15in}
+{\LARGE\bfseries Projective Representations\par}
+\vspace{0.06in}
+{\LARGE\bfseries and Noether Charges\par}
+\vspace{0.16in}
+{\large\color{qftgreen} Central Extensions and the Algebra of Symmetries\par}
+\vspace{0.6in}
+{\large Nima Lashkari\par}
+{\large Fall 2026\par}
+\vfill
+\begin{minipage}{0.86\textwidth}
+\small
+Quantum symmetries can compose up to a phase. We derive the constraints
+on that phase and its infinitesimal central term, contrasting rotational
+spin with the Galilean mass extension. We then return to fields: a
+complex scalar multiplet supplies explicit Noether currents, canonical
+generators, and a complete calculation of their charge algebra.
+
+\medskip
+Course page: \url{https://nimalashkari.com/quantum-field-theory-2026-part-i/}
+\end{minipage}
+\vspace{0.5in}
+\end{titlepage}
+\pagenumbering{roman}
+\begingroup\small
+\tableofcontents
+\endgroup
+\newpage
+\pagenumbering{arabic}
+
+\section*{Roadmap}
+\addcontentsline{toc}{section}{Roadmap}
+Lecture 9 explained why rotations can act on quantum rays even when
+their vector implementers compose only up to phase. We now ask which
+phases can be removed and what remains in the generator algebra. Then
+we derive that algebra directly from fields. The goals are:
+\begin{enumerate}
+\item derive the associativity and rephasing rules for projective phases;
+\item distinguish a global covering-group effect from a nonremovable
+central Lie algebra term;
+\item verify conservation, generator action, and charge brackets for a
+complex scalar multiplet.
+\end{enumerate}
+The ideals and semisimple algebras of Lecture 8 enter when we ask which
+central terms can be removed. The field representations of Lecture 9
+enter when we construct currents.
+
+\begin{keyidea}[Conventions and two kinds of generators]
+We set \(\hbar=1\), use mostly-minus Minkowski signature, and write
+\(U(\theta)=e^{-i\theta^aT_a}\). The finite matrices \(t_a\) acting on
+field components obey \([t_a,t_b]=if_{ab}{}^ct_c\). The corresponding
+charges \(Q_a\) act on the full field phase space or quantum Hilbert
+space; they are different objects from those component matrices.
+
+Our canonical convention is \(\{q,p\}=1\) and
+\(\delta F=\epsilon^a\{F,Q_a\}\). At the quantum level the same
+transformation is \(U^\dagger F U\), with
+\(U=e^{-i\epsilon^aQ_a}\). Keeping the order of each bracket fixed will
+make the signs in the current and charge algebra agree.
+\end{keyidea}
+
+\section{Projective multiplication and phase freedom}
+\label{sec:projective}
+\subsection{Associativity constrains the phase}
+Restrict for now to unitary implementers. Two successive transformations
+agree with their group product on rays, so on vectors they may obey
+\begin{equation}
+ \boxed{U(g)U(h)=e^{i\omega(g,h)}U(gh).}
+ \label{eq:projective-law}
+\end{equation}
+This is a projective representation. The phase is independent of the
+state vector: two linear implementers of the same ray transformation
+differ by a scalar, not by an arbitrary state-dependent phase.
+
+Apply the projective law twice to each association:
+\begin{align*}
+ (U(g)U(h))U(k)&=e^{i[\omega(g,h)+\omega(gh,k)]}U(ghk),\\
+ U(g)(U(h)U(k))&=e^{i[\omega(h,k)+\omega(g,hk)]}U(ghk).
+\end{align*}
+The resulting operators must agree. Thus associativity gives
+\begin{equation}
+ \omega(g,h)+\omega(gh,k)
+ =\omega(h,k)+\omega(g,hk)\pmod{2\pi}.
+ \label{eq:group-cocycle}
+\end{equation}
+This is the \emph{cocycle condition}. Choosing \(U(e)=I\) normalizes
+\(e^{i\omega(e,g)}=e^{i\omega(g,e)}=1\). Near the identity we may choose
+a smooth real branch with \(\omega(e,g)=\omega(g,e)=0\).
+A globally smooth choice of implementers or real phase function need not
+exist; all Taylor expansions below are local.
+
+If antiunitary elements are included, moving a scalar past \(U(g)\)
+complex conjugates it when \(U(g)\) is antiunitary. The right side of
+Eq.~\eqref{eq:group-cocycle} becomes
+\(s(g)\omega(h,k)+\omega(g,hk)\), where \(s(g)=+1\) for unitary and
+\(-1\) for antiunitary implementers. We use the ordinary, untwisted
+condition only on the unitary part of the symmetry group.
+
+\subsection{Rephasing and central extensions of groups}
+Changing the phase convention of each implementer,
+\(U'(g)=e^{i\alpha(g)}U(g)\), changes the multiplier to
+\begin{equation}
+ \omega'(g,h)=\omega(g,h)+\alpha(g)+\alpha(h)-\alpha(gh)
+ \pmod{2\pi}.
+ \label{eq:coboundary}
+\end{equation}
+Such changes do not alter the action on rays. A multiplier is removable
+if a single-valued choice of phases makes the representation law exact.
+Local removability does not guarantee a globally consistent choice.
+
+\begin{remarkbox}[A multiplier that is only a phase convention]
+Start with an ordinary representation of the additive real line,
+\(R(t)=e^{-itP}\), and choose \(U(t)=e^{i\kappa t^2}R(t)\), with
+\(\kappa\) real. Then
+\[
+ U(s)U(t)=e^{i\kappa(s^2+t^2-(s+t)^2)}U(s+t)
+         =e^{-2i\kappa st}U(s+t).
+\]
+The nonzero multiplier disappears upon rephasing by
+\(e^{-i\kappa t^2}\). A nonzero phase in one formula is therefore
+not enough to establish a nontrivial extension.
+\end{remarkbox}
+
+One can absorb a multiplier into an enlarged group. Choose one
+implementer \(U(g)\) for each g in a neighborhood (a local
+\emph{section}). Use pairs \((g,z)\), \(z\in\UU(1)\), with multiplication
+\begin{equation}
+ (g,z)(h,w)=\bigl(gh,zw e^{i\omega(g,h)}\bigr).
+ \label{eq:extension-product}
+\end{equation}
+Equation~\eqref{eq:group-cocycle} is exactly associativity of this product.
+The phase subgroup is central, and
+\(\widetilde U(g,z)=zU(g)\) obeys an ordinary representation law.
+The phase coordinate can be chosen locally; around the whole group,
+different choices may have to be patched together.
+
+\begin{keyidea}[Two questions that must be kept separate]
+\textbf{Global question:} Can the phases be chosen consistently around
+noncontractible loops in the group? Covering groups detect this issue.
+
+\textbf{Infinitesimal question:} Do the generator commutators contain a
+central term that no constant shift of generators removes?
+Lie algebra central extensions detect this issue.
+
+A projective representation can have an ordinary Lie algebra. The
+half-integer-spin representations of \(\SO(3)\) in Lecture 9 gave an
+explicit example.
+\end{keyidea}
+
+\Needspace{10\baselineskip}
+\section{Central terms in the generator algebra}
+\label{sec:central}
+We now look close to the identity. Lecture 8 obtained an ordinary Lie
+bracket by comparing two orders of composition. Repeating that argument
+with the phase retained shows precisely where a central term can enter.
+
+\subsection{Differentiating the projective law}
+Choose local exponential coordinates near the identity. The group law is
+\[
+ F^c(\theta,\varphi)=\theta^c+\varphi^c+
+ \tfrac12 f_{ab}{}^c\theta^a\varphi^b+O(3),
+\]
+and a normalized smooth multiplier begins as
+\begin{equation}
+ \omega(\theta,\varphi)=\chi_{ab}\theta^a\varphi^b+O(3).
+ \label{eq:local-multiplier}
+\end{equation}
+Pure terms in only one parameter vanish by normalization. Write
+\(U(\theta)=I-i\theta^aT_a+\tfrac12\theta^a\theta^bC_{ab}+O(3)\),
+where \(C_{ab}=C_{ba}\). Comparing the mixed terms in
+\(U(\theta)U(\varphi)=e^{i\omega}U(F)\) gives
+\[
+ -T_aT_b=C_{ab}-\tfrac i2 f_{ab}{}^cT_c+i\chi_{ab}I.
+\]
+Subtract the equation with a and b exchanged:
+\begin{equation}
+ \boxed{[T_a,T_b]=if_{ab}{}^cT_c+iz_{ab}I},
+ \qquad z_{ab}=\chi_{ba}-\chi_{ab}=-z_{ba}.
+ \label{eq:central-algebra}
+\end{equation}
+The antisymmetric part of the multiplier supplies the extra commutator
+term; its symmetric part cancels. For Hermitian generators,
+\(z_{ab}\) is real.
+
+The identity commutes with every operator. Abstractly, one adjoins a
+central generator Z, writes
+\([T_a,T_b]=if_{ab}{}^cT_c+iz_{ab}Z\), and represents Z by I in the
+chosen sector. More generally there can be several central generators,
+whose scalar values label irreducible sectors.
+
+\subsection{Jacobi identities and removable terms}
+The Jacobi identity imposes both the usual constraint on f and
+\begin{equation}
+ f_{bc}{}^d z_{ad}+f_{ca}{}^d z_{bd}+f_{ab}{}^d z_{cd}=0.
+ \label{eq:central-jacobi}
+\end{equation}
+Thus one cannot append arbitrary constants to a Lie algebra. This is the
+infinitesimal cocycle condition.
+
+A shift \(T'_a=T_a+b_aI\) does not change the induced ray transformation,
+but changes the central coefficients. The left side of the commutator
+is unchanged; on the right substitute \(T_c=T'_c-b_cI\):
+\[
+ [T'_a,T'_b]=if_{ab}{}^cT'_c+i(z_{ab}-f_{ab}{}^cb_c)I.
+\]
+Hence
+\begin{equation}
+ z'_{ab}=z_{ab}-f_{ab}{}^c b_c.
+ \label{eq:central-shift}
+\end{equation}
+A term of the form \(z_{ab}=f_{ab}{}^cb_c\) can therefore be removed.
+The space of allowed central terms modulo such shifts is denoted
+\(H^2(\lieg,\R)\). For this lecture, the cocycle equation and shift
+formula are the operational meaning of that notation.
+
+For example, an apparent central term in the rotation algebra is always
+of the form \(z_{ij}=\epsilon_{ijk}b_k\), because every antisymmetric
+three-by-three matrix has this form. Shifting \(J_i\) to \(J_i+b_iI\)
+removes it. This direct calculation already shows why the spin-one-half
+representation is not explained by a nontrivial central extension of
+\(\so(3)\).
+
+\Needspace{12\baselineskip}
+\subsection{What semisimplicity does imply}
+The relevance of semisimplicity to central extensions is a further
+structural result:
+
+\begin{keyidea}[Whitehead's second lemma, in the form we need]
+For a finite-dimensional semisimple Lie algebra over \(\R\) or \(\C\),
+every scalar central Lie algebra extension is removable. Equivalently,
+\(H^2(\lieg,\R)=0\) for a real semisimple algebra with trivial scalar
+coefficients. A trivial direct-sum central extension can always be added;
+the theorem rules out a nontrivial extension class.
+\end{keyidea}
+This is a theorem about the algebra, not a claim that every global group
+with that algebra has only ordinary representations. Passing to a simply
+connected cover removes the remaining topological obstruction in the
+usual continuous unitary representation setting. On SO(3) itself,
+half-integer spins still give projective representations.
+
+Nor does the theorem follow just from tracelessness of finite-dimensional
+semisimple generators. Quantum charges may act on infinite-dimensional
+spaces, and tracing their commutators is generally unjustified.
+The cohomological statement has the correct scope; a proof is given in
+the further reading.
+
+\subsection{The Poincar\'e example and its dimension restriction}
+The Poincar\'e algebra is not semisimple: translations form a nonzero
+abelian ideal. Nevertheless in spacetime dimension \(D>2\), scalar
+central terms in the ordinary Poincar\'e algebra are removable. In
+3+1 dimensions the connected group's universal cover is
+\(\R^{1,3}\rtimes\SL(2,\C)\). Its ordinary unitary representations
+include the representations that are projective on the proper
+orthochronous Poincar\'e group, so the absence of a nontrivial Lie algebra
+central term does not exclude half-integer spin.
+
+The dimensional qualification matters. In 1+1 dimensions, let H, P, and
+K generate time translations, spatial translations, and boosts. The
+extension
+\begin{equation}
+ [K,H]=iP,\qquad [K,P]=iH,\qquad [H,P]=iZ,
+ \qquad [Z,\cdot]=0
+ \label{eq:poincare-two-dimensional}
+\end{equation}
+satisfies Jacobi. Its last bracket cannot be removed by constant shifts
+of H and P, because their unextended bracket is zero. We will use the
+3+1-dimensional result for relativistic QFT; the lower-dimensional
+example shows why its dimension restriction is necessary.
+
+\section{A nontrivial extension: mass in Galilean symmetry}
+\label{sec:galilei}
+The Galilei group provides a physical central extension that survives
+infinitesimally. Consider a free nonrelativistic particle with mass m,
+\(\{x_i,p_j\}=\delta_{ij}\), and
+\begin{equation}
+ H=\frac{\bm p^2}{2m},\qquad P_i=p_i,\qquad K_i=mx_i-tp_i.
+ \label{eq:galilean-generators}
+\end{equation}
+With our choice of boost parameter,
+\(\delta x_i=\{x_i,v_jK_j\}=-tv_i\) and
+\(\delta p_i=-mv_i\). Reversing the boost parameter gives the opposite
+coordinate convention used in some texts. Direct calculation yields
+\begin{equation}
+ \{K_i,P_j\}=m\delta_{ij},\qquad
+ \{K_i,H\}=P_i,\qquad \{K_i,K_j\}=0.
+ \label{eq:galilean-poisson}
+\end{equation}
+The explicitly time-dependent boost charge is nevertheless conserved:
+\(\dd K_i/\dd t=\partial_tK_i+\{K_i,H\}=-p_i+p_i=0\).
+In particular, conservation need not mean that the charge separately
+Poisson-commutes with H when it has explicit time dependence.
+
+Quantization gives \([K_i,P_j]=im\delta_{ij}I\). Abstractly m is the
+value of a central mass operator M. For several particles it is the total
+mass. A shift of K or P by a constant does not change their bracket, so
+this extension cannot be removed.
+
+There is also a direct group-level test. Set
+\(B(\bm v)=e^{-i\bm v\cdot\bm K}\) and
+\(T(\bm a)=e^{-i\bm a\cdot\bm P}\). Since the commutator of their
+exponents is central, the Baker--Campbell--Hausdorff formula gives exactly
+\begin{equation}
+ B(\bm v)T(\bm a)
+ =e^{-im\bm v\cdot\bm a}T(\bm a)B(\bm v).
+ \label{eq:bargmann-phase}
+\end{equation}
+Boosts and spatial translations commute as transformations of Galilean
+spacetime, but their quantum implementers differ by this phase. The
+extended group is often called the Bargmann group. Unlike the SU(2)
+double cover of SO(3), this example adds a nontrivial continuous central
+direction to the algebra itself. Notice also that the central term was
+already present in the classical Poisson algebra: it need not be a
+quantum anomaly.
+
+\section{Noether currents for a complex scalar multiplet}
+\label{sec:currents}
+We now connect the representation matrices to quantities built from
+fields. There are three steps: derive a conserved current, check that
+its charge generates the field transformation, and compute the brackets
+of two charges. Conservation alone does not perform the last two checks.
+
+\subsection{The symmetry and its equations of motion}
+Return to relativistic fields in \(d+1\) dimensions. Let \(\Phi\) be a
+column of N complex scalar fields, with Lagrangian density
+\begin{equation}
+ \Lag=\partial_\mu\Phi^\dagger\partial^\mu\Phi-V(s),
+ \qquad s=\Phi^\dagger\Phi.
+ \label{eq:multiplet-lagrangian}
+\end{equation}
+For a differentiable real potential V, this is invariant under a constant
+internal transformation
+\begin{equation}
+ \Phi'=U\Phi,\qquad \Phi'^\dagger=\Phi^\dagger U^\dagger,
+ \qquad U\in\UU(N).
+ \label{eq:multiplet-action}
+\end{equation}
+The fundamental and dual/conjugate actions and their invariant pairing
+were developed in Lecture 9. Here they ensure that both the
+kinetic term and s are invariant.
+Space-dependent U would produce extra derivative terms and would require
+a different theory with a gauge connection.
+Written as \(2N\) real scalars, this particular Lagrangian also has an
+O(2N) symmetry; we study its chosen U(N) subgroup and the associated
+\(N^2\) currents.
+
+Choose Hermitian matrices \(t_a\), \(a=0,\ldots,N^2-1\), normalized by
+\begin{equation}
+ \tr(t_at_b)=\tfrac12\delta_{ab},\qquad
+ t_0=\frac{I_N}{\sqrt{2N}},\qquad [t_a,t_b]=if_{ab}{}^ct_c.
+ \label{eq:uN-basis}
+\end{equation}
+There is one central u(1) generator and \(N^2-1\) traceless su(N)
+generators. Treat \(\Phi\) and \(\Phi^\dagger\) as independent variables
+when varying the action. The resulting equations are
+\begin{equation}
+ \Box\Phi+V'(s)\Phi=0,\qquad
+ \Box\Phi^\dagger+V'(s)\Phi^\dagger=0.
+ \label{eq:multiplet-eom}
+\end{equation}
+
+\subsection{Deriving and checking the currents}
+For \(U=e^{-i\epsilon^at_a}\),
+\(\delta\Phi=-i\epsilon^at_a\Phi\) and
+\(\delta\Phi^\dagger=i\epsilon^a\Phi^\dagger t_a\).
+There is no spacetime displacement or total-derivative term in this
+strict internal symmetry. The Noether formula gives
+\begin{align}
+ j_a^\mu
+ &=\partial^\mu\Phi^\dagger(-it_a\Phi)
+   +(i\Phi^\dagger t_a)\partial^\mu\Phi\notag\\
+ &=\boxed{i\bigl(\Phi^\dagger t_a\partial^\mu\Phi
+       -\partial^\mu\Phi^\dagger t_a\Phi\bigr)}.
+ \label{eq:noether-current}
+\end{align}
+These are \(N^2\) real classical currents, one for each independent
+symmetry parameter.
+On shell,
+\begin{align}
+ \partial_\mu j_a^\mu
+ &=i\bigl(\Phi^\dagger t_a\Box\Phi
+     -\Box\Phi^\dagger t_a\Phi\bigr)\notag\\
+ &=i\bigl(-V'(s)\Phi^\dagger t_a\Phi
+          +V'(s)\Phi^\dagger t_a\Phi\bigr)=0.
+ \label{eq:current-divergence}
+\end{align}
+The first-derivative terms cancel before using the equations of motion.
+The remaining terms vanish by the equations of motion.
+
+The charge is the integral of the time component,
+\begin{equation}
+ Q_a=\int\dd^dx\,j_a^0
+ =i\int\dd^dx\,
+ \bigl(\Phi^\dagger t_a\dot\Phi
+       -\dot\Phi^\dagger t_a\Phi\bigr).
+ \label{eq:noether-charge}
+\end{equation}
+Its time derivative is minus the boundary flux
+\(\int_{\partial\Sigma}\dd S_i\,j_a^i\); assume this flux vanishes.
+Reversing the parameter in the field transformation reverses both the
+current and charge together.
+
+\subsection{How the currents transform}
+Define \(D(U)\) by \(Ut_bU^\dagger=t_aD(U)^a{}_b\).
+Trace invariance makes D orthogonal in the basis
+\eqref{eq:uN-basis}. Inserting \(\Phi'=U\Phi\) in the current gives
+\begin{equation}
+ j_a'^\mu=D(U^{-1})^b{}_a j_b^\mu
+          =D(U)^a{}_b j_b^\mu.
+ \label{eq:current-adjoint}
+\end{equation}
+Thus the currents carry the coadjoint representation, identified with
+the adjoint by the invariant trace pairing. The matrix
+\(\mathcal J^\mu=2j_a^\mu t_a\) transforms as
+\(\mathcal J'^\mu=U\mathcal J^\mu U^\dagger\).
+As explained in Lecture 9, the U(N) adjoint is reducible: its u(1)
+component is a singlet and its traceless part is the SU(N) adjoint.
+The central u(1) acts trivially by conjugation, even though its Noether
+charge generates a nontrivial phase rotation of the fundamental field.
+
+\section{The Poisson algebra and quantization of charges}
+\label{sec:charges}
+\subsection{Canonical variables and the generator test}
+At a fixed time, the canonical momenta are
+\begin{equation}
+ \Pi_A=\frac{\partial\Lag}{\partial\dot\Phi^A}
+       =\dot\Phi_A^\dagger,
+ \qquad
+ \overline\Pi^{\,A}=\frac{\partial\Lag}{\partial\dot\Phi_A^\dagger}
+       =\dot\Phi^A.
+ \label{eq:momenta}
+\end{equation}
+Capital indices label field components; lower-case a,b label generators.
+In complex canonical coordinates the nonzero elementary brackets are
+\begin{equation}
+ \{\Phi^A(\bm x),\Pi_B(\bm y)\}
+ =\delta^A{}_B\delta^{(d)}(\bm x-\bm y),\qquad
+ \{\Phi_A^\dagger(\bm x),\overline\Pi^{\,B}(\bm y)\}
+ =\delta_A{}^B\delta^{(d)}(\bm x-\bm y).
+ \label{eq:canonical-pb}
+\end{equation}
+The reverse-ordered brackets have minus signs. All cross brackets vanish.
+These complex coordinates are a convenient rewriting of the usual real
+canonical coordinates; they do not introduce extra degrees of freedom.
+
+In matrix notation, with \(\Pi\) a row and \(\overline\Pi\) a column,
+\begin{equation}
+ Q_a=i\int\dd^dx\,
+       \bigl(\Phi^\dagger t_a\overline\Pi-\Pi t_a\Phi\bigr).
+ \label{eq:charge-canonical}
+\end{equation}
+In the bracket with \(\Phi\), only the term containing \(\Pi\)
+contributes. Its delta function collapses the spatial integral:
+\begin{align}
+ \{\Phi^A(\bm y),Q_a\}
+ &=-i\int\dd^dx\,
+ \delta^A{}_B\delta^{(d)}(\bm y-\bm x)
+ (t_a)^B{}_C\Phi^C(\bm x)\notag\\
+ &=-i(t_a\Phi)^A(\bm y),\label{eq:field-generator}\\
+ \{\Phi_A^\dagger(\bm y),Q_a\}
+ &=i(\Phi^\dagger t_a)_A(\bm y).
+ \label{eq:conjugate-generator}
+\end{align}
+Thus \(\delta F=\epsilon^a\{F,Q_a\}\) reproduces precisely the
+transformation used to derive the current. If the charge is placed first
+in the bracket, its action changes sign.
+
+\begin{remarkbox}[One complex field is a rotation of two real fields]
+For a concrete check take N=1 and use the phase parameterization
+\(\delta\phi=-i\epsilon\phi\), with generator 1 rather than the
+trace-normalized \(t_0\). Write
+\(\phi=(q_1+iq_2)/\sqrt2\). Its real components transform as
+\[
+ \delta q_1=\epsilon q_2,\qquad \delta q_2=-\epsilon q_1.
+\]
+With \(p_i=\dot q_i\), the current and charge become
+\[
+ j^\mu=q_2\partial^\mu q_1-q_1\partial^\mu q_2,
+ \qquad Q=\int\dd^dx\,(q_2p_1-q_1p_2).
+\]
+The real canonical brackets give \(\{q_1,Q\}=q_2\) and
+\(\{q_2,Q\}=-q_1\), exactly as required. The charge is an angular
+momentum in the internal \((q_1,q_2)\) plane; the sign corresponds
+to the orientation chosen by \(e^{-i\epsilon}\).
+\end{remarkbox}
+
+\subsection{Computing the charge brackets}
+A short bilinear identity keeps the matrix multiplication visible. For
+constant matrices A and B define
+\[
+ F[A]=\int\dd^dx\,\Pi A\Phi,\qquad
+ G[A]=\int\dd^dx\,\Phi^\dagger A\overline\Pi.
+\]
+For the first bracket, the functional derivatives are
+\(\delta F[A]/\delta\Phi^I=(\Pi A)_I\) and
+\(\delta F[A]/\delta\Pi_I=(A\Phi)^I\). Thus the canonical rule gives
+\begin{align*}
+ \{F[A],F[B]\}
+ &=\int\dd^dx\,\bigl[(\Pi A)_I(B\Phi)^I
+                      -(A\Phi)^I(\Pi B)_I\bigr]\\
+ &=\int\dd^dx\,\Pi(AB-BA)\Phi=F([A,B]).
+\end{align*}
+Repeating this for the conjugate pair yields the three useful identities
+\begin{equation}
+ \{F[A],F[B]\}=F([A,B]),\qquad
+ \{G[A],G[B]\}=-G([A,B]),\qquad
+ \{F[A],G[B]\}=0.
+ \label{eq:bilinear-brackets}
+\end{equation}
+The opposite signs come from the opposite order of coordinate and
+momentum indices in the two bilinears. The mixed bracket vanishes
+because the two canonical pairs have zero cross brackets.
+Since \(Q_a=-iF[t_a]+iG[t_a]\),
+\begin{align}
+ \{Q_a,Q_b\}
+ &=-F([t_a,t_b])+G([t_a,t_b])\notag\\
+ &=f_{ab}{}^c\bigl(-iF[t_c]+iG[t_c]\bigr)
+ =\boxed{f_{ab}{}^cQ_c}.
+ \label{eq:charge-algebra}
+\end{align}
+The abstract Lie algebra is therefore realized by functions on the full
+classical field phase space. It is not merely an algebra satisfied by the
+finite matrices \(t_a\).
+
+As a check, the u(1) charge \(Q_0\) commutes with every \(Q_a\), because
+\(f_{0a}{}^b=0\). Yet \(\{\Phi,Q_0\}=-i\Phi/\sqrt{2N}\) is nonzero.
+Being central among symmetry charges does not mean acting trivially on
+all fields.
+
+\subsection{Where a central term could have entered}
+Suppose charges generate the expected symmetry algebra on all canonical
+variables. The Jacobi identity then implies that
+\[
+ C_{ab}=\{Q_a,Q_b\}-f_{ab}{}^cQ_c
+\]
+Poisson-commutes with all those variables. On a connected nondegenerate
+canonical phase space it must be a constant. Generator actions by
+themselves therefore determine the charge algebra only up to a possible
+central term. The explicit calculation \eqref{eq:charge-algebra} proves
+that it vanishes for this multiplet with the chosen normalization.
+The Galilean example showed that this constant need not vanish in a
+different theory.
+
+Constant shifts change C as in Eq.~\eqref{eq:central-shift}, so the same
+test for removability applies classically. Boundary contributions can
+also affect the charge algebra in systems with different boundary
+conditions.
+
+\subsection{Quantization and the factor of i}
+Canonical quantization replaces the elementary Poisson brackets by
+commutators according to
+\begin{equation}
+ [\widehat\Phi^A(\bm x),\widehat\Pi_B(\bm y)]
+ =i\delta^A{}_B\delta^{(d)}(\bm x-\bm y),
+ \qquad \{\ ,\ \}_{\rm PB}\ \longrightarrow\ \frac1i[\ ,\ ].
+ \label{eq:quantization}
+\end{equation}
+Restoring units, the denominator is \(i\hbar\). This correspondence
+applies to the elementary variables and present charges, but need not
+hold for arbitrary classical functions. With symmetry-preserving
+regularization and operator ordering, the
+scalar multiplet's global charges satisfy
+\begin{equation}
+ [\widehat Q_a,\widehat Q_b]=if_{ab}{}^c\widehat Q_c,
+ \qquad [\widehat Q_a,\widehat\Phi]=-t_a\widehat\Phi.
+ \label{eq:quantum-charge-algebra}
+\end{equation}
+Consequently
+\[
+ e^{i\epsilon^a\widehat Q_a}\widehat\Phi
+ e^{-i\epsilon^a\widehat Q_a}
+ =e^{-i\epsilon^at_a}\widehat\Phi,
+\]
+which matches the classical component transformation. Local field
+products require a regulator; unbounded charges need a common invariant
+domain. The stated assumptions give the unextended scalar charge
+algebra. Other theories may have central terms or quantum anomalies
+(failure of a classical symmetry after quantization). These are separate
+questions requiring a quantum calculation.
+
+For a conserved charge with explicit time dependence, the quantum
+conservation equation is
+\(\partial_t\widehat Q+i[\widehat H,\widehat Q]=0\).
+For a time-independent internal charge it reduces to
+\([\widehat H,\widehat Q]=0\), paralleling the classical discussion.
+
+
+
+\clearpage
+\section*{Questions and checks}
+\addcontentsline{toc}{section}{Questions and checks}
+\begin{enumerate}
+\item Derive the cocycle condition by associating three unitary
+implementers in two ways. Derive the rephasing formula as well.
+\item Show that the product \eqref{eq:extension-product} is associative
+exactly when the cocycle condition holds. Identify its central subgroup.
+\item Derive the local central term \eqref{eq:central-algebra}, its
+Jacobi constraint, and its change under a constant generator shift.
+\item Remove an arbitrary antisymmetric central term in the rotation
+algebra explicitly. Explain why this does not remove half-integer spin
+as a projective representation of SO(3).
+\item Compute \(\{K_i,P_j\}\), \(\{K_i,H\}\), and \(\dd K_i/\dd t\)
+for the free particle. Derive the boost-translation phase and explain why
+constant shifts cannot remove the mass term.
+\item Starting from \eqref{eq:multiplet-lagrangian}, derive the currents
+and verify their divergence using the field equations. Count the U(N)
+and SU(N) currents separately.
+\item Prove both bilinear bracket identities in
+Eq.~\eqref{eq:bilinear-brackets} in component notation. Use them to
+recover \(\{Q_a,Q_b\}=f_{ab}{}^cQ_c\).
+\item Explain how a central u(1) charge can act nontrivially on a
+fundamental field while the same central subgroup acts trivially in the
+adjoint representation. Track the factor of i after quantization.
+\end{enumerate}
+
+\clearpage
+\section*{Summary}
+\addcontentsline{toc}{section}{Summary}
+\begin{keyidea}[The completed connection]
+The group law determines the infinitesimal algebra. Quantum rays allow
+phases in the group law. Global topology and central Lie algebra terms
+are two distinct sources of projective behavior. Noether charges realize
+the symmetry as canonical transformations, and their Poisson brackets
+reproduce the Lie algebra, possibly with a central term. Quantization
+then introduces the factor of i in the commutator algebra.
+\end{keyidea}
+\begin{itemize}
+\item Associativity constrains a projective multiplier. Rephasing changes
+it by a coboundary; the removable-multiplier example shows why a nonzero
+phase alone does not establish a nontrivial extension.
+\item A central Lie algebra term satisfies Jacobi and is defined modulo
+constant shifts of generators. For a finite-dimensional semisimple
+algebra every scalar central extension is removable.
+\item The covering-group origin of spin in Lecture 9 leaves the rotation
+Lie algebra unchanged. Galilean mass instead supplies a nonremovable
+central term, already present in the classical Poisson brackets.
+\item For a complex scalar multiplet,
+\(j_a^\mu=i(\Phi^\dagger t_a\partial^\mu\Phi
+-\partial^\mu\Phi^\dagger t_a\Phi)\). The field equations imply
+current conservation, and vanishing boundary flux gives conserved charges.
+\item The canonical brackets verify \(\{\Phi,Q_a\}=-it_a\Phi\)
+and \(\{Q_a,Q_b\}=f_{ab}{}^cQ_c\). The generator test and the
+charge-algebra calculation are separate steps.
+\item With the stated quantum assumptions,
+\([\widehat Q_a,\widehat Q_b]=if_{ab}{}^c\widehat Q_c\).
+Central terms and anomalies require attention to the actual theory,
+regularization, and boundary conditions.
+\end{itemize}
+
+\section*{Further reading}
+\addcontentsline{toc}{section}{Further reading}
+These notes reorganize the supplied symmetry and representation slide
+sets into Lectures 8--10. For mathematical background and further proofs:
+\begin{itemize}
+\item J. C. Fiallo R., \href{https://www.math.ubc.ca/~reichst/Lie-Algebra-Cohomology.pdf}{\emph{Lie Algebra Cohomology}},
+Corollary 5.13, for Whitehead's second lemma.
+\item Y. Nakayama, \emph{Central Extension of Scaling Poincar\'e Algebra},
+\href{https://arxiv.org/abs/2311.10254}{arXiv:2311.10254},
+for the dimension dependence of Poincar\'e central extensions.
+\end{itemize}
+\end{document}

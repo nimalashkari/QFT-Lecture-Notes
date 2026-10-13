@@ -1,0 +1,735 @@
+\documentclass[11pt]{article}
+
+\usepackage[letterpaper,margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb,mathtools,bm}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{hyperref}
+\usepackage[most]{tcolorbox}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{parskip}
+
+\definecolor{qftblue}{HTML}{245A8D}
+\definecolor{qftgreen}{HTML}{2F6B4F}
+\definecolor{qftred}{HTML}{A23B3B}
+\definecolor{qftgray}{HTML}{F4F6F8}
+\definecolor{qftgold}{HTML}{C08B2C}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=qftblue,
+  urlcolor=qftblue,
+  citecolor=qftgreen,
+  pdftitle={PHYS 662 Lecture 2: From Quantum Particles to Quantum Fields},
+  pdfauthor={Nima Lashkari}
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{PHYS 662: Quantum Field Theory I}
+\rhead{Lecture 2}
+\cfoot{\thepage}
+\setlength{\headheight}{14pt}
+
+\titleformat{\section}{\Large\bfseries\color{qftblue}}{\thesection.}{0.6em}{}
+\titleformat{\subsection}{\large\bfseries\color{qftgreen}}{\thesubsection}{0.6em}{}
+\titleformat{\subsubsection}{\normalsize\bfseries\color{qftred}}{\thesubsubsection}{0.6em}{}
+
+\setlist[itemize]{leftmargin=2em,itemsep=0.25em,topsep=0.4em}
+\setlist[enumerate]{leftmargin=2em,itemsep=0.25em,topsep=0.4em}
+
+\newcommand{\dd}{\mathrm{d}}
+\newcommand{\e}{\mathrm{e}}
+\newcommand{\ii}{\mathrm{i}}
+\newcommand{\cD}{\mathcal{D}}
+\newcommand{\cH}{\mathcal{H}}
+\newcommand{\cO}{\mathcal{O}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\avg}[1]{\left\langle #1\right\rangle}
+\newcommand{\comm}[2]{\left[#1,#2\right]}
+
+\newtcolorbox{keyidea}[1][]{
+  enhanced,
+  breakable,
+  colback=qftgray,
+  colframe=qftblue,
+  boxrule=0.8pt,
+  arc=1.5mm,
+  title={#1},
+  fonttitle=\bfseries,
+  coltitle=qftblue
+}
+
+\newtcolorbox{remarkbox}[1][]{
+  enhanced,
+  breakable,
+  colback=white,
+  colframe=qftgreen,
+  boxrule=0.7pt,
+  arc=1.5mm,
+  title={#1},
+  fonttitle=\bfseries,
+  coltitle=qftgreen
+}
+
+\newtcolorbox{warningbox}[1][]{
+  enhanced,
+  breakable,
+  colback=white,
+  colframe=qftred,
+  boxrule=0.7pt,
+  arc=1.5mm,
+  title={#1},
+  fonttitle=\bfseries,
+  coltitle=qftred
+}
+
+\begin{document}
+\pagenumbering{gobble}
+
+\begin{titlepage}
+\centering
+\vspace*{1.2in}
+{\scshape\Large PHYS 662 --- Quantum Field Theory I\par}
+\vspace{0.35in}
+{\Huge\bfseries\color{qftblue} Lecture 2\par}
+\vspace{0.15in}
+{\LARGE\bfseries From Quantum Particles to Quantum Fields\par}
+\vspace{0.12in}
+{\Large\color{qftgreen} Relativity, Locality, and the Limits of the Particle Picture\par}
+\vspace{0.6in}
+{\large Nima Lashkari\par}
+{\large Fall 2026\par}
+\vfill
+\begin{minipage}{0.86\textwidth}
+\small
+Quantum field theory is the framework in which quantum fluctuations, special
+relativity, and locality coexist.  Relativistic localization makes a
+fixed-particle-number description unstable, while local fields provide
+observables whose spacelike commutators vanish.  Particles remain important,
+but they emerge as special excitations of the field theory rather than serving
+as its universally valid starting point.
+
+\medskip
+Course page: \url{https://nimalashkari.com/quantum-field-theory-2026-part-i/}
+\end{minipage}
+\vspace{0.5in}
+\end{titlepage}
+
+\pagenumbering{roman}
+\tableofcontents
+\newpage
+\pagenumbering{arabic}
+
+\section*{Roadmap}
+\addcontentsline{toc}{section}{Roadmap}
+
+Lecture 1 showed how a classical statistical field can emerge from a
+many-body system after coarse-graining.  This lecture first completes that
+argument, then turns to quantum fluctuations and asks why relativistic
+quantum physics cannot be organized consistently around a fixed number of
+particles.
+
+The central questions are:
+\begin{enumerate}
+  \item How does a block variable become a continuum field?
+  \item In what sense is ordinary quantum mechanics already a field theory in
+  zero spatial dimensions?
+  \item Why does relativistic localization force us to allow particle
+  creation and annihilation?
+  \item How does a local quantum field theory restore causal behavior?
+  \item When does the theory admit a particle or quasiparticle
+  interpretation?
+\end{enumerate}
+
+\section{Review: from spin blocks to a classical field}
+
+The three elementary principles emphasized in Lecture 1 were
+\begin{center}
+\begin{tabular}{>{\bfseries}p{0.20\textwidth} p{0.67\textwidth}}
+Locality & Short-range interactions and a local derivative expansion. \\
+Symmetry & Constraints on the effective free energy and its observables. \\
+Fluctuations & Probability distributions, correlation functions, and
+coarse-graining. \\
+\end{tabular}
+\end{center}
+Stability, expressed through a free energy bounded below, will also become
+important.  In the quantum relativistic theory it becomes part of the
+spectrum condition: the energy must be bounded below and the vacuum must be
+stable.
+
+\subsection{Block magnetization}
+
+Consider the nearest-neighbor Ising model
+\begin{equation}
+  H[\{s_x\}]=-J\sum_{\langle xy\rangle}s_xs_y,
+  \qquad s_x=\pm1,
+  \qquad J>0.
+  \label{eq:IsingH}
+\end{equation}
+Divide the lattice into blocks $B_X$, each containing $N_B$ spins, and define
+the block magnetization
+\begin{equation}
+  m_X=\frac{1}{N_B}\sum_{x\in B_X}s_x.
+  \label{eq:blockm}
+\end{equation}
+Although every microscopic spin is discrete, $m_X$ takes $N_B+1$ values in
+$[-1,1]$.  When $N_B\gg1$, these values are closely spaced and the block
+magnetization can be treated as an approximately continuous variable.
+
+A related soft-spin description replaces $s_x=\pm1$ by a real variable
+$\phi_x$ with local weight
+\begin{equation}
+  p(\phi_x)=\frac{1}{z_g}\exp\left[-g(\phi_x^2-1)^2\right],
+  \qquad g\gg1.
+  \label{eq:softspin}
+\end{equation}
+Large $g$ concentrates the distribution near $\phi_x=\pm1$, while retaining
+a continuous integration variable.
+
+\subsection{The gradient term and locality}
+
+The nearest-neighbor interaction can be rewritten, up to an additive
+constant, as
+\begin{equation}
+  -J s_xs_{x+a\hat\mu}
+  =\frac{J}{2}\left(s_{x+a\hat\mu}-s_x\right)^2-J.
+  \label{eq:discretegradient}
+\end{equation}
+For a slowly varying field,
+\begin{equation}
+  \phi(x+a\hat\mu)-\phi(x)
+  =a\,\partial_\mu\phi(x)+\cO(a^2).
+\end{equation}
+Thus a local lattice interaction produces a continuum term proportional to
+$(\bm\nabla\phi)^2$.  Symmetry and stability then lead to a local
+Landau--Ginzburg functional of the form
+\begin{equation}
+  \beta F[\phi]
+  =\int\dd^dx\left[
+    \frac{\kappa}{2}(\bm\nabla\phi)^2
+    +\frac{r}{2}\phi^2
+    +\frac{u}{4!}\phi^4+\cdots
+  \right],
+  \qquad u>0,
+  \label{eq:LG2}
+\end{equation}
+where the ellipsis contains higher powers and derivatives allowed by the
+$\mathbb Z_2$ symmetry $\phi\mapsto-\phi$.
+
+\subsection{Reorganizing the partition function}
+
+The microscopic partition function can be grouped exactly according to the
+values of the block variables:
+\begin{align}
+  Z
+  &=\sum_{\{s_x\}}\e^{-\beta H[\{s_x\}]}
+  \notag\\
+  &=\sum_{\{m_X\}}
+    \sum_{\{s_x\}\,\text{consistent with }\{m_X\}}
+    \e^{-\beta H[\{s_x\}]}
+  \equiv
+  \sum_{\{m_X\}}\e^{-\beta F[\{m_X\}]}.
+  \label{eq:constrainedF2}
+\end{align}
+This equation \emph{defines} the constrained free energy.  It includes both
+the energy of a microscopic configuration and the entropy associated with
+the many configurations that share the same coarse-grained profile.
+
+When the block variables are effectively continuous and vary slowly on the
+cutoff scale, the sum becomes a functional integral:
+\begin{equation}
+  \boxed{
+  Z=\int\cD m\,\e^{-\beta F[m]},
+  \qquad
+  \mathcal P[m]=\frac{1}{Z}\e^{-\beta F[m]}.
+  }
+  \label{eq:statpath}
+\end{equation}
+The configuration space is now a space of functions $m(\bm x)$.
+
+\begin{keyidea}[Continuum criterion]
+The continuum description is useful when the correlation length is much
+larger than the microscopic lattice spacing, $\xi/a\gg1$.  A block can then
+contain many microscopic degrees of freedom while remaining small compared
+with the distances over which the field changes appreciably.
+\end{keyidea}
+
+\newpage
+\begin{warningbox}[Classical versus quantum dimensionality]
+A classical statistical system on a $d$-dimensional lattice gives a
+$d$-dimensional Euclidean statistical field theory.  A $d$-dimensional
+quantum system, by contrast, acquires an additional imaginary-time direction
+in its Euclidean path-integral representation and is related to a
+$(d+1)$-dimensional Euclidean field theory.
+\end{warningbox}
+
+\section{Quantum fluctuations and quantum correlation functions}
+
+For a quantum system, the canonical variables become noncommuting operators,
+\begin{equation}
+  \comm{\hat q_i}{\hat p_j}=\ii\hbar\,\delta_{ij}.
+  \label{eq:CCR}
+\end{equation}
+A state therefore does not assign sharp simultaneous values to all
+coordinates and momenta.  For an observable $\hat A$, its variance is
+\begin{equation}
+  (\Delta A)^2
+  =\avg{\hat A^2}-\avg{\hat A}^2.
+\end{equation}
+These fluctuations are present even in a pure ground state; they are not
+caused by ignorance of a classical microstate or by coupling to a thermal
+bath.
+
+Quantum correlation functions are expectation values of products of
+operators,
+\begin{equation}
+  \avg{
+    \hat q_{i_1}(t_1)\cdots
+    \hat q_{i_n}(t_n)
+    \hat p_{j_1}(t'_1)\cdots
+    \hat p_{j_m}(t'_m)
+  }.
+  \label{eq:quantumcorr}
+\end{equation}
+Because the operators need not commute, their ordering is part of the
+definition.  Time-ordered, retarded, advanced, and unordered correlators
+answer different physical questions.
+
+At finite temperature,
+\begin{equation}
+  \avg{\hat A}_\beta
+  =\frac{1}{Z}\operatorname{Tr}
+   \left(\e^{-\beta\hat H}\hat A\right),
+  \qquad
+  Z=\operatorname{Tr}\e^{-\beta\hat H},
+\end{equation}
+so thermal and quantum fluctuations are both present.
+
+\begin{remarkbox}[Two kinds of fluctuations]
+Thermal fluctuations arise from a probability distribution over states.
+Quantum fluctuations arise from noncommuting observables in a quantum state.
+They can coexist, but they are conceptually distinct.
+\end{remarkbox}
+
+\section{Ordinary quantum mechanics as a field theory in \texorpdfstring{$0+1$}{0+1} dimensions}
+
+Consider a particle moving in $\R^d$.  Its Heisenberg-picture coordinates
+\begin{equation}
+  \hat q^a(t),
+  \qquad a=1,\ldots,d,
+\end{equation}
+are $d$ operator-valued functions of time.  In this limited but useful sense,
+ordinary quantum mechanics is a theory of $d$ fields in $0+1$ dimensions:
+there is one time coordinate and no spatial coordinate on the base space.
+The index $a$ labels the target-space coordinate; it is not a spatial
+coordinate on which the field depends.
+
+A genuine spatial quantum field has an independent operator at every point,
+\begin{equation}
+  \hat\phi(\bm x,t),
+  \qquad
+  \hat\pi(\bm x,t),
+\end{equation}
+with equal-time canonical commutator
+\begin{equation}
+  \comm{\hat\phi(\bm x,t)}{\hat\pi(\bm y,t)}
+  =\ii\hbar\,\delta^{(d)}(\bm x-\bm y).
+  \label{eq:fieldCCR}
+\end{equation}
+One way to approach this continuum is to place coupled quantum oscillators
+on a lattice and send the lattice spacing to zero.  A quantum field may
+therefore be viewed as the continuum limit of infinitely many coupled quantum
+degrees of freedom.
+
+\section{Why relativity destabilizes fixed particle number}
+
+\subsection{Localization and the Compton scale}
+
+To localize a particle within a region of size $\Delta x$, the uncertainty
+principle requires momentum components of order
+\begin{equation}
+  \Delta p\gtrsim\frac{\hbar}{2\Delta x}.
+\end{equation}
+For relativistic momenta the associated energy grows as
+$\Delta E\sim c\,\Delta p$.  When $\Delta x$ approaches the Compton
+wavelength
+\begin{equation}
+  \lambda_C=\frac{\hbar}{mc},
+\end{equation}
+the localization energy is comparable to the rest energy.  At sufficiently
+high energy, creation of additional particle--antiparticle pairs becomes
+kinematically possible.  Numerical factors depend on the localization
+protocol; the invariant lesson is that a one-particle description cannot
+remain closed under arbitrarily sharp localization.
+
+\begin{keyidea}[First obstruction]
+Relativity converts large momentum uncertainty into enough energy to change
+particle number.  A Hilbert space containing exactly one particle is
+therefore not a complete arena for relativistic local experiments.
+\end{keyidea}
+
+\subsection{The positive-energy propagation kernel}
+
+For a free relativistic particle, the positive-energy Hamiltonian is
+\begin{equation}
+  H(\bm p)=\sqrt{\bm p^2c^2+m^2c^4}.
+\end{equation}
+The formal position-space kernel is
+\begin{equation}
+  K_+(t,\bm r)
+  =\int\frac{\dd^d p}{(2\pi\hbar)^d}
+  \exp\left[
+    \frac{\ii}{\hbar}\bm p\cdot\bm r
+    -\frac{\ii}{\hbar}H(\bm p)t
+  \right].
+  \label{eq:positivekernel}
+\end{equation}
+Restricting to positive energies makes this kernel nonzero outside the light
+cone.  In $3+1$ dimensions and at spacelike separation
+$r^2-c^2t^2>0$, its large-distance behavior contains the exponential
+\begin{equation}
+  K_+(t,\bm r)
+  \sim
+  \exp\left[
+    -\frac{mc}{\hbar}\sqrt{r^2-c^2t^2}
+  \right]
+\end{equation}
+times a power-law prefactor.  The effect is exponentially small but not
+identically zero.
+
+This does not by itself describe a superluminal signal: position states and
+the positive-frequency kernel are not local observables of a relativistic
+theory.  It does show why a sharply localized, positive-energy,
+single-particle wavefunction is not the right fundamental object.
+
+\subsection{Local fields and microcausality}
+
+For a free real scalar field,
+\begin{equation}
+  \hat\phi(x)
+  =\int\frac{\dd^d p}{(2\pi)^d}
+   \frac{1}{\sqrt{2E_{\bm p}}}
+  \left(
+    \hat a_{\bm p}\e^{-\ii p\cdot x}
+    +\hat a^\dagger_{\bm p}\e^{+\ii p\cdot x}
+  \right),
+  \qquad
+  E_{\bm p}=\sqrt{\bm p^2+m^2},
+  \label{eq:modeexpansion}
+\end{equation}
+where this equation uses $\hbar=c=1$.  Its commutator is
+\begin{equation}
+  \comm{\hat\phi(x)}{\hat\phi(y)}
+  =\ii\,\Delta(x-y).
+  \label{eq:PauliJordan}
+\end{equation}
+The positive- and negative-frequency parts cancel at spacelike separation,
+so
+\begin{equation}
+  \boxed{
+  \comm{\hat\phi(x)}{\hat\phi(y)}=0
+  \quad\text{when}\quad
+  (x-y)^2<0.
+  }
+  \label{eq:microcausality}
+\end{equation}
+This is microcausality: operations performed in spacelike separated regions
+cannot influence one another through local observables.
+
+\begin{warningbox}[What performs the cancellation?]
+It is the full local field commutator, including both frequency signs, that
+vanishes outside the light cone.  It is not generally correct to say that a
+particle probability is canceled by an antiparticle probability.  A real
+scalar particle is its own antiparticle, yet its field is perfectly causal.
+\end{warningbox}
+
+\section{Fock space and particle-number-changing processes}
+
+The natural weak-coupling state space includes every particle number:
+\begin{equation}
+  \cH_{\mathrm F}
+  =
+  \bigoplus_{n=0}^{\infty}\cH_n,
+  \qquad
+  \cH_n=
+  \begin{cases}
+    \operatorname{Sym}\cH_1^{\otimes n}, & \text{bosons},\\
+    \operatorname{Alt}\cH_1^{\otimes n}, & \text{fermions}.
+  \end{cases}
+  \label{eq:Fock}
+\end{equation}
+Creation and annihilation operators connect neighboring sectors.  For
+several particle species, the corresponding Fock spaces are combined.
+Interactions may conserve a charge while changing the total number of
+quanta.
+
+Fock space is indispensable for free and perturbative QFT, but it is not the
+definition of QFT.  In strongly interacting theories, curved spacetime, or
+gauge theories, a preferred particle basis may be absent or only
+approximate.  Local operators and their correlation functions are more
+general.
+
+\subsection{Quantum fluctuations and pair creation}
+
+Quantum fields fluctuate even in the vacuum:
+\begin{equation}
+  \avg{0|\hat\phi(x)\hat\phi(y)|0}\neq0.
+\end{equation}
+Interactions or external backgrounds can convert available energy into
+on-shell particle--antiparticle pairs.  However, a stable time-independent
+vacuum does not continually emit real particles: energy and all conserved
+charges must still be respected.  Vacuum correlation functions and virtual
+intermediate states should not be confused with directly observable
+particles.
+
+\begin{remarkbox}[Classical and quantum parallels]
+In classical statistical field theory, thermal fluctuations lead to a
+probability distribution on field configurations.  In QFT, quantum
+fluctuations appear in noncommuting field operators and their correlation
+functions.  Both settings use generating functionals and functional
+integrals, but the physical interpretation is different.
+\end{remarkbox}
+
+\section{Particles and quasiparticles are regime-dependent}
+
+\subsection{Short-range interactions and asymptotic states}
+
+Suppose two localized wave packets are separated by a distance $R$.  If the
+interaction energy vanishes sufficiently rapidly as $R\to\infty$, the
+Hamiltonian approximately splits,
+\begin{equation}
+  H\simeq H_1+H_2,
+\end{equation}
+and the state approximately factorizes into two independently propagating
+excitations.  Bringing the packets together produces scattering; taking
+them far apart again defines asymptotic in- and out-particles.
+
+In an interacting theory, a stable particle is visible as an isolated pole
+of an appropriate two-point function.  Schematically,
+\begin{equation}
+  G(p)
+  \sim\frac{Z_{\mathrm{pole}}}
+  {p^2-m_{\mathrm{phys}}^2+\ii\epsilon}
+  +\text{continuum}.
+  \label{eq:particlepole}
+\end{equation}
+The pole location gives the physical mass and its residue measures the
+overlap of the field with the one-particle state.  An unstable excitation
+produces a resonance rather than a pole on the physical sheet.
+
+\subsection{Strong coupling, long-range forces, and confinement}
+
+If interactions do not become negligible at large separation, the ordinary
+particle picture can fail.  Confinement is the sharp example.  In pure
+Yang--Mills theory, the energy of a separated color source and antisource
+grows approximately as
+\begin{equation}
+  V(R)\simeq \sigma R
+\end{equation}
+at large $R$, with string tension $\sigma$.  Isolated colored asymptotic
+states are then absent; the spectrum is organized into color-neutral bound
+states.
+
+In full QCD with dynamical quarks, the flux tube can break by pair creation,
+so the static potential eventually saturates.  The conclusion remains that
+quarks are not isolated asymptotic particles.  Hadrons, rather than quarks,
+provide the particle states measured at low energy.
+
+Long-range interactions require additional care even without confinement.
+In QED, for example, a charged particle is accompanied by a soft photon
+cloud, modifying the naive Fock-particle picture.
+
+\begin{keyidea}[The particle concept is asymptotic]
+Particles and quasiparticles are exceptionally useful when the theory has
+stable, well-separated excitations.  They are properties of a regime and of
+the spectrum, not universal microscopic ingredients.  Some strongly
+coupled theories have only composite particles; others have no useful
+particle description at all.
+\end{keyidea}
+
+\section{Structural consequences of relativistic QFT}
+
+\subsection{Antiparticles}
+
+Relativistic local QFT naturally contains both signs of frequency.  For a
+complex field, the negative-frequency term is reinterpreted through
+creation operators for antiparticles.  Particles and antiparticles have the
+same mass and spin and opposite additive charges.
+
+The modern statement relies on the full structure of local relativistic QFT,
+including a stable vacuum and CPT symmetry.  Not every particle has a
+\emph{distinct} antiparticle: a neutral real scalar, the photon, and other
+self-conjugate excitations can be their own antiparticles.
+
+\subsection{Identical particles and the spin--statistics connection}
+
+Quanta created by the same field are intrinsically identical.  In
+$3+1$-dimensional local relativistic QFT with positive energy,
+\begin{equation}
+  \begin{array}{ccl}
+  \text{integer spin} &\Longrightarrow& \text{Bose statistics},\\
+  \text{half-integer spin} &\Longrightarrow& \text{Fermi statistics}.
+  \end{array}
+  \label{eq:spinstat}
+\end{equation}
+This is the spin--statistics theorem.  It is not a statement of
+nonrelativistic quantum mechanics alone; locality, Lorentz symmetry, and
+the spectrum condition are essential assumptions.
+
+In $2+1$ spacetime dimensions the topology of particle exchange is
+different, and anyonic or more general braid statistics are possible.  The
+dimensional assumptions should therefore always be stated.
+
+\section{What is a quantum field?}
+
+A quantum field is often introduced as an operator-valued function
+$\hat\phi(x)$.  The mathematically and physically safer statement is that it
+is an \emph{operator-valued distribution}.  The object at an exact point is
+typically too singular to be an operator on the Hilbert space.  One defines
+a smeared field
+\begin{equation}
+  \hat\phi(f)
+  =\int\dd^{d+1}x\,f(x)\hat\phi(x),
+  \label{eq:smearedfield}
+\end{equation}
+where $f$ is a smooth test function of compact support.  The support of $f$
+specifies the spacetime region in which the observable is localized.
+
+\subsection{From a classical equation to a quantum field}
+
+For a classical real scalar field with potential $V(\phi)$, a standard
+action is
+\begin{equation}
+  S[\phi]
+  =\int\dd t\,\dd^d x\left[
+    \frac12(\partial_t\phi)^2
+    -\frac12(\bm\nabla\phi)^2
+    -V(\phi)
+  \right].
+\end{equation}
+Its Euler--Lagrange equation is
+\begin{equation}
+  \partial_t^2\phi-\bm\nabla^2\phi+V'(\phi)=0.
+  \label{eq:classicalEOM}
+\end{equation}
+Quantization promotes the field and its conjugate momentum to
+operator-valued distributions satisfying canonical commutators, or
+equivalently constructs their correlation functions from a path integral.
+
+For the free potential $V(\phi)=m^2\phi^2/2$, the equation becomes
+\begin{equation}
+  (\Box+m^2)\phi=0,
+\end{equation}
+in units with $c=\hbar=1$.  Each positive-frequency classical solution
+labels a one-particle wave packet, while the full quantum field also creates
+and annihilates arbitrary multiparticle states.
+
+\begin{warningbox}[Fields are not ordinary pointwise observables]
+Products such as $\hat\phi(x)^2$ are singular and must be defined by a
+renormalization prescription.  Smearing controls the distributional
+singularity of a single field, but composite operators require additional
+work.
+\end{warningbox}
+
+\section{Three principles of relativistic QFT}
+
+\subsection{Locality}
+
+Local observables commute at spacelike separation,
+\begin{equation}
+  \comm{\cO_1(x)}{\cO_2(y)}=0,
+  \qquad (x-y)^2<0,
+\end{equation}
+with the corresponding graded relation for fermionic fields.  This is the
+operational form of relativistic causality.
+
+\subsection{Symmetry}
+
+Spacetime and internal symmetries act on fields, states, and observables.
+Continuous symmetries lead to conserved currents and charges.  Gauge
+symmetry is more subtle: it is a redundancy of description whose constraints
+organize the physical state space and the local observables.
+
+\subsection{The spectrum condition}
+
+The Hamiltonian is bounded below, and in a Poincare-invariant theory the
+joint energy--momentum spectrum lies in the closed future light cone:
+\begin{equation}
+  p^0\ge0,
+  \qquad
+  p_\mu p^\mu\ge0.
+\end{equation}
+This condition expresses stability and selects the vacuum as a
+lowest-energy state.
+
+\begin{keyidea}[A working definition]
+A relativistic QFT assigns quantum observables to spacetime regions in a way
+compatible with locality, symmetry, and a positive-energy spectrum.
+Fields are the local operator-valued distributions used to generate and
+organize those observables.
+\end{keyidea}
+
+\section{Two complementary quantization viewpoints}
+
+\begin{description}
+  \item[Canonical or second quantization.]
+  Begin with classical fields and their conjugate momenta, impose canonical
+  commutation or anticommutation relations, and construct a Hilbert space.
+  For free fields this leads directly to creation and annihilation
+  operators and a Fock-space particle interpretation.
+
+  \item[Path-integral quantization.]
+  Begin with the action and sum over field histories with weight
+  $\e^{\ii S/\hbar}$ in Lorentzian signature, or $\e^{-S_E/\hbar}$ after
+  suitable continuation to Euclidean time.  This approach keeps Lagrangian
+  symmetries manifest and is well suited to perturbative and
+  nonperturbative methods.
+\end{description}
+
+The two viewpoints encode the same theory when both are well defined, but
+they illuminate different structures.  Neither requires us to regard
+particles as fundamental.
+
+\section{Questions to think about}
+
+\begin{enumerate}
+  \item Why is a nonzero positive-frequency kernel outside the light cone
+  not, by itself, a measurable violation of causality?
+  \item Which cancellation makes the free scalar commutator vanish at
+  spacelike separation?
+  \item What distinguishes a virtual contribution to a correlator from an
+  on-shell particle detected in an experiment?
+  \item What analytic feature of a two-point function identifies a stable
+  particle?
+  \item Can a local QFT have no particle interpretation?  What remains
+  meaningful in that case?
+  \item Why may a neutral particle be its own antiparticle?
+  \item Which assumptions enter the spin--statistics theorem, and why do
+  lower-dimensional systems admit exceptions?
+\end{enumerate}
+
+\section*{Summary}
+\addcontentsline{toc}{section}{Summary}
+
+Coarse-graining a many-body system reorganizes the microscopic partition sum
+into a functional integral over smooth fields.  Quantization replaces
+classical random variables by noncommuting operator-valued distributions.
+Special relativity then makes a fixed-particle-number description
+inadequate: localization reaches the pair-production scale, and
+positive-energy one-particle propagation alone does not furnish local causal
+observables.  A full local field restores microcausality through the
+cancellation of its positive- and negative-frequency parts.  Fock space
+describes variable particle number when a particle basis is useful, while
+correlation functions and local observables remain meaningful even at strong
+coupling or in regimes without particles.  Locality, symmetry, and the
+positive-energy spectrum form the structural core of relativistic QFT.
+
+\end{document}

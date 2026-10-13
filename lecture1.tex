@@ -110,7 +110,8 @@
 \vfill
 \begin{minipage}{0.86\textwidth}
 \small
-Statistical field theory can emerge for the effective low-energy dynamics of a classical many-body problem with local interactions, when one asks only about physics at distances much larger than the microscopic cutoff. The central ideas that underlie the emergence of (statistical) field theory are locality, symmetry, (thermal) fluctuations and coarse-graining.
+The central ideas that underlie the emergence of (statistical/quantum) field theory are {\bf locality}, {\bf symmetry}, {\bf (thermal/quantum) fluctuations} and {\bf coarse-graining}.
+Statistical field theory can emerge as the effective description of a classical many-body system with local interactions, when one asks only about physics at distances much larger than the microscopic cutoff (e.g lattice spacing). 
 
 \medskip
 Course page: \url{https://nimalashkari.com/quantum-field-theory-2026-part-i/}
@@ -126,33 +127,49 @@ Course page: \url{https://nimalashkari.com/quantum-field-theory-2026-part-i/}
 \section*{Course perspective}
 \addcontentsline{toc}{section}{Course perspective}
 
-In this course, we will assume fluency in quantum mechanics and statistical mechanics, and familiarity with special relativity and basic group theory.  There is no single textbook that we will follow.  The course website is the authoritative source for the syllabus, homework, lecture notes, and recordings.
+The prerequisites are fluency in quantum mechanics and statistical mechanics, special relativity and familiarity with group theory.  There is no single required textbook.  The course website is the authoritative source for the syllabus, references, homework, lecture notes, and recordings.
 
-The first part of the course develops \emph{classical field theory}; the second part quantizes it, first canonically and then using path integrals.  Along the way, three principles will repeatedly organize the subject:
+\subsection*{Organization and expectations}
+
+The working format announced in the first lecture is summarized below.  Current announcements on the course website supersede this summary.
 \begin{center}
-\begin{tabular}{>{\bfseries}p{0.20\textwidth} p{0.67\textwidth}}
-Fluctuations & Correlation functions, probability distributions, and eventually path integrals. \\
-Locality & Local interactions, local fields, causality, and the action principle. \\
-Symmetry & Constraints on dynamics, conservation laws, charges, and spin. \\
+\begin{tabular}{>{\bfseries}p{0.23\textwidth} p{0.7\textwidth}}
+Notes & Written notes are posted on the course website.\\
+Homework & Eight problem sets are planned.  Each set is announced in class, posted online, and normally due two weeks later through Brightspace. \\
+Assessment & There is no midterm.  The final examination is based on the homework you submit.\\
+Collaboration & Discussion is encouraged, but submitted solutions must be independently written and must follow the university's standards of academic integrity. \\
 \end{tabular}
 \end{center}
-A fourth principle, which will become increasingly important, is \emph{renormalization}: the long-distance theory often forgets most microscopic details.
+\subsection*{The course map}
 
+Quantum Field Theory (QFT) I begins by asking why field theory is the right language.  Its first part develops \emph{classical field theory}; its second part quantizes classical fields, first canonically and then using path integrals.  Free fields of spin $0$, $\tfrac12$, and $1$ provide the basic examples, followed by interacting scalar. We end with the $O(N)$-model as a class of QFT that describe various systems in nature and captures most of the tools and techniques discussed in the course.  The presentation is primarily based on the Lagrangian approach, with occasional comparisons to Hamiltonian, algebraic, and Euclidean approaches.
+
+QFT II develops renormalized perturbation theory and nonperturbative methods.  There, the same organizing ideas reappear as global and higher form symmetries, manifest or hidden symmetries, renormalization (coarse-graining) of short-distance fluctuations, and we will end with the standard model of particle physics, as a concrete four-dimensional QFT that describes elementary particles and their interactions.
+
+Throughout both courses, four principles repeatedly organize the subject:
 \begin{keyidea}[A useful attitude]
-Quantum field theory is not a finished collection of recipes.  It is a framework whose conceptual structure is still being developed.  Questions are therefore not interruptions to the subject; they are part of the subject.  The goal of this course is to learn the standard tools while keeping track of what they mean and why they work.
+\begin{tabular}{>{\bfseries}p{0.20\textwidth} p{0.7\textwidth}}
+Locality & Local interactions, local fields, causality, and the action principle. \\
+Symmetry & Constraints on dynamics, conservation laws, charges, and spin. \\
+Fluctuations & Correlation functions, amplitudes, and eventually path integrals. \\
+Coarse-graining & Renormalization, running couplings, asymptotic freeness.
+\end{tabular}
 \end{keyidea}
+QFT is not a finished collection of recipes.  It is a framework whose conceptual structure is still being developed.  Questions are therefore not interruptions to the subject; they are part of the subject.  The goal of this course is to learn the standard tools while keeping track of what they mean and why they work.
+
 
 \section{Why start with statistical field theory?}
 
 Field theory is a language for systems whose relevant degrees of freedom are functions of position (and, in dynamical problems, time).  It is useful both at very high energies and at very low energies.  In high-energy physics, relativistic quantum field theory is our framework for elementary interactions.  In many-body physics, fields emerge as collective variables describing long-wavelength fluctuations of a large number of microscopic degrees of freedom.
 
-Particles are extremely useful when a theory has stable or sufficiently long-lived, well-separated excitations.  But a particle description is not always available.  Near a continuous phase transition, for example, fluctuations occur on arbitrarily large length scales, and the natural observables are correlation functions of coarse-grained fields.  Similarly, in relativistic QFT, particle states are best thought of as a special asymptotic or low-energy organization of the theory rather than as the only possible starting point.
+Particles are extremely useful when a theory has stable or sufficiently long-lived, well-separated excitations.  But a particle description is not always available.  Near a continuous phase transition, for example, fluctuations occur on arbitrarily large length scales, and the natural observables are correlation functions of coarse-grained fields.  Similarly, in relativistic QFT, particle states are best thought of as a special asymptotic or low-energy organization of the theory.
 
 \begin{remarkbox}[Fields versus particles]
 It is often said that ``fields are more fundamental than particles.''  The precise statement we will use is more modest: \emph{the local field-theoretic description is often more robust than a particle description}.  A theory may have no useful particle interpretation in some regime, while its local observables and correlation functions remain perfectly meaningful.
 \end{remarkbox}
 
 Classical statistical field theory is the cleanest place to see how such a description emerges.  It will also give us our first example of a path integral.
+
 
 \section{Thermal fluctuations in a finite system}
 
@@ -164,20 +181,20 @@ and Hamiltonian $H(\Gamma)$.  A microstate is a point in phase space.  If the sy
 \begin{equation}
   \beta=\frac{1}{k_B T},
 \end{equation}
-then we no longer assign a single microstate to the system.  Instead we assign the canonical probability measure
+we use the {\it macrostate} that is the canonical probability measure over microstates
 \begin{equation}
   \dd\mu_\beta(\Gamma)=\frac{1}{Z(\beta)}\,\e^{-\beta H(\Gamma)}\,\dd\Gamma,
   \qquad
   Z(\beta)=\int \dd\Gamma\,\e^{-\beta H(\Gamma)}.
   \label{eq:canonical}
 \end{equation}
-For discrete degrees of freedom the phase-space integral is replaced by a sum.  We will suppress conventional normalization factors in $\dd\Gamma$ that do not affect the discussion.
+For discrete degrees of freedom, the phase-space integral is replaced by a sum.\footnote{We will suppress conventional normalization factors in $\dd\Gamma$ that do not affect the discussion.}
 
-For an observable $A(\Gamma)$,
+Classical observables are functions on the phase space. For an observable $A(\Gamma)$,
 \begin{equation}
   \avg{A}=\frac{1}{Z}\int \dd\Gamma\,\e^{-\beta H(\Gamma)}A(\Gamma).
 \end{equation}
-The probability distribution turns deterministic microscopic variables into fluctuating statistical observables.
+The probability distribution turns deterministic microscopic variables into fluctuating statistical observables. In other words, observables $A$ can be viewed as random variables, and their fluctuations around the mean are captured by moments of $A-\avg{A}$. 
 
 \subsection{Correlation functions and connected correlators}
 
@@ -188,18 +205,18 @@ For two observables $A$ and $B$, the simplest measure of correlated fluctuations
   \avg{AB}-\avg{A}\avg{B}.
   \label{eq:connected}
 \end{equation}
+We call this a connected correlation function, because it vanishes when the random variables $A$ and $B$ are independent.
 For example,
 \begin{equation}
   \avg{(q_1-\avg{q_1})(q_2-\avg{q_2})}
   =\avg{q_1q_2}-\avg{q_1}\avg{q_2}.
 \end{equation}
-If the joint distribution factorizes, $p(q_1,q_2)=p(q_1)p(q_2)$, then this connected two-point function vanishes.  Nonzero connected correlators therefore measure the failure of statistical independence.
-
-Higher moments and connected moments are the basic observables of statistical field theory and, later, of quantum field theory.
+If the joint distribution factorizes, $p(q_1,q_2)=p(q_1)p(q_2)$, then this connected two-point function vanishes.  Nonzero connected correlators therefore measure the failure of statistical independence. Higher moments and connected moments are the basic observables of statistical field theory and, later, of quantum field theory.
 
 \subsection{The partition function as a generating function}
 
-Introduce sources $J_i$ and $K_i$ coupled to positions and momenta:
+An elegant view of package the information content of all correlation functions at once, by defining a {\it partition function} that generates them.
+Introduce {\it sources} $J_i$ and $K_i$ coupled to positions and momenta:
 \begin{equation}
   Z[J,K]
   =\int \dd\Gamma\,
@@ -212,7 +229,7 @@ Differentiating $Z$ generates ordinary moments.  For instance,
   \qquad
   \left.\frac{1}{Z}\frac{\partial^2 Z}{\partial J_i\partial J_j}\right|_{0}=\avg{q_iq_j}.
 \end{equation}
-Even more importantly,
+Even more importantly, we will see (check this for yourself)
 \begin{equation}
   W[J,K]\equiv \log Z[J,K]
 \end{equation}
@@ -237,13 +254,19 @@ Then the response of another observable $B$ is
 \end{equation}
 For $A=B$, the static susceptibility is proportional to the variance.  Equation~\eqref{eq:staticFDT} is the simplest form of the fluctuation--dissipation relation: fluctuations in equilibrium determine linear response to a weak external perturbation.
 
-\section{A laboratory: the \texorpdfstring{$O(N)$}{O(N)} spin model}
 
-A useful family of many-body systems consists of spins or rotors living on the sites of a lattice.  At each site $i$, let
+\section{Local many-particle system}
+
+Before turning to a many-body system, consider a single planar rotor of length $\ell$ in a gravitational field.  Its angular coordinate $\theta$ and conjugate momentum $p_\theta$ have Hamiltonian
 \begin{equation}
-  \bm S_i\in \R^N,
-  \qquad
-  \bm S_i\cdot \bm S_i=1.
+  H(\theta,p_\theta)
+  =\frac{p_\theta^2}{2m\ell^2}+mg\ell(1-\cos\theta).
+  \label{eq:single-rotor}
+\end{equation}
+The configuration may equivalently be represented by the unit vector
+\begin{equation}
+  \bm S=(\cos\theta,\sin\theta),
+  \qquad \bm S^2=1.
 \end{equation}
 The nearest-neighbor ferromagnetic Hamiltonian is
 \begin{equation}
@@ -251,46 +274,9 @@ The nearest-neighbor ferromagnetic Hamiltonian is
   \qquad J>0.
   \label{eq:ONH}
 \end{equation}
-The model is invariant under a common orthogonal rotation of all spins,
-\begin{equation}
-  \bm S_i\longrightarrow R\bm S_i,
-  \qquad
-  R^T R=\mathbf 1,
-\end{equation}
-so its global symmetry group is $O(N)$.
 
-Important special cases are
-\begin{center}
-\begin{tabular}{ccl}
-\toprule
-$N$ & Degree of freedom & Model \\
-\midrule
-$1$ & $S_i=\pm1$ & Ising model \\
-$2$ & $\bm S_i=(\cos\theta_i,\sin\theta_i)$ & XY model \\
-$3$ & $\bm S_i\in S^2$ & Heisenberg model \\
-\bottomrule
-\end{tabular}
-\end{center}
-For $N=1$, $O(1)\simeq \mathbb Z_2$ and the degree of freedom is discrete.  For $N\ge2$ the spin takes values on the sphere $S^{N-1}$.
 
-The thermal state is
-\begin{equation}
-  p(\{\bm S_i\})=\frac{1}{Z}\e^{-\beta H(\{\bm S_i\})}.
-\end{equation}
-At nonzero temperature, the microscopic spins fluctuate.  What survives at long distances are suitable averages and correlation functions.
-
-\subsection{Quasiparticles are emergent}
-
-Even a spin system may admit a particle-like description at sufficiently low energy.  A simple example is the one-dimensional Ising chain,
-\begin{equation}
-  H=-J\sum_i s_i s_{i+1},
-  \qquad s_i=\pm1.
-\end{equation}
-The ground states have all spins aligned.  A bond with $s_i\neq s_{i+1}$ is a \emph{domain wall}.  Relative to an aligned bond, one domain wall costs energy $2J$.  With periodic boundary conditions domain walls are created in pairs.  Under an appropriate spin-flip dynamics they can move, and two domain walls can annihilate when they meet.
-
-Thus the number of these particle-like excitations is not a microscopic conserved quantity.  The ``particles'' are defects of a more fundamental many-body configuration.  This is our first example of the general QFT idea that particle number need not be fundamental.
-
-\section{Correlation length}
+\subsection{Locality and Correlation length}
 
 For a translationally invariant spin system, consider the connected two-point function
 \begin{equation}
@@ -341,7 +327,59 @@ Two variables separated by a distance much larger than $\xi$ are approximately s
 
 This picture works well when $\xi$ is finite.  At a continuous phase transition, however, $\xi$ diverges.  There is then no finite block size beyond which all fluctuations become independent.  Fluctuations survive on every scale.  This is precisely the regime where a continuum field theory becomes natural.
 
-\section{Separation of scales, coarse-graining, and universality}
+
+\section{Symmetry: the laboratory of \texorpdfstring{$O(N)$}{O(N)} spin model}
+
+This change of language generalizes immediately: an $O(N)$ rotor is a unit vector in $\R^N$.  The familiar Ising, XY, and Heisenberg variables are the cases $N=1,2,3$.
+
+A useful family of many-body systems is obtained by placing one such spin or rotor at every site of a lattice.  At each site $i$, let
+\begin{equation}
+  \bm S_i\in \R^N,
+  \qquad
+  \bm S_i\cdot \bm S_i=1.
+\end{equation}
+
+The model is invariant under a common orthogonal rotation of all spins,
+\begin{equation}
+  \bm S_i\longrightarrow R\bm S_i,
+  \qquad
+  R^T R=\mathbf 1,
+\end{equation}
+so its global symmetry group is $O(N)$.
+
+Important special cases are
+\begin{center}
+\begin{tabular}{ccl}
+\toprule
+$N$ & Degree of freedom & Model \\
+\midrule
+$1$ & $S_i=\pm1$ & Ising model \\
+$2$ & $\bm S_i=(\cos\theta_i,\sin\theta_i)$ & XY model \\
+$3$ & $\bm S_i\in S^2$ & Heisenberg model \\
+\bottomrule
+\end{tabular}
+\end{center}
+For $N=1$, $O(1)\simeq \mathbb Z_2$ and the degree of freedom is discrete.  For $N\ge2$ the spin takes values on the sphere $S^{N-1}$.
+
+The thermal state is
+\begin{equation}
+  p(\{\bm S_i\})=\frac{1}{Z}\e^{-\beta H(\{\bm S_i\})}.
+\end{equation}
+At nonzero temperature, the microscopic spins fluctuate.  What survives at long distances are suitable averages and correlation functions.
+
+\subsection{Quasiparticles are emergent}
+
+Even a spin system may admit a particle-like description at sufficiently low energy.  A simple example is the one-dimensional Ising chain,
+\begin{equation}
+  H=-J\sum_i s_i s_{i+1},
+  \qquad s_i=\pm1.
+\end{equation}
+The ground states have all spins aligned.  A bond with $s_i\neq s_{i+1}$ is a \emph{domain wall}.  Relative to an aligned bond, one domain wall costs energy $2J$.  With periodic boundary conditions domain walls are created in pairs.  Under an appropriate spin-flip dynamics they can move, and two domain walls can annihilate when they meet.
+
+Thus the number of these particle-like excitations is not a microscopic conserved quantity.  The ``particles'' are defects of a more fundamental many-body configuration.  This is our first example of the general QFT idea that particle number need not be fundamental.
+
+
+\section{Coarse-graining, Separation of scales, and universality}
 
 Let $a$ denote the microscopic lattice spacing.  The meaningful continuum parameter is not simply $\xi$, but the dimensionless ratio
 \begin{equation}

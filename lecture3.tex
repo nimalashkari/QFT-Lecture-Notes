@@ -1,0 +1,925 @@
+\documentclass[11pt]{article}
+
+\usepackage[letterpaper,margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb,mathtools,bm}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{hyperref}
+\usepackage[most]{tcolorbox}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{parskip}
+
+\definecolor{qftblue}{HTML}{245A8D}
+\definecolor{qftgreen}{HTML}{2F6B4F}
+\definecolor{qftred}{HTML}{A23B3B}
+\definecolor{qftgray}{HTML}{F4F6F8}
+\definecolor{qftgold}{HTML}{C08B2C}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=qftblue,
+  urlcolor=qftblue,
+  citecolor=qftgreen,
+  pdftitle={PHYS 662 Lecture 3: Quantum Sound and Phonons},
+  pdfauthor={Nima Lashkari}
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{PHYS 662: Quantum Field Theory I}
+\rhead{Lecture 3}
+\cfoot{\thepage}
+\setlength{\headheight}{14pt}
+
+\titleformat{\section}{\Large\bfseries\color{qftblue}}{\thesection.}{0.6em}{}
+\titleformat{\subsection}{\large\bfseries\color{qftgreen}}{\thesubsection}{0.6em}{}
+\titleformat{\subsubsection}{\normalsize\bfseries\color{qftred}}{\thesubsubsection}{0.6em}{}
+
+\setlist[itemize]{leftmargin=2em,itemsep=0.25em,topsep=0.4em}
+\setlist[enumerate]{leftmargin=2em,itemsep=0.25em,topsep=0.4em}
+
+\newcommand{\dd}{\mathrm{d}}
+\newcommand{\e}{\mathrm{e}}
+\newcommand{\ii}{\mathrm{i}}
+\newcommand{\cH}{\mathcal{H}}
+\newcommand{\cF}{\mathcal{F}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\comm}[2]{\left[#1,#2\right]}
+\newcommand{\pb}[2]{\left\{#1,#2\right\}_{\mathrm{PB}}}
+\newcommand{\ket}[1]{\left|#1\right\rangle}
+\newcommand{\bra}[1]{\left\langle#1\right|}
+\newcommand{\braket}[2]{\left\langle#1\middle|#2\right\rangle}
+
+\newtcolorbox{keyidea}[1][]{
+  enhanced,
+  breakable,
+  colback=qftgray,
+  colframe=qftblue,
+  boxrule=0.8pt,
+  arc=1.5mm,
+  title={#1},
+  fonttitle=\bfseries,
+  coltitle=qftblue
+}
+
+\newtcolorbox{remarkbox}[1][]{
+  enhanced,
+  breakable,
+  colback=white,
+  colframe=qftgreen,
+  boxrule=0.7pt,
+  arc=1.5mm,
+  title={#1},
+  fonttitle=\bfseries,
+  coltitle=qftgreen
+}
+
+\newtcolorbox{warningbox}[1][]{
+  enhanced,
+  breakable,
+  colback=white,
+  colframe=qftred,
+  boxrule=0.7pt,
+  arc=1.5mm,
+  title={#1},
+  fonttitle=\bfseries,
+  coltitle=qftred
+}
+
+\begin{document}
+\pagenumbering{gobble}
+
+\begin{titlepage}
+\centering
+\vspace*{1.2in}
+{\scshape\Large PHYS 662 --- Quantum Field Theory I\par}
+\vspace{0.35in}
+{\Huge\bfseries\color{qftblue} Lecture 3\par}
+\vspace{0.15in}
+{\LARGE\bfseries Quantum Sound and Phonons\par}
+\vspace{0.12in}
+{\Large\color{qftgreen} From Coupled Atoms to an Emergent Quantum Field\par}
+\vspace{0.6in}
+{\large Nima Lashkari\par}
+{\large Fall 2026\par}
+\vfill
+\begin{minipage}{0.86\textwidth}
+\small
+A solid is microscopically a many-body system, but its long-wavelength
+vibrations are described by a field.  Diagonalizing the harmonic lattice
+reveals independent normal modes; quantizing those modes produces phonons,
+the bosonic quanta of sound.  The continuum limit is a massless scalar field
+theory with an emergent limiting speed, while the lattice supplies a physical
+short-distance cutoff and anharmonicity supplies interactions.
+
+\medskip
+Course page: \url{https://nimalashkari.com/quantum-field-theory-2026-part-i/}
+\end{minipage}
+\vspace{0.5in}
+\end{titlepage}
+
+\pagenumbering{roman}
+\tableofcontents
+\newpage
+\pagenumbering{arabic}
+
+\section*{Roadmap}
+\addcontentsline{toc}{section}{Roadmap}
+
+Lectures 1 and 2 motivated field theory as a long-distance language and
+explained why particles need not be fundamental.  This lecture develops the
+first complete example.  We start with a ring of coupled atoms, find its
+classical normal modes, quantize them, and then take the continuum limit.
+The calculation answers five questions:
+\begin{enumerate}
+  \item How does a local many-particle system produce a field at long
+  wavelength?
+  \item Why are the collective excitations particles, and why are they
+  bosons?
+  \item What is the precise dispersion relation, and where does the speed of
+  sound come from?
+  \item How does a lattice regulate the ultraviolet continuum theory?
+  \item What changes when the crystal is anharmonic and phonons interact?
+\end{enumerate}
+
+The one-dimensional chain keeps the algebra transparent.  Its longitudinal
+displacement becomes a scalar field.  A realistic three-dimensional solid
+has vector displacements, several polarizations, and possibly several atoms
+per unit cell, but the logic is the same.
+
+\section{Emergence and the particle--field question}
+
+An emergent phenomenon is a robust collective behavior that is not naturally
+assigned to one microscopic constituent.  Electric current in a metal, for
+example, depends on the electronic many-body state, the lattice, and
+scattering.  Ohm's law is not a property of an isolated atom.  In the same
+way, sound is not the motion of one atom through a solid.  It is a coherent
+disturbance of many atoms.
+
+This observation changes the particle--wave question.  A photon is a quantum
+of the electromagnetic field; a phonon is a quantum of the displacement
+field.  A wave profile and a particle excitation are therefore not rival
+microscopic pictures.  They are two descriptions of states in the same
+quantum field theory:
+\begin{center}
+\begin{tabular}{>{\bfseries}p{0.25\textwidth} p{0.58\textwidth}}
+Field language & Local amplitudes and correlation functions in space and
+time. \\
+Particle language & Quanta of normal modes when the spectrum contains
+sufficiently long-lived excitations. \\
+\end{tabular}
+\end{center}
+
+At weak coupling and low density, separated wave packets make the particle
+description exceptionally useful.  When interactions remain strong, a
+particle basis may cease to be useful even though local fields and their
+correlators remain meaningful.
+
+\begin{keyidea}[The example in one sentence]
+The ultraviolet variables are the atomic displacements $u_j(t)$; the
+infrared variable is a smooth field $u(x,t)$; and the quanta of its normal
+modes are emergent particles called phonons.
+\end{keyidea}
+
+\section{A microscopic model of a solid}
+
+\subsection{Coordinates and assumptions}
+
+Consider $N$ identical masses $m$ arranged on a ring of circumference
+\begin{equation}
+  L=Na,
+\end{equation}
+where $a$ is the equilibrium lattice spacing.  The equilibrium position of
+site $j$ is $x_j=ja$, and the actual position is
+\begin{equation}
+  X_j(t)=x_j+u_j(t).
+  \label{eq:actualposition}
+\end{equation}
+The variable $u_j$ is a longitudinal displacement, not the full position.
+We impose periodic boundary conditions
+\begin{equation}
+  u_{j+N}=u_j,
+  \qquad
+  p_{j+N}=p_j,
+\end{equation}
+and take $p_j=m\dot u_j$.
+
+Suppose the energy is local and dominated by nearest-neighbor bonds.  If
+$U(r)$ is the energy of a bond of length $r$, expand around its equilibrium
+length $a$:
+\begin{equation}
+  U(a+\Delta u)
+  =U(a)+U'(a)\Delta u
+  +\frac{U''(a)}{2}(\Delta u)^2
+  +\frac{U'''(a)}{3!}(\Delta u)^3+\cdots,
+  \qquad
+  \Delta u=u_{j+1}-u_j.
+  \label{eq:bondexpansion}
+\end{equation}
+Mechanical equilibrium gives $U'(a)=0$.  Defining the spring constant
+\begin{equation}
+  K=U''(a)>0,
+\end{equation}
+the harmonic Hamiltonian is
+\begin{equation}
+  \boxed{
+  H_{\mathrm{harm}}
+  =\sum_{j=0}^{N-1}
+  \left[
+    \frac{p_j^2}{2m}
+    +\frac{K}{2}(u_{j+1}-u_j)^2
+  \right].
+  }
+  \label{eq:latticeH}
+\end{equation}
+The harmonic approximation is controlled when the typical relative
+displacement is small enough that the cubic and higher terms in
+Eq.~\eqref{eq:bondexpansion} are subleading.
+
+\subsection{Why there is no term proportional to \texorpdfstring{$u_j$}{u j}}
+
+A uniform translation $u_j\mapsto u_j+c$ moves the whole solid without
+stretching any bond.  The Hamiltonian therefore depends on differences of
+displacements, not on $u_j$ itself.  This exact symmetry forbids an onsite
+potential such as $\sum_j u_j^2$ for a freely translating chain.
+
+A substrate or pinning potential would break this symmetry and add, for
+example,
+\begin{equation}
+  H_{\mathrm{pin}}=\frac{m\Omega_0^2}{2}\sum_j u_j^2.
+\end{equation}
+It would change the low-momentum dispersion from gapless to gapped.  The
+absence of pinning is therefore the microscopic reason that acoustic sound
+has $\omega_k\to0$ as $k\to0$.
+
+\begin{remarkbox}[Three related facts]
+Expanding about equilibrium removes the linear term in each bond extension.
+Periodic boundary conditions also make
+$\sum_j(u_{j+1}-u_j)=0$.  Most importantly, uniform-translation symmetry
+forbids any energy cost for the zero-momentum displacement.  These are
+different views of the same physical structure.
+\end{remarkbox}
+
+\section{Normal modes and the lattice dispersion relation}
+
+\subsection{Discrete Fourier transform}
+
+Translation invariance suggests diagonalizing the Hamiltonian in crystal
+momentum.  Choose one representative of each allowed momentum in the first
+Brillouin zone,
+\begin{equation}
+  k=\frac{2\pi n}{L},
+  \qquad
+  -\frac{\pi}{a}<k\leq\frac{\pi}{a}.
+  \label{eq:allowedk}
+\end{equation}
+Define
+\begin{align}
+  u_k&=\frac{1}{\sqrt N}\sum_{j=0}^{N-1}
+  \e^{-\ii kx_j}u_j,
+  &
+  u_j&=\frac{1}{\sqrt N}\sum_k \e^{\ii kx_j}u_k,
+  \label{eq:DFTu}
+  \\
+  p_k&=\frac{1}{\sqrt N}\sum_{j=0}^{N-1}
+  \e^{-\ii kx_j}p_j,
+  &
+  p_j&=\frac{1}{\sqrt N}\sum_k \e^{\ii kx_j}p_k.
+  \label{eq:DFTp}
+\end{align}
+The orthogonality relation is
+\begin{equation}
+  \frac{1}{N}\sum_{j=0}^{N-1}
+  \e^{\ii(k-k')x_j}=\delta_{k,k'}.
+  \label{eq:DFTorthogonality}
+\end{equation}
+Because $u_j$ and $p_j$ are real classically,
+\begin{equation}
+  u_k^*=u_{-k},
+  \qquad
+  p_k^*=p_{-k}.
+  \label{eq:reality}
+\end{equation}
+The Fourier variables have Poisson bracket
+\begin{equation}
+  \pb{u_k}{p_{k'}}=\delta_{k,-k'}.
+  \label{eq:FourierPB}
+\end{equation}
+The minus sign in the Kronecker delta is a direct consequence of using the
+same Fourier phase convention for $u_k$ and $p_k$.
+
+\subsection{Diagonalizing the Hamiltonian}
+
+The discrete derivative acts diagonally in momentum space:
+\begin{equation}
+  u_{j+1}-u_j
+  =\frac{1}{\sqrt N}\sum_k
+  \e^{\ii kx_j}(\e^{\ii ka}-1)u_k.
+\end{equation}
+Consequently,
+\begin{equation}
+  \sum_j(u_{j+1}-u_j)^2
+  =\sum_k 4\sin^2\left(\frac{ka}{2}\right)u_ku_{-k}.
+\end{equation}
+The Hamiltonian becomes
+\begin{equation}
+  H_{\mathrm{harm}}
+  =\sum_k\left[
+    \frac{p_kp_{-k}}{2m}
+    +\frac{m\omega_k^2}{2}u_ku_{-k}
+  \right],
+  \label{eq:Hnormal}
+\end{equation}
+with the exact lattice dispersion relation
+\begin{equation}
+  \boxed{
+  \omega_k^2
+  =\frac{4K}{m}\sin^2\left(\frac{ka}{2}\right),
+  \qquad
+  \omega_k=2\sqrt{\frac Km}
+  \left|\sin\left(\frac{ka}{2}\right)\right|.
+  }
+  \label{eq:dispersion}
+\end{equation}
+Thus the coupled system is equivalent, at the harmonic level, to a
+collection of decoupled normal modes.
+
+\subsection{Equations of motion}
+
+Hamilton's equations give
+\begin{equation}
+  \dot u_k=\frac{p_k}{m},
+  \qquad
+  \dot p_k=-m\omega_k^2u_k,
+\end{equation}
+and hence
+\begin{equation}
+  \ddot u_k+\omega_k^2u_k=0.
+  \label{eq:modeEOM}
+\end{equation}
+Equivalently, the site variables satisfy
+\begin{equation}
+  m\ddot u_j
+  =K(u_{j+1}-2u_j+u_{j-1}).
+  \label{eq:latticeEOM}
+\end{equation}
+A trial wave $u_j(t)\propto\e^{\ii(kx_j-\omega t)}$ inserted into
+Eq.~\eqref{eq:latticeEOM} reproduces Eq.~\eqref{eq:dispersion}.
+
+\subsection{Long wavelengths and the speed of sound}
+
+At momenta much smaller than the inverse lattice spacing,
+$|k|a\ll1$, the exact dispersion becomes
+\begin{align}
+  \omega_k^2
+  &=c_s^2k^2\left[1-\frac{(ka)^2}{12}
+    +\mathcal O((ka)^4)\right],
+  \label{eq:omegasqexpansion}
+  \\
+  \omega_k
+  &=c_s|k|\left[1-\frac{(ka)^2}{24}
+    +\mathcal O((ka)^4)\right],
+  \label{eq:omegaexpansion}
+\end{align}
+where
+\begin{equation}
+  \boxed{c_s=a\sqrt{\frac Km}}
+  \label{eq:soundspeed}
+\end{equation}
+is the speed of sound.  The linear term describes nondispersive waves.  The
+higher powers of $ka$ remember the lattice and become important near the
+edge of the Brillouin zone.
+
+The maximum \emph{single-mode frequency} in this monatomic nearest-neighbor
+model is
+\begin{equation}
+  \omega_{\max}=2\sqrt{\frac Km}.
+  \label{eq:omegamax}
+\end{equation}
+This is not a maximum energy for the full system: arbitrarily many phonons
+can occupy the available modes.
+
+\begin{warningbox}[Dimensions and notation]
+Here $K$ is a spring constant with units of energy per length squared.  With
+this convention $\omega_k=2\sqrt{K/m}\,|\sin(ka/2)|$ and
+$c_s=a\sqrt{K/m}$.  If one instead writes the bond energy as
+$\lambda[(u_{j+1}-u_j)/a]^2/2$, then $\lambda=Ka^2$ and
+$c_s=\sqrt{\lambda/m}$.  Mixing the two conventions loses a factor of $a$.
+\end{warningbox}
+
+\section{Quantization: phonons are quanta of the normal modes}
+
+\subsection{Canonical commutators and the zero mode}
+
+Quantization promotes the lattice variables to operators obeying
+\begin{equation}
+  \comm{\hat u_j}{\hat p_\ell}=\ii\hbar\delta_{j\ell},
+  \qquad
+  \comm{\hat u_j}{\hat u_\ell}
+  =\comm{\hat p_j}{\hat p_\ell}=0.
+  \label{eq:latticeCCR}
+\end{equation}
+In Fourier space,
+\begin{equation}
+  \comm{\hat u_k}{\hat p_{k'}}
+  =\ii\hbar\delta_{k,-k'},
+  \qquad
+  \hat u_k^\dagger=\hat u_{-k},
+  \qquad
+  \hat p_k^\dagger=\hat p_{-k}.
+  \label{eq:FourierCCR}
+\end{equation}
+
+The $k=0$ mode requires special care.  It has $\omega_0=0$ and represents a
+uniform translation, not a harmonic oscillator.  If
+\begin{equation}
+  U_{\mathrm{cm}}=\frac1N\sum_j u_j,
+  \qquad
+  P=\sum_jp_j,
+\end{equation}
+then $u_0=\sqrt N\,U_{\mathrm{cm}}$, $p_0=P/\sqrt N$, and
+\begin{equation}
+  H_{\mathrm{cm}}=\frac{P^2}{2Nm}.
+  \label{eq:Hcm}
+\end{equation}
+It is a free center-of-mass degree of freedom.  One may fix the center of
+mass, restrict to $P=0$, or add weak pinning.  One must not insert
+$\omega_0=0$ into oscillator formulas containing $1/\sqrt{\omega_0}$.
+
+\subsection{Creation and annihilation operators}
+
+For every nonzero $k$, define
+\begin{align}
+  \hat a_k
+  &=\sqrt{\frac{m\omega_k}{2\hbar}}\,\hat u_k
+  +\frac{\ii}{\sqrt{2\hbar m\omega_k}}\,\hat p_k,
+  \label{eq:akdef}
+  \\
+  \hat a_k^\dagger
+  &=\sqrt{\frac{m\omega_k}{2\hbar}}\,\hat u_{-k}
+  -\frac{\ii}{\sqrt{2\hbar m\omega_k}}\,\hat p_{-k}.
+  \label{eq:akdagdef}
+\end{align}
+Then
+\begin{equation}
+  \comm{\hat a_k}{\hat a_{k'}^\dagger}=\delta_{k,k'},
+  \qquad
+  \comm{\hat a_k}{\hat a_{k'}}=0.
+  \label{eq:bosonCCR}
+\end{equation}
+The inverse relations make the pairing of $k$ and $-k$ explicit:
+\begin{align}
+  \hat u_k
+  &=\sqrt{\frac{\hbar}{2m\omega_k}}
+  \left(\hat a_k+\hat a_{-k}^\dagger\right),
+  \label{eq:ukladder}
+  \\
+  \hat p_k
+  &=-\ii\sqrt{\frac{\hbar m\omega_k}{2}}
+  \left(\hat a_k-\hat a_{-k}^\dagger\right).
+  \label{eq:pkladder}
+\end{align}
+This pairing is required by the Hermiticity of the real-space displacement.
+It does not identify $\hat a_k$ with $\hat a_{-k}$: right- and left-moving
+phonons are independent excitations.
+
+Substitution into Eq.~\eqref{eq:Hnormal} gives
+\begin{equation}
+  \boxed{
+  \hat H
+  =\frac{\hat P^2}{2Nm}
+  +\sum_{k\neq0}\hbar\omega_k
+  \left(\hat a_k^\dagger\hat a_k+\frac12\right).
+  }
+  \label{eq:quantumH}
+\end{equation}
+The number operator
+\begin{equation}
+  \hat N_k=\hat a_k^\dagger\hat a_k
+\end{equation}
+counts phonons of crystal momentum $\hbar k$ in the harmonic theory.
+
+\begin{keyidea}[The first QFT]
+Each normal mode is a quantum harmonic oscillator, but the collection of all
+modes is a quantum field.  The creation operator $\hat a_k^\dagger$ adds one
+quantum of a collective vibration.  That quantum is a phonon.
+\end{keyidea}
+
+\section{One phonon, many phonons, and Fock space}
+
+Choose the translational sector and define the phonon vacuum by
+\begin{equation}
+  \hat a_k\ket{\Omega}=0,
+  \qquad k\neq0.
+  \label{eq:phononvacuum}
+\end{equation}
+A one-phonon momentum eigenstate is
+\begin{equation}
+  \ket{k}=\hat a_k^\dagger\ket{\Omega},
+  \qquad
+  \hat H\ket{k}=(E_0+\hbar\omega_k)\ket{k}.
+  \label{eq:onephonon}
+\end{equation}
+A localized phonon is not an additional fundamental object; it is a wave
+packet of momentum modes,
+\begin{equation}
+  \ket{f}
+  =\sum_{k\neq0}f_k\hat a_k^\dagger\ket{\Omega},
+  \qquad
+  \sum_{k\neq0}|f_k|^2=1.
+  \label{eq:wavepacket}
+\end{equation}
+Because $k$ is restricted to a Brillouin zone, no one-phonon state can be
+localized on scales parametrically smaller than the lattice spacing.
+
+Multiphonon states are
+\begin{equation}
+  \ket{\{n_k\}}
+  =\prod_{k\neq0}
+  \frac{(\hat a_k^\dagger)^{n_k}}{\sqrt{n_k!}}
+  \ket{\Omega}.
+  \label{eq:numberstates}
+\end{equation}
+Since creation operators commute, exchanging two phonons leaves the state
+unchanged.  Phonons are bosons.  If $\cH_1$ denotes the one-phonon Hilbert
+space, the full state space is the symmetric Fock space
+\begin{equation}
+  \cF_s(\cH_1)
+  =\bigoplus_{n=0}^{\infty}
+  \operatorname{Sym}\left(\cH_1^{\otimes n}\right).
+  \label{eq:Fockphonon}
+\end{equation}
+This does not mean that every state has an indefinite number of phonons.
+Fock space contains every fixed-number sector and also permits their
+superpositions.
+
+\subsection{Microscopic atoms versus emergent phonons}
+
+The normal-mode transformation reorganizes the same underlying system:
+\begin{center}
+\begin{tabular}{>{\bfseries}p{0.25\textwidth} p{0.29\textwidth} p{0.31\textwidth}}
+ & Microscopic description & Infrared description \\
+\toprule
+Variables & Site displacements $u_j$ & Smooth displacement field $u(x)$ \\
+Excitations & Atomic motion & Phonons \\
+Dispersion & Set by microscopic dynamics & $E_k\simeq\hbar c_s|k|$ \\
+Statistics & Not inferred from site labels & Bosonic normal-mode quanta \\
+Resolution & Lattice scale $a$ & Wavelength $\lambda\gg a$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Calling the site variables ``distinguishable atoms'' is only shorthand for
+the fact that equilibrium sites label the normal coordinates.  Actual atoms
+of the same isotope are identical quantum particles.  Their microscopic
+exchange statistics and the bosonic statistics of phonons are logically
+different statements.
+
+\section{The continuum limit: an emergent scalar field}
+
+\subsection{From sums and differences to an integral}
+
+For a slowly varying displacement,
+\begin{equation}
+  u_{j+1}-u_j
+  =a\,\partial_xu(x_j)+\mathcal O(a^2),
+  \qquad
+  \sum_j f(x_j)\longrightarrow\frac1a\int_0^L\dd x\,f(x).
+  \label{eq:continuumrules}
+\end{equation}
+Introduce the mass density and one-dimensional elastic coefficient
+\begin{equation}
+  \rho=\frac ma,
+  \qquad
+  C=Ka.
+  \label{eq:rhoC}
+\end{equation}
+Then Eq.~\eqref{eq:latticeH} becomes
+\begin{equation}
+  H
+  =\int_0^L\dd x\left[
+    \frac{\rho}{2}(\partial_tu)^2
+    +\frac{C}{2}(\partial_xu)^2
+  \right]
+  +\text{higher-derivative terms}.
+  \label{eq:Hcontinuumu}
+\end{equation}
+The continuum canonical momentum density is
+\begin{equation}
+  p_u(x)=\rho\,\partial_tu(x).
+\end{equation}
+
+It is convenient to canonically normalize the field,
+\begin{equation}
+  \phi(x,t)=\sqrt\rho\,u(x,t),
+  \qquad
+  \Pi(x,t)=\partial_t\phi(x,t).
+  \label{eq:phirescale}
+\end{equation}
+Using $c_s^2=C/\rho=Ka^2/m$, the Hamiltonian is
+\begin{equation}
+  \boxed{
+  H_{\mathrm{IR}}
+  =\frac12\int\dd x\left[
+    \Pi^2+c_s^2(\partial_x\phi)^2
+  \right].
+  }
+  \label{eq:Hscalar}
+\end{equation}
+The corresponding action is
+\begin{equation}
+  S_{\mathrm{IR}}[\phi]
+  =\frac12\int\dd t\,\dd x\left[
+    (\partial_t\phi)^2-c_s^2(\partial_x\phi)^2
+  \right],
+  \label{eq:Sscalar}
+\end{equation}
+and the equation of motion is the wave equation
+\begin{equation}
+  \boxed{
+  (\partial_t^2-c_s^2\partial_x^2)\phi(x,t)=0.
+  }
+  \label{eq:waveequation}
+\end{equation}
+
+\subsection{Continuum quantization and the cutoff}
+
+The equal-time canonical commutator is
+\begin{equation}
+  \comm{\hat\phi(x,t)}{\hat\Pi(y,t)}
+  =\ii\hbar\delta(x-y).
+  \label{eq:continuumCCR}
+\end{equation}
+With the center-of-mass mode treated separately, a continuum mode expansion
+is
+\begin{align}
+  \hat\phi(x,t)
+  &=\int_{|k|<\Lambda}\frac{\dd k}{2\pi}
+  \sqrt{\frac{\hbar}{2\omega_k}}
+  \left[
+    \hat a(k)\e^{\ii(kx-\omega_kt)}
+    +\hat a^\dagger(k)\e^{-\ii(kx-\omega_kt)}
+  \right],
+  \label{eq:continuumphi}
+  \\
+  \hat\Pi(x,t)
+  &=-\ii\int_{|k|<\Lambda}\frac{\dd k}{2\pi}
+  \sqrt{\frac{\hbar\omega_k}{2}}
+  \left[
+    \hat a(k)\e^{\ii(kx-\omega_kt)}
+    -\hat a^\dagger(k)\e^{-\ii(kx-\omega_kt)}
+  \right],
+  \label{eq:continuumPi}
+\end{align}
+where
+\begin{equation}
+  \comm{\hat a(k)}{\hat a^\dagger(k')}
+  =2\pi\delta(k-k').
+  \label{eq:continuumaCCR}
+\end{equation}
+For the exact lattice theory, $\Lambda$ is of order $\pi/a$ and
+$\omega_k$ is the sine dispersion in Eq.~\eqref{eq:dispersion}.  The
+strict infrared field theory replaces it by $\omega_k=c_s|k|$ and is valid
+only for $|k|a\ll1$.
+
+At finite cutoff, Eq.~\eqref{eq:continuumCCR} contains a regulated delta
+function.  The ordinary Dirac delta is recovered only after modes with
+arbitrarily large momentum are formally restored.  The crystal therefore
+gives a concrete ultraviolet regulator: it limits both the available momenta
+and the spatial resolution.
+
+\begin{remarkbox}[What the continuum limit means]
+Taking $a\to0$ is a useful idealization, but a real solid retains a nonzero
+lattice spacing.  The continuum theory is an effective theory: it accurately
+predicts long-wavelength observables and organizes corrections in powers of
+$ka$, while the microscopic lattice determines its coefficients and its
+breakdown scale.
+\end{remarkbox}
+
+\subsection{Emergent Lorentz symmetry}
+
+If we use $c_s$ as the limiting speed, Eq.~\eqref{eq:waveequation} has the
+same form as the massless Klein--Gordon equation in $1+1$ dimensions.  Its
+leading low-energy dynamics is invariant under Lorentz transformations built
+with $c_s$, and its solutions split into left- and right-moving waves,
+\begin{equation}
+  \phi(x,t)=f(x-c_st)+g(x+c_st).
+\end{equation}
+
+This Lorentz symmetry is emergent, not exact.  The solid has a preferred rest
+frame, and the corrections in Eq.~\eqref{eq:omegaexpansion} violate the
+linear relativistic dispersion.  Near $|k|\sim\pi/a$, the lattice is visible
+and the symmetry is lost.
+
+\begin{warningbox}[Do not confuse the two limiting speeds]
+The emergent symmetry of sound uses $c_s$, not the speed of light $c$.
+Microscopically the solid is a nonrelativistic medium embedded in a
+relativistic world.  Approximate Lorentz invariance can emerge in the
+infrared even when it is absent from the effective microscopic lattice
+model.
+\end{warningbox}
+
+\subsection{The physical field in one dimension}
+
+Uniform shifts of $u$ are unobservable in the unpinned theory.  The local
+strain
+\begin{equation}
+  \varepsilon(x,t)=\partial_xu(x,t)
+\end{equation}
+and the velocity $\partial_tu$ are directly physical.  In one spatial
+dimension the massless scalar itself also has infrared subtleties associated
+with its zero mode, while derivative observables are well behaved.  This is
+the continuum counterpart of separating the center of mass before defining
+phonon ladder operators.
+
+\section{Anharmonicity and interacting phonons}
+
+The harmonic Hamiltonian is exactly solvable because it is quadratic.  Real
+bonds are not perfectly harmonic.  Write
+\begin{equation}
+  U(a+\Delta u)
+  =U(a)+\frac K2(\Delta u)^2
+  +\frac{g_3}{3!}(\Delta u)^3
+  +\frac{g_4}{4!}(\Delta u)^4+\cdots.
+  \label{eq:anharmonicpotential}
+\end{equation}
+If the bond potential is symmetric about its minimum, $g_3=0$; otherwise a
+cubic term is generally present.  In momentum space the cubic interaction is
+\begin{align}
+  H_3
+  ={}&\frac{g_3}{3!\sqrt N}
+  \sum_{k_1,k_2,k_3}
+  \prod_{r=1}^3(\e^{\ii k_ra}-1)
+  u_{k_1}u_{k_2}u_{k_3}
+  \delta^{(G)}_{k_1+k_2+k_3,0},
+  \label{eq:H3momentum}
+\end{align}
+where the delta symbol enforces crystal-momentum conservation modulo a
+reciprocal lattice vector
+\begin{equation}
+  G=\frac{2\pi\ell}{a},
+  \qquad \ell\in\mathbb Z.
+\end{equation}
+Processes with nonzero $G$ are Umklapp processes.  Thus anharmonicity couples
+normal modes, but not arbitrarily: lattice translation symmetry imposes a
+selection rule.
+
+Substituting Eqs.~\eqref{eq:ukladder}--\eqref{eq:pkladder} produces terms of
+the schematic form
+\begin{equation}
+  \hat a\hat a\hat a,
+  \qquad
+  \hat a^\dagger\hat a\hat a,
+  \qquad
+  \hat a^\dagger\hat a^\dagger\hat a,
+  \qquad
+  \hat a^\dagger\hat a^\dagger\hat a^\dagger.
+  \label{eq:cubicterms}
+\end{equation}
+These interactions can change phonon number.  For example, when energy and
+crystal momentum allow it, one phonon can decay into two, or two phonons can
+merge into one.  Phonon number is exactly conserved by the harmonic
+Hamiltonian but is not a fundamental conservation law of the solid.
+
+In the continuum limit the interactions are derivative interactions,
+\begin{equation}
+  H_{\mathrm{int}}
+  \sim\int\dd x\left[
+    \frac{g_3a^2}{3!}(\partial_xu)^3
+    +\frac{g_4a^3}{4!}(\partial_xu)^4+\cdots
+  \right].
+  \label{eq:continuuminteractions}
+\end{equation}
+Every field appears differentiated because $u\mapsto u+c$ remains a
+symmetry.  At sufficiently small momentum these higher-order interactions
+are weak, which explains why long-wavelength phonons can be long lived even
+when the microscopic solid is not weakly interacting.
+
+\begin{keyidea}[Particle number is emergent]
+The quadratic approximation makes each $N_k$ conserved and gives perfectly
+stable phonons.  Anharmonicity breaks those separate conservation laws.
+Phonons remain useful particles only when their decay widths are small
+compared with their energies.
+\end{keyidea}
+
+\section{In what sense are phonons real?}
+
+Phonons carry energy and crystal momentum, transport heat, scatter from
+defects and other phonons, and appear as peaks in measurable response
+functions.  A standard diagnostic is the dynamical structure factor,
+schematically
+\begin{equation}
+  S(k,\omega)
+  =\int\dd t\,\e^{\ii\omega t}
+  \left\langle \hat\rho_k(t)\hat\rho_{-k}(0)\right\rangle,
+  \label{eq:structurefactor}
+\end{equation}
+which is probed by neutron, x-ray, or light scattering.  In the ideal
+harmonic theory it contains sharp contributions at the normal-mode
+frequencies.  Interactions shift the frequencies and broaden the peaks.  A
+narrow peak corresponds to a long-lived phonon quasiparticle.
+
+For finite $N$, the momenta and frequencies are discrete.  In a macroscopic
+solid the spacing between adjacent allowed $k$ values is $2\pi/L$ and becomes
+so small that the band appears continuous.  The single-phonon band remains
+bounded because the Brillouin zone is compact, even though the many-phonon
+Hilbert space has no upper energy bound.
+
+\begin{remarkbox}[Reality does not require fundamentality]
+Phonons are not among the microscopic constituents of a solid, but they are
+real excitations of the solid in precisely the regime where the corresponding
+spectral peaks are sharp.  ``Emergent'' means regime-dependent, not fictitious.
+\end{remarkbox}
+
+\section{Beyond the one-dimensional monatomic chain}
+
+In three dimensions each atom has a vector displacement.  For a crystal with
+one atom per primitive cell, diagonalizing the dynamical matrix gives three
+acoustic branches near $\bm k=0$: one longitudinal and two transverse.  If a
+primitive cell contains more than one atom, additional optical branches are
+possible.  Their frequencies need not vanish at $\bm k=0$.
+
+The scalar field in Eq.~\eqref{eq:Sscalar} therefore captures one
+longitudinal polarization in one dimension.  The general elastic theory uses
+a displacement vector $u_i(\bm x,t)$ and a strain tensor
+\begin{equation}
+  u_{ij}=\frac12(\partial_i u_j+\partial_j u_i).
+\end{equation}
+The elastic constants determine the velocities and polarizations of the
+different branches.  Quantizing every normal mode again produces phonons.
+
+\section{Lessons for quantum field theory}
+
+This example illustrates several general principles.
+\begin{enumerate}
+  \item \textbf{Locality.}  Nearest-neighbor forces produce a local
+  derivative expansion in the continuum.
+  \item \textbf{Symmetry.}  Discrete translation diagonalizes the harmonic
+  problem; uniform-displacement symmetry protects the gapless mode; and
+  crystal momentum is conserved modulo reciprocal lattice vectors.
+  \item \textbf{Positivity and stability.}  $K>0$ makes the harmonic energy
+  nonnegative and the normal-mode frequencies real.
+  \item \textbf{Coarse-graining.}  At $|k|a\ll1$, the discrete displacement
+  becomes a smooth field and microscopic details enter through a few
+  coefficients such as $\rho$, $C$, and the anharmonic couplings.
+  \item \textbf{Particles from fields.}  Quantizing normal modes creates a
+  Fock space of indistinguishable bosonic quanta.
+  \item \textbf{Effective symmetry.}  The infrared wave equation has an
+  emergent Lorentz symmetry that the lattice does not possess.
+  \item \textbf{Regime-dependent particles.}  The harmonic theory has exact
+  phonons; the interacting theory has quasiparticles whose utility is set by
+  their lifetime.
+\end{enumerate}
+
+The same logic appears throughout QFT.  A microscopic theory need not be a
+field theory of the variables that are simplest in the infrared.  Conversely,
+a continuum field theory should be understood together with its regime of
+validity and the operators that encode corrections from shorter distances.
+
+\section{Questions to think about}
+
+\begin{enumerate}
+  \item Which symmetry guarantees $\omega_{k=0}=0$ in an unpinned crystal?
+  How does a substrate change the answer?
+  \item Why does the Fourier-space canonical commutator contain
+  $\delta_{k,-k'}$, while the ladder-operator commutator contains
+  $\delta_{k,k'}$?
+  \item What goes wrong if one defines $\hat a_0$ by dividing by
+  $\sqrt{\omega_0}$?
+  \item In what precise sense is the energy of a single phonon bounded, while
+  the energy of the solid is not?
+  \item Why can anharmonic interactions change phonon number without
+  violating energy conservation?
+  \item Which terms in the exact dispersion violate emergent Lorentz
+  symmetry?
+  \item Are microscopic atoms in a crystal really distinguishable?  Why is
+  that question separate from the statistics of phonons?
+  \item What observable feature distinguishes a long-lived phonon from a
+  strongly damped collective excitation?
+\end{enumerate}
+
+\section*{Summary}
+\addcontentsline{toc}{section}{Summary}
+
+A periodic chain with local harmonic interactions is diagonalized by a
+discrete Fourier transform.  Its exact normal-mode frequencies are
+$\omega_k=2\sqrt{K/m}|\sin(ka/2)|$.  At long wavelength this becomes
+$\omega_k\simeq c_s|k|$ with $c_s=a\sqrt{K/m}$, and the lattice equation
+becomes the massless scalar wave equation.  Quantizing every nonzero normal
+mode produces bosonic creation and annihilation operators; their quanta are
+phonons, and their multiparticle state space is a symmetric Fock space.  The
+uniform zero mode is a free center-of-mass coordinate and must be treated
+separately.  The lattice supplies a physical ultraviolet cutoff and breaks
+the Lorentz symmetry that emerges at low energy.  Anharmonic terms couple
+normal modes, conserve crystal momentum modulo reciprocal lattice vectors,
+and make phonon number nonconserved.  Phonons remain meaningful particles
+when the resulting spectral peaks are narrow and their lifetimes are long.
+
+\end{document}

@@ -1,0 +1,337 @@
+\documentclass[11pt]{article}
+
+\usepackage[letterpaper,margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb,mathtools,bm}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage[most]{tcolorbox}
+\usepackage{fancyhdr}
+\usepackage{parskip}
+
+\definecolor{qftblue}{HTML}{245A8D}
+\definecolor{qftgreen}{HTML}{2F6B4F}
+\definecolor{qftred}{HTML}{A23B3B}
+\definecolor{qftgray}{HTML}{F4F6F8}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=qftblue,
+  urlcolor=qftblue,
+  pdftitle={PHYS 662 Homework Set 2},
+  pdfauthor={Nima Lashkari}
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{PHYS 662: Quantum Field Theory I}
+\rhead{Homework Set 2}
+\cfoot{\thepage}
+\setlength{\headheight}{14pt}
+
+\setlist[enumerate]{leftmargin=2.2em,itemsep=0.55em,topsep=0.5em}
+\newlist{parts}{enumerate}{2}
+\setlist[parts,1]{label=\textbf{(\alph*)},leftmargin=2.3em,itemsep=0.7em}
+\setlist[parts,2]{label=\textbf{(\roman*)},leftmargin=2.4em,itemsep=0.45em}
+
+\newcommand{\dd}{\mathrm{d}}
+\newcommand{\ii}{\mathrm{i}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\cH}{\mathcal{H}}
+
+\newtcolorbox{conventionbox}[1][]{
+  enhanced,
+  breakable,
+  colback=qftgray,
+  colframe=qftblue,
+  boxrule=0.8pt,
+  arc=1.5mm,
+  title={#1},
+  fonttitle=\bfseries,
+  coltitle=white
+}
+
+\newcommand{\problem}[2]{%
+  \clearpage
+  \section*{\color{qftblue}Problem #1: #2}
+  \addcontentsline{toc}{section}{Problem #1: #2}
+}
+
+
+\newcommand{\Lag}{\mathcal L}
+\begin{document}
+
+\begin{center}
+  {\scshape\Large PHYS 662 --- Quantum Field Theory I\par}
+  \vspace{0.25em}
+  {\Huge\bfseries\color{qftblue} Homework Set 2\par}
+  \vspace{0.25em}
+  {\large Lectures 5--6 \quad Fall 2026\par}
+\end{center}
+
+\vspace{0.5em}
+\noindent
+\textbf{Name:} \rule{0.44\textwidth}{0.4pt}
+\hfill
+\textbf{Due:} \rule{0.24\textwidth}{0.4pt}
+
+\begin{conventionbox}[Instructions and conventions]
+Show the reasoning leading to each result. Use \(\hbar=c=k_B=1\) and
+\(\eta_{\mu\nu}=\operatorname{diag}(1,-1,-1,-1)\), so
+\(\Box=\partial_t^2-\nabla^2\). Work in \(3+1\) dimensions unless a
+problem states otherwise. A positive-frequency plane wave is
+\(e^{-\ii\omega t+\ii\bm k\cdot\bm x}\).
+
+Keep boundary terms when varying an action, and explain which assumptions
+remove them. Field variations vanish at the initial and final times;
+spatial boundary conditions are specified below. Treat a complex field and
+its conjugate as independent variables when deriving their equations,
+then impose complex conjugacy. Derive conservation laws directly when
+asked; Noether's first theorem is not required for this set.
+\end{conventionbox}
+
+\noindent
+The four problems are weighted equally.
+
+\tableofcontents
+
+\problem{1}{The action of a relativistic particle}
+
+Consider a free particle of mass \(m>0\) on a smooth, future-directed
+timelike worldline \(x^\mu(\lambda)\) in Minkowski spacetime. Here
+\(\lambda\) is an arbitrary increasing parameter, not necessarily time.
+Define \(\dot x^\mu=\dd x^\mu/\dd\lambda\) and take
+\begin{equation}
+ S[x]=-m\int\dd s
+ =-m\int_{\lambda_i}^{\lambda_f}\dd\lambda\,
+       \sqrt{\eta_{\mu\nu}\dot x^\mu\dot x^\nu},
+ \qquad \dot x^2>0.
+ \label{eq:particleAction}
+\end{equation}
+The spacetime endpoints are fixed.
+
+\begin{parts}
+ \item Show that the action is invariant under a smooth monotonic
+ reparameterization \(\lambda\mapsto\lambda'(\lambda)\) with
+ \(\dd\lambda'/\dd\lambda>0\). Explain why reparameterizing the same
+ curve does not describe a different physical trajectory.
+
+ \item Vary \(x^\mu(\lambda)\), display the endpoint term, and derive
+ the Euler--Lagrange equations before choosing a parameter. Afterward
+ set \(\lambda=s\), and show that the trajectory is a straight timelike
+ line. Why would imposing \(\dot x^2=1\) in the integrand before taking
+ arbitrary variations discard essential information?
+
+ \item Choose coordinate time as the parameter, \(x^0=t\), and write
+ the Lagrangian in terms of \(\bm v=\dd\bm x/\dd t\). Calculate
+ \begin{equation}
+ \bm p=\frac{\partial L}{\partial\bm v},\qquad
+ H=\bm p\cdot\bm v-L.
+ \end{equation}
+ Express \(H\) as a function of \(\bm p\), verify
+ \(H^2-|\bm p|^2=m^2\), and derive conservation of \(\bm p\) and
+ \(H\) from the equations of motion and the absence of explicit
+ position and time dependence.
+
+ \item Expand \(L(\bm v)\) through order \(|\bm v|^4\). Identify the
+ rest-energy contribution and the nonrelativistic kinetic term. Explain
+ why an additive constant in \(L\) does not change the trajectory but
+ changes the reference value of the Hamiltonian.
+
+ \item Explain why simply setting \(m=0\) in
+ Eq.~\eqref{eq:particleAction} does not provide a variational principle
+ for a massless particle. No alternative massless-particle action is
+ required.
+\end{parts}
+
+\problem{2}{Maxwell theory in Coulomb gauge}
+
+Consider a prescribed smooth conserved current \(j^\mu=(\rho,\bm j)\),
+with \(\partial_t\rho+\nabla\cdot\bm j=0\), and the action
+\begin{equation}
+ S[A]=\int\dd^4x\left[-\frac14F_{\mu\nu}F^{\mu\nu}
+                          -j^\mu A_\mu\right],\qquad
+ F_{\mu\nu}=\partial_\mu A_\nu-\partial_\nu A_\mu.
+ \label{eq:MaxwellAction}
+\end{equation}
+Use rationalized units and
+\begin{equation}
+ A^\mu=(\varphi,\bm A),\qquad
+ \bm E=-\nabla\varphi-\partial_t\bm A,\qquad
+ \bm B=\nabla\times\bm A.
+\end{equation}
+The scalar potential \(\varphi(t,\bm x)\) may depend on time. Work on
+\(\R^3\) with localized sources and sufficient falloff for the boundary
+terms below to vanish; choose potentials vanishing at spatial infinity.
+
+\begin{parts}
+ \item Expand the Lagrangian density in terms of \(\varphi\),
+ \(\bm A\), \(\rho\), and \(\bm j\). Keep the mixed term involving
+ \(\partial_t\bm A\) and \(\nabla\varphi\) at this stage.
+
+ \item Vary \(\varphi\) and all three components of \(\bm A\)
+ \emph{before imposing a gauge condition}. Derive their equations and
+ identify Gauss's law. Which potential has vanishing canonical momentum,
+ and why is its equation a constraint rather than an independent wave
+ equation?
+
+ \item Impose Coulomb gauge, \(\nabla\cdot\bm A=0\). Obtain the
+ Poisson equation for \(\varphi\) and the sourced equation for
+ \(\bm A\). Show that the latter's source is divergence free, using
+ current conservation and the Poisson equation. Explain why restricting
+ \(\delta\bm A\) to transverse variations from the start would retain
+ only the transverse part of its field equation.
+
+ \item Use the spatial Fourier convention
+ \begin{equation}
+ f(t,\bm x)=\int\frac{\dd^3k}{(2\pi)^3}
+     \widetilde f(t,\bm k)e^{\ii\bm k\cdot\bm x}.
+ \end{equation}
+ For \(k=|\bm k|>0\), define
+ \(P_{ij}^{T}(\bm k)=\delta_{ij}-k_i k_j/k^2\) and
+ \(\widetilde j_i^{T}=P_{ij}^{T}\widetilde j_j\).
+ Find \(\widetilde\varphi\) and solve the forced oscillator equation
+ for \(\widetilde{\bm A}\) in terms of \(\widetilde{\bm j}^{T}\) and
+ the transverse initial data
+ \begin{equation}
+ \widetilde{\bm A}(t_0,\bm k)=\bm a(\bm k),\qquad
+ \partial_t\widetilde{\bm A}(t_0,\bm k)=\bm b(\bm k),\qquad
+ \bm k\cdot\bm a=\bm k\cdot\bm b=0.
+ \end{equation}
+ Include both the homogeneous solution and the source integral from
+ \(t_0\) to \(t\). Spatially constant potentials are excluded by the
+ stated falloff conditions.
+
+ \item For a source-free plane wave with \(k>0\), determine the
+ dispersion relation and the number of independent polarizations.
+ Explain why \(\varphi\) supplies no additional freely propagating
+ polarization or independently specifiable initial data.
+\end{parts}
+
+\problem{3}{A complex scalar and spontaneous symmetry breaking}
+
+Let \(\Phi\) be a classical complex relativistic scalar with
+\begin{equation}
+ \Lag=\frac12\partial_\mu\Phi^*\partial^\mu\Phi-V(\Phi),
+ \qquad V(\Phi)=\lambda\left(|\Phi|^2-v^2\right)^2,
+ \qquad \lambda>0,\quad v>0.
+ \label{eq:brokenScalar}
+\end{equation}
+Our normalization is \(\Phi=\phi_1+\ii\phi_2\), with no factor of
+\(1/\sqrt2\); each real component therefore has a canonical kinetic
+term \((\partial\phi_a)^2/2\). Use compactly supported variations when
+deriving the field equations. Vacuum configurations below refer to
+spatially uniform classical fields, with energy compared per unit volume.
+
+\begin{parts}
+ \item Derive the equations of motion for \(\Phi\) and \(\Phi^*\).
+ Show that the action is invariant under the constant phase rotation
+ \(\Phi\mapsto e^{\ii\alpha}\Phi\). Identify the continuous internal
+ symmetry group.
+
+ \item Find all constant stationary configurations of the potential,
+ classify them, and describe the set of minima. Explain why the vacuum
+ minimizes the energy density \(V\), while the Lorentzian action is
+ subject to a stationarity condition rather than a general minimization
+ principle.
+
+ \item Choose the vacuum \(\Phi_0=v\) and write
+ \begin{equation}
+ \Phi(t,\bm x)=v+h(t,\bm x)+\ii\chi(t,\bm x),
+ \end{equation}
+ with real \(h\) and \(\chi\). Expand the Lagrangian through second
+ order in these fluctuations. Read off their squared masses from
+ canonically normalized quadratic terms, and find both plane-wave
+ dispersion relations. Which fluctuation changes the magnitude of the
+ order parameter, and which moves tangentially to the vacuum manifold?
+ Explain the origin of any massless mode.
+
+ \item Connect this example to Landau's description of phases by
+ considering the family
+ \begin{equation}
+ V_r(\Phi)=\frac r2|\Phi|^2+\lambda|\Phi|^4,
+ \qquad \lambda>0.
+ \label{eq:LandauFamily}
+ \end{equation}
+ Find its minima for \(r>0\), \(r=0\), and \(r<0\), and identify
+ the value of \(r\) that reproduces Eq.~\eqref{eq:brokenScalar} up to
+ an additive constant. Distinguish symmetry of the action from symmetry
+ of a chosen vacuum. Explain why internal symmetry restricts the allowed
+ potential terms without fixing their coefficients, which can change
+ under coarse-graining.
+
+ \item In a regulated finite-volume statistical ensemble with symmetric
+ boundary conditions and no external source, explain why
+ \(\langle\Phi\rangle=0\) even when the classical potential has a circle
+ of minima. Add a weak source \(-\epsilon\operatorname{Re}\Phi\) to the
+ energy density. In which order must the limits of infinite spatial
+ volume and \(\epsilon\to0^+\) be taken to define a selected ordered
+ phase? Assume a regime in which such an ordered phase exists.
+\end{parts}
+
+\problem{4}{A nonrelativistic complex field}
+
+In \(d\) spatial dimensions, consider
+\begin{equation}
+ S[\Psi,\Psi^*]=\int\dd t\,\dd^dx\left[
+ \frac{\ii}{2}\left(\Psi^*\partial_t\Psi
+                    -(\partial_t\Psi^*)\Psi\right)
+ -\frac{1}{2M}\nabla\Psi^*\cdot\nabla\Psi\right],
+ \qquad M>0.
+ \label{eq:NRAction}
+\end{equation}
+Here \(\Psi\) is a classical field, with no normalization constraint.
+Use periodic spatial boundary conditions in a finite box, or sufficient
+falloff on \(\R^d\) so that the integrals and boundary terms are well
+behaved.
+
+\begin{parts}
+ \item Show that the displayed Lagrangian density is real. Show that
+ replacing its time-derivative term by \(\ii\Psi^*\partial_t\Psi\)
+ changes the action only by an endpoint term, and state the endpoint
+ condition needed for the two forms to give the same bulk equations.
+ Why would the candidate kinetic term \(\psi\partial_t\psi\) for a
+ single real field fail to produce comparable first-order dynamics?
+
+ \item Vary \(\Psi\) and \(\Psi^*\) independently to obtain both
+ equations of motion. For
+ \(\Psi=C e^{-\ii\omega t+\ii\bm k\cdot\bm x}\), determine
+ \(\omega(\bm k)\). What initial data determine a solution, and how
+ do they differ from those of a real Klein--Gordon field?
+
+ \item Compute the canonical momenta
+ \(\Pi_{\Psi}=\partial\Lag/\partial(\partial_t\Psi)\) and
+ \(\Pi_{\Psi^*}=\partial\Lag/\partial(\partial_t\Psi^*)\).
+ Evaluate the energy functional
+ \begin{equation}
+ H=\int\dd^dx\left[
+ \Pi_\Psi\partial_t\Psi+
+ \Pi_{\Psi^*}\partial_t\Psi^*-\Lag\right]
+ \end{equation}
+ and show that it is nonnegative. Explain why the momenta cannot be
+ inverted to solve for independent velocities, so that an ordinary
+ unconstrained Legendre transform is insufficient. A full constrained
+ Hamiltonian analysis is not required.
+
+ \item Starting directly from the equations of motion and their complex
+ conjugates, derive a continuity equation for
+ \(n=|\Psi|^2\). Find the associated spatial current and state the
+ boundary condition under which
+ \begin{equation}
+ \mathcal N=\int\dd^dx\,|\Psi|^2
+ \end{equation}
+ is conserved. For a plane wave, compare the ratio of current to density
+ with the group velocity \(\nabla_{\bm k}\omega\).
+
+ \item Find the natural mass dimension of \(\Psi\) and check both
+ terms in the action dimensionally, using \([M]=1\) and
+ \([\partial_t]=[\nabla]=1\). Explain why an equation with the form of
+ the one-particle Schrodinger equation does not, by itself, make this
+ classical field a normalized one-particle quantum state.
+\end{parts}
+
+\end{document}

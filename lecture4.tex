@@ -1,0 +1,916 @@
+\documentclass[11pt]{article}
+
+\usepackage[letterpaper,margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb,mathtools,bm}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{hyperref}
+\usepackage[most]{tcolorbox}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{parskip}
+
+\definecolor{qftblue}{HTML}{245A8D}
+\definecolor{qftgreen}{HTML}{2F6B4F}
+\definecolor{qftred}{HTML}{A23B3B}
+\definecolor{qftgray}{HTML}{F4F6F8}
+\definecolor{qftgold}{HTML}{C08B2C}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=qftblue,
+  urlcolor=qftblue,
+  citecolor=qftgreen,
+  pdftitle={PHYS 662 Lecture 4: Review of Symmetries and Groups},
+  pdfauthor={Nima Lashkari}
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{PHYS 662: Quantum Field Theory I}
+\rhead{Lecture 4}
+\cfoot{\thepage}
+\setlength{\headheight}{14pt}
+
+\titleformat{\section}{\Large\bfseries\color{qftblue}}{\thesection.}{0.6em}{}
+\titleformat{\subsection}{\large\bfseries\color{qftgreen}}{\thesubsection}{0.6em}{}
+\titleformat{\subsubsection}{\normalsize\bfseries\color{qftred}}{\thesubsubsection}{0.6em}{}
+
+\setlist[itemize]{leftmargin=2em,itemsep=0.25em,topsep=0.4em}
+\setlist[enumerate]{leftmargin=2em,itemsep=0.25em,topsep=0.4em}
+
+\newcommand{\dd}{\mathrm{d}}
+\newcommand{\e}{\mathrm{e}}
+\newcommand{\ii}{\mathrm{i}}
+\newcommand{\cH}{\mathcal{H}}
+\newcommand{\cL}{\mathcal{L}}
+\newcommand{\cS}{\mathcal{S}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\comm}[2]{\left[#1,#2\right]}
+\newcommand{\SO}{\mathrm{SO}}
+\newcommand{\OO}{\mathrm{O}}
+\newcommand{\UU}{\mathrm{U}}
+\newcommand{\SU}{\mathrm{SU}}
+
+\newtcolorbox{keyidea}[1][]{
+  enhanced,
+  breakable,
+  colback=qftgray,
+  colframe=qftblue,
+  boxrule=0.8pt,
+  arc=1.5mm,
+  title={#1},
+  fonttitle=\bfseries,
+  coltitle=white
+}
+
+\newtcolorbox{remarkbox}[1][]{
+  enhanced,
+  breakable,
+  colback=white,
+  colframe=qftgreen,
+  boxrule=0.7pt,
+  arc=1.5mm,
+  title={#1},
+  fonttitle=\bfseries,
+  coltitle=white
+}
+
+\newtcolorbox{warningbox}[1][]{
+  enhanced,
+  breakable,
+  colback=white,
+  colframe=qftred,
+  boxrule=0.7pt,
+  arc=1.5mm,
+  title={#1},
+  fonttitle=\bfseries,
+  coltitle=white
+}
+
+\begin{document}
+\pagenumbering{gobble}
+
+\begin{titlepage}
+\centering
+\vspace*{1.2in}
+{\scshape\Large PHYS 662 --- Quantum Field Theory I\par}
+\vspace{0.35in}
+{\Huge\bfseries\color{qftblue} Lecture 4\par}
+\vspace{0.15in}
+{\LARGE\bfseries Review of Symmetries and Groups\par}
+\vspace{0.12in}
+{\Large\color{qftgreen} From Phonons to Group Representations\par}
+\vspace{0.6in}
+{\large Nima Lashkari\par}
+{\large Fall 2026\par}
+\vfill
+\begin{minipage}{0.86\textwidth}
+\small
+The lecture begins with the harmonic chain and asks what its collective
+quanta teach us about particles, interactions, continuum limits, and
+effective field theory.  It then develops the language needed to discuss
+symmetry precisely: active and passive transformations, scalar, vector, and
+tensor fields, groups and Lie groups, and linear representations.  The final
+part compares orthogonal, unitary, and indefinite orthogonal groups and
+emphasizes that the words ``scalar'' and ``vector'' always refer to a
+specified symmetry group.
+
+\medskip
+Course page: \url{https://nimalashkari.com/quantum-field-theory-2026-part-i/}
+\end{minipage}
+\vspace{0.5in}
+\end{titlepage}
+
+\pagenumbering{roman}
+\tableofcontents
+\newpage
+\pagenumbering{arabic}
+
+\section*{Roadmap}
+\addcontentsline{toc}{section}{Roadmap}
+
+Lecture 3 exhibited a field theory emerging from a microscopic lattice.  Its
+long-wavelength phonons obey a continuum wave equation with more symmetry than
+the underlying lattice.  That example makes symmetry the natural next
+subject: we need precise language for distinguishing an exact microscopic
+symmetry, an approximate infrared symmetry, and a change of coordinates.
+
+This lecture develops that language in seven stages:
+\begin{enumerate}
+  \item review the phonon field, its interactions, and its continuum limit;
+  \item interpret the low-energy scalar field as an effective theory with an
+  emergent limiting-speed symmetry;
+  \item review translations and rotations of Euclidean space;
+  \item distinguish active transformations from passive coordinate changes;
+  \item define scalar, vector, and tensor fields;
+  \item define groups, Lie groups, generators, and representations; and
+  \item compare $\OO(N)$, $\SO(N)$, $\UU(N)$, $\SU(N)$, and indefinite
+  orthogonal groups.
+\end{enumerate}
+
+The central theme is that a transformation of space and a transformation of
+field components are related but distinct.  A field carries both an argument,
+telling us where it is evaluated, and possibly indices, telling us which
+representation it belongs to.  In particular, a field may be a scalar under
+spatial rotations while being a vector under an internal symmetry.
+
+\section{Review: from phonons to an effective scalar field}
+
+\subsection{The harmonic chain and its quanta}
+
+Consider $N$ masses $m$ on a periodic one-dimensional lattice of spacing
+$a$.  If $q_j$ is the displacement of the $j$th mass from equilibrium and
+$p_j=m\dot q_j$, the harmonic Hamiltonian is
+\begin{equation}
+  H_0=\sum_{j=0}^{N-1}\left[
+    \frac{p_j^2}{2m}+\frac K2(q_{j+1}-q_j)^2
+  \right],
+  \qquad q_{j+N}=q_j.
+  \label{eq:harmonicchain}
+\end{equation}
+The discrete Fourier transform diagonalizes this quadratic many-body problem.
+For wave numbers in the first Brillouin zone, the exact dispersion relation is
+\begin{equation}
+  \omega_k^2=\frac{4K}{m}\sin^2\!\left(\frac{ka}{2}\right).
+  \label{eq:latticedispersion}
+\end{equation}
+At long wavelength, $|k|a\ll1$,
+\begin{equation}
+  \omega_k=c_s|k|\left[1-\frac{(ka)^2}{24}+\cdots\right],
+  \qquad
+  c_s=a\sqrt{\frac Km}.
+  \label{eq:longdispersion}
+\end{equation}
+
+After quantization, each nonzero normal mode is a harmonic oscillator:
+\begin{equation}
+  \hat H_0
+  =E_0+\sum_{k\ne0}\hbar\omega_k\hat a_k^\dagger\hat a_k,
+  \qquad
+  \comm{\hat a_k}{\hat a_{k'}^\dagger}=\delta_{kk'}.
+  \label{eq:phononH}
+\end{equation}
+The vacuum obeys $\hat a_k\lvert\Omega\rangle=0$, a one-phonon state is
+$\hat a_k^\dagger\lvert\Omega\rangle$, and repeated creation operators span
+the symmetric Fock space
+\begin{equation}
+  \mathcal F_s(\cH_1)
+  =\bigoplus_{n=0}^{\infty}\operatorname{Sym}(\cH_1^{\otimes n}).
+  \label{eq:phononfock}
+\end{equation}
+The site labels are labels of microscopic normal coordinates.  The phonons are
+indistinguishable bosonic quanta of collective modes.
+
+\begin{remarkbox}[A bounded band is not a bounded many-body energy]
+Because the Brillouin zone is compact, the energy of a \emph{single} phonon is
+bounded:
+\begin{equation*}
+  0\leq \hbar\omega_k\leq2\hbar\sqrt{K/m}.
+\end{equation*}
+The total energy is nevertheless unbounded, because arbitrarily many phonons
+can occupy the modes.  In the formal continuum theory the momentum range is
+extended without bound, so even the one-particle energy $\hbar c_s|k|$ becomes
+unbounded.
+\end{remarkbox}
+
+\subsection{Interactions and particle-number-changing processes}
+
+The exact solvability of Eq.~\eqref{eq:harmonicchain} follows from its
+quadratic form.  A generic bond potential contains anharmonic terms,
+\begin{equation}
+  V(\Delta q)
+  =\frac K2(\Delta q)^2
+  +\frac{g_3}{3!}(\Delta q)^3
+  +\frac{g_4}{4!}(\Delta q)^4+\cdots,
+  \qquad \Delta q=q_{j+1}-q_j.
+  \label{eq:anharmonicreview}
+\end{equation}
+In momentum space a cubic interaction has the schematic structure
+\begin{equation}
+  H_3\sim
+  \sum_{k_1,k_2,k_3}
+  F(k_1,k_2,k_3)
+  q_{k_1}q_{k_2}q_{k_3}
+  \delta^{(G)}_{k_1+k_2+k_3,0},
+  \label{eq:cubicmomentum}
+\end{equation}
+where the lattice form factor $F$ comes from finite differences and the last
+factor imposes conservation of crystal momentum modulo a reciprocal lattice
+vector.  Expressing each $q_k$ in terms of $a_k$ and $a_k^\dagger$ generates
+terms such as
+\begin{equation}
+  aaa,
+  \qquad a^\dagger aa,
+  \qquad a^\dagger a^\dagger a,
+  \qquad a^\dagger a^\dagger a^\dagger.
+  \label{eq:numberchanging}
+\end{equation}
+They describe decay, merging, and virtual processes.  Thus the separate mode
+occupation numbers $N_k=a_k^\dagger a_k$, and their sum
+$N=\sum_kN_k$, are conserved by $H_0$ but not by a generic anharmonic
+Hamiltonian.
+
+\begin{keyidea}[Particle number is an emergent conservation law]
+The microscopic theory conserves energy and crystal momentum, but it need not
+conserve phonon number.  Phonons remain useful particles when interactions
+produce decay widths much smaller than their energies.  A particle is then a
+long-lived spectral feature, not a fundamental constituent of the Hamiltonian.
+\end{keyidea}
+
+\subsection{The continuum limit and canonical normalization}
+
+Let $x_j=ja$ and suppose $q_j(t)\simeq q(x_j,t)$ varies slowly on the lattice
+scale.  The basic Riemann-sum rules are
+\begin{equation}
+  \frac{q_{j+1}-q_j}{a}\longrightarrow\partial_xq,
+  \qquad
+  a\sum_j f(x_j)\longrightarrow\int\dd x\,f(x),
+  \qquad
+  \sum_j\longrightarrow\frac1a\int\dd x.
+  \label{eq:riemannrules}
+\end{equation}
+Introduce the mass density $\rho=m/a$ and the elastic coefficient $C=Ka$.
+Then Eq.~\eqref{eq:harmonicchain} becomes
+\begin{equation}
+  H_{\mathrm{IR}}
+  =\frac12\int\dd x\left[
+    \rho(\partial_tq)^2+C(\partial_xq)^2
+  \right]+\text{higher-derivative terms}.
+  \label{eq:qcontinuumH}
+\end{equation}
+The canonically normalized field and momentum are
+\begin{equation}
+  \phi=\sqrt\rho\,q,
+  \qquad
+  \Pi=\partial_t\phi,
+  \qquad
+  c_s^2=\frac C\rho=\frac{Ka^2}{m}.
+  \label{eq:canonicalphi}
+\end{equation}
+Therefore
+\begin{equation}
+  \boxed{
+  H_{\mathrm{IR}}
+  =\frac12\int\dd x\left[
+    \Pi^2+c_s^2(\partial_x\phi)^2
+  \right],
+  }
+  \label{eq:continuumH}
+\end{equation}
+and the equation of motion is
+\begin{equation}
+  (\partial_t^2-c_s^2\partial_x^2)\phi(x,t)=0.
+  \label{eq:soundwave}
+\end{equation}
+For a one-dimensional chain, the continuum mode expansion uses $\dd k/(2\pi)$:
+\begin{align}
+  \hat\phi(x,t)
+  &=\int_{|k|<\Lambda}\frac{\dd k}{2\pi}
+  \sqrt{\frac{\hbar}{2\omega_k}}
+  \left[
+    \hat a(k)\e^{\ii(kx-\omega_kt)}
+    +\hat a^\dagger(k)\e^{-\ii(kx-\omega_kt)}
+  \right],
+  \label{eq:phimodeexpansion}
+  \\
+  \hat\Pi(x,t)
+  &=-\ii\int_{|k|<\Lambda}\frac{\dd k}{2\pi}
+  \sqrt{\frac{\hbar\omega_k}{2}}
+  \left[
+    \hat a(k)\e^{\ii(kx-\omega_kt)}
+    -\hat a^\dagger(k)\e^{-\ii(kx-\omega_kt)}
+  \right].
+  \label{eq:Pimodeexpansion}
+\end{align}
+The three-dimensional scalar-field generalization replaces $\dd k/(2\pi)$
+by $\dd^3\bm k/(2\pi)^3$.  This is the formula displayed on the updated
+slides.  The one-dimensional chain itself uses $\dd k/(2\pi)$.  If the
+microscopic displacement is vector-valued rather than scalar, one must also
+include polarization labels.
+
+The scale $\Lambda\sim\pi/a$ is a physical ultraviolet cutoff.  At
+$|k|a\ll1$, Eq.~\eqref{eq:soundwave} has a Lorentz symmetry with limiting
+speed $c_s$.  The exact sine dispersion in Eq.~\eqref{eq:latticedispersion}
+breaks that symmetry at short wavelengths.
+
+\begin{warningbox}[Emergent is not exact]
+The solid selects a preferred rest frame, and its microscopic dynamics is not
+Lorentz invariant with speed $c_s$.  Lorentz symmetry is an accidental
+infrared symmetry of the leading derivative terms.  Higher-derivative
+operators remember the lattice and violate it.
+\end{warningbox}
+
+\subsection{The scalar field as an effective theory}
+
+The continuum scalar field is an effective description of the long-wavelength
+sector.  It is not meant to reproduce the microscopic theory at arbitrary
+momentum.  Instead, observables are expanded in powers of $ka$, and the
+leading terms are fixed by locality and the infrared symmetries.  The lattice
+regulates the ultraviolet by cutting off modes with $|k|\gtrsim\pi/a$.
+
+Phonons are nevertheless physically real: they can be created, absorbed, and
+scattered, and they appear as poles or narrow peaks in response functions.  A
+finite solid has a discrete normal-mode spectrum.  In a macroscopic sample
+the modes become dense, but weak interactions can still leave sharp
+quasiparticle peaks.  Thus ``particle'' describes a robust excitation, not
+necessarily a microscopic constituent.
+
+This example is also a prototype for particle physics.  A relativistic QFT
+may itself be an effective theory below some ultraviolet scale.  Predictivity
+does not require knowing every microscopic detail; it requires a controlled
+expansion and a clear statement of the regime of validity.
+
+\section{Symmetries of Euclidean space}
+
+Let $X$ denote the space on which a theory is defined and let $\Phi$ denote
+all its fields.  A transformation $g$ acts on points and fields.  It is a
+symmetry when it preserves the physical structure of interest: for example,
+the equations of motion, the action, the Hamiltonian, or the quantum
+transition amplitudes.  In a Lagrangian field theory the clean statement is
+\begin{equation}
+  S[\Phi_g]=S[\Phi].
+  \label{eq:actionsymmetry}
+\end{equation}
+The transformed field $\Phi_g$ must include both the relocation of its
+argument and any transformation of its components.
+
+The action of a symmetry on observables can still be nontrivial.  Invariance
+does not mean that every state or field configuration is fixed.  It means
+that transformed configurations obey the same laws and receive the same
+action.
+
+\subsection{The Euclidean metric}
+
+On $\R^d$, the squared length and inner product are
+\begin{equation}
+  |x|^2=\delta_{ij}x^ix^j,
+  \qquad
+  x\cdot y=\delta_{ij}x^iy^j.
+  \label{eq:euclideanmetric}
+\end{equation}
+Here and below repeated indices are summed.  The Kronecker delta
+$\delta_{ij}$ is the Euclidean metric in Cartesian coordinates.
+
+A linear transformation $x'^i=R^i{}_jx^j$ preserves the metric when
+\begin{equation}
+  R^T R=I,
+  \qquad\text{or equivalently}\qquad
+  \delta_{ij}R^i{}_kR^j{}_\ell=\delta_{k\ell}.
+  \label{eq:orthogonalcondition}
+\end{equation}
+The matrices satisfying this condition form the orthogonal group $\OO(d)$.
+Taking determinants gives $(\det R)^2=1$, so $\det R=\pm1$.  The subgroup
+with $\det R=+1$ is the special orthogonal group $\SO(d)$, the group of proper
+rotations.  The other component contains reflections combined with rotations.
+
+In two dimensions,
+\begin{equation}
+  R(\theta)=
+  \begin{pmatrix}
+    \cos\theta&-\sin\theta\\
+    \sin\theta& \cos\theta
+  \end{pmatrix},
+  \qquad
+  R(\theta_1)R(\theta_2)=R(\theta_1+\theta_2),
+  \label{eq:SO2rotation}
+\end{equation}
+parametrizes $\SO(2)$, not all of $\OO(2)$.  Multiplying such a rotation by a
+fixed reflection supplies the second component of $\OO(2)$.
+
+\subsection{Translations and the Euclidean group}
+
+Translations act as $x\mapsto x+a$ and preserve distances between points.
+Together, rotations, reflections, and translations act affinely:
+\begin{equation}
+  x\longmapsto Rx+a,
+  \qquad R\in\OO(d),\quad a\in\R^d.
+  \label{eq:affinetransformation}
+\end{equation}
+They form the Euclidean group
+\begin{equation}
+  E(d)=\R^d\rtimes\OO(d).
+  \label{eq:Euclideangroup}
+\end{equation}
+The semidirect product matters.  If $g_r=(a_r,R_r)$, composition gives
+\begin{equation}
+  g_2g_1=(a_2+R_2a_1,R_2R_1).
+  \label{eq:Euclideangrouplaw}
+\end{equation}
+Rotations act on translation vectors, so the two subgroups do not simply form
+a direct product.
+
+\subsection{Active and passive transformations}
+
+The same geometry can be described in two languages.
+
+\begin{center}
+\begin{tabular}{>{\bfseries}p{0.19\textwidth} p{0.32\textwidth} p{0.36\textwidth}}
+ & Active transformation & Passive transformation \\
+\toprule
+Meaning & Move or transform the physical configuration. & Relabel the same
+configuration with new coordinates. \\
+Coordinates & The coordinate system is fixed. & The coordinate labels change. \\
+State & The state or field changes. & The physical state is unchanged. \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+For a translation by $a$ in one dimension, the active transformation of a
+scalar profile is
+\begin{equation}
+  x\longmapsto x+a,
+  \qquad
+  \phi_a(x)=\phi(x-a).
+  \label{eq:activetranslation}
+\end{equation}
+The inverse appears because the value found at $x$ after the translation came
+from $x-a$ before it.  In the passive description, let $x'=x-a$.  Scalarity
+means that the numerical value assigned to the same geometric point is
+unchanged:
+\begin{equation}
+  \phi'(x')=\phi(x)=\phi(x'+a).
+  \label{eq:passivetranslation}
+\end{equation}
+The active operation by $a$ and the corresponding passive coordinate change
+are inverse descriptions.
+
+The rotation analogue makes the inverse especially visible.  For the active
+point transformation $x\mapsto Rx$,
+\begin{equation}
+  \phi_R(x)=\phi(R^{-1}x),
+  \qquad\text{equivalently}\qquad
+  \phi_R(Rx)=\phi(x).
+  \label{eq:activerotation}
+\end{equation}
+The inverse passive relabeling is $x'=R^{-1}x$, for which
+\begin{equation}
+  \phi'(x')=\phi(x)=\phi(Rx').
+  \label{eq:passiverotation}
+\end{equation}
+One may instead choose the passive convention $x'=Rx$; then the correct
+relation is $\phi'(x')=\phi(R^{-1}x')$.  Both conventions are valid, but the
+definition of $x'$ must be stated before deciding whether $R$ or $R^{-1}$
+appears in the argument.
+
+\begin{remarkbox}[Convention used below]
+Unless stated otherwise, transformations are written actively.  For a map
+$x\mapsto g x$, a scalar transforms as
+\begin{equation*}
+  \phi_g(x)=\phi(g^{-1}x).
+\end{equation*}
+This convention prevents the most common sign error in translations and the
+most common inverse-matrix error in rotations.
+\end{remarkbox}
+
+\subsection{Scalar, vector, and tensor fields}
+
+A scalar field assigns one number to each point.  In the active convention,
+the affine point transformation $x\mapsto Rx+a$ gives
+\begin{equation}
+  \phi_g(x)=\phi\!\left(R^{-1}(x-a)\right).
+  \label{eq:activescalar}
+\end{equation}
+
+A vector field has both an argument and a vector index.  Consequently, its
+active transformation is
+\begin{equation}
+  V_g^i(x)=R^i{}_j
+  V^j\!\left(R^{-1}(x-a)\right).
+  \label{eq:vectoractive}
+\end{equation}
+A rank-three contravariant tensor transforms with one copy of $R$ per index:
+\begin{equation}
+  T_g^{ijk}(x)
+  =R^i{}_{i'}R^j{}_{j'}R^k{}_{k'}
+  T^{i'j'k'}\!\left(R^{-1}(x-a)\right).
+  \label{eq:tensortransform}
+\end{equation}
+Covariant indices transform with the inverse matrix.  For an orthogonal
+matrix in Cartesian coordinates, $R^{-1}=R^T$, so upper and lower Euclidean
+indices are easily identified; this simplification should not obscure the
+general rule.
+
+For comparison, the inverse passive coordinates associated with the same
+geometric motion are $x'=R^{-1}(x-a)$.  The unchanged scalar and the
+components of an unchanged spatial vector then obey
+\begin{equation}
+  \phi'(x')=\phi(Rx'+a),
+  \qquad
+  V'^i(x')=(R^{-1})^i{}_jV^j(Rx'+a).
+  \label{eq:passivefields}
+\end{equation}
+
+\begin{keyidea}[Arguments and components transform separately]
+The inverse transformation in the argument tells us where the field value
+came from.  The matrix multiplying the components tells us which
+representation the field carries.  Scalars have no nontrivial component
+matrix; vectors have one; higher tensors have one for each index.
+\end{keyidea}
+
+\section{Groups, actions, and representations}
+
+\subsection{The group axioms}
+
+A group $G$ is a set with a product satisfying four axioms:
+\begin{enumerate}
+  \item \textbf{Closure:} $g_1g_2\in G$ for all $g_1,g_2\in G$.
+  \item \textbf{Associativity:}
+  $(g_1g_2)g_3=g_1(g_2g_3)$.
+  \item \textbf{Identity:} there is an element $e$ such that
+  $eg=ge=g$.
+  \item \textbf{Inverse:} every $g$ has $g^{-1}$ satisfying
+  $g^{-1}g=gg^{-1}=e$.
+\end{enumerate}
+A group is Abelian if $g_1g_2=g_2g_1$ for every pair and non-Abelian
+otherwise.
+
+A group action on a space $X$ is a map $G\times X\to X$, written
+$(g,x)\mapsto g\cdot x$, such that
+\begin{equation}
+  e\cdot x=x,
+  \qquad
+  g_1\cdot(g_2\cdot x)=(g_1g_2)\cdot x.
+  \label{eq:groupaction}
+\end{equation}
+The group and the space it acts on are conceptually different.  For example,
+$\SO(3)$ acts on $\R^3$, but $\SO(3)$ is not $\R^3$.
+
+\subsection{Linear representations}
+
+A linear representation is a homomorphism
+\begin{equation}
+  \rho:G\longrightarrow GL(V)
+  \label{eq:representationmap}
+\end{equation}
+from group elements to invertible linear maps on a vector space $V$, with
+\begin{equation}
+  \rho(g_1g_2)=\rho(g_1)\rho(g_2),
+  \qquad
+  \rho(e)=I,
+  \qquad
+  \rho(g^{-1})=\rho(g)^{-1}.
+  \label{eq:representationproperties}
+\end{equation}
+Different representations can realize the same abstract group on different
+vector spaces.  A representation need not be faithful: distinct group
+elements may be represented by the same matrix.
+
+The circle group may be written either as angles modulo $2\pi$ or as phases:
+\begin{equation}
+  \theta\in\R/(2\pi\mathbb Z),
+  \qquad
+  z=\e^{\ii\theta}\in\UU(1).
+  \label{eq:circleU1}
+\end{equation}
+The same group has the real two-dimensional representation
+$\theta\mapsto R(\theta)$ in Eq.~\eqref{eq:SO2rotation} and complex
+one-dimensional representations
+\begin{equation}
+  \rho_n(\theta)=\e^{\ii n\theta},
+  \qquad n\in\mathbb Z.
+  \label{eq:U1irreps}
+\end{equation}
+
+\subsection{Lie groups and infinitesimal generators}
+
+A Lie group is simultaneously a smooth manifold and a group, with smooth
+multiplication and inversion.  A one-parameter subgroup near the identity may
+be written
+\begin{equation}
+  \rho(g(\epsilon))
+  =I+\epsilon T+\mathcal O(\epsilon^2)
+  =\e^{\epsilon T},
+  \label{eq:oneparametergroup}
+\end{equation}
+where $T$ is an infinitesimal generator.  The generators span the tangent
+space to $G$ at the identity.  Their commutators close,
+\begin{equation}
+  \comm{T_a}{T_b}=f_{ab}{}^cT_c,
+  \label{eq:liealgebra}
+\end{equation}
+and define the Lie algebra.  The constants $f_{ab}{}^c$ are the structure
+constants in the chosen basis.
+
+For $\SO(2)$,
+\begin{equation}
+  J=
+  \begin{pmatrix}0&-1\\1&0\end{pmatrix},
+  \qquad
+  R(\theta)=\e^{\theta J}.
+  \label{eq:SO2generator}
+\end{equation}
+There is only one generator, so the Lie algebra is Abelian.
+
+For $\SO(3)$ choose real antisymmetric generators $(J_i)_{jk}=-\epsilon_{ijk}$.
+They obey
+\begin{equation}
+  \comm{J_i}{J_j}=\epsilon_{ijk}J_k.
+  \label{eq:SO3realalgebra}
+\end{equation}
+With Hermitian quantum-mechanical generators $L_i=-\ii\hbar J_i$, the same
+algebra becomes
+\begin{equation}
+  \comm{L_i}{L_j}=\ii\hbar\epsilon_{ijk}L_k.
+  \label{eq:angularmomentumalgebra}
+\end{equation}
+Rotations in three dimensions are noncommutative.  Euler angles provide a
+local parametrization only after an order convention is chosen, for example
+\begin{equation}
+  R(\alpha,\beta,\gamma)
+  =R_z(\alpha)R_y(\beta)R_z(\gamma).
+  \label{eq:Eulerangles}
+\end{equation}
+Because the factors do not commute, changing the order changes the
+parametrization and generally changes the resulting rotation.
+
+\begin{warningbox}[A generator convention must be stated]
+Real antisymmetric rotation generators have commutators without a factor of
+$\ii$.  Hermitian generators used for quantum observables have commutators
+with $\ii\hbar$.  Mixing the two conventions produces an apparent sign or
+factor-of-$\ii$ contradiction.
+\end{warningbox}
+
+\section{Orthogonal and unitary groups}
+
+\subsection{\texorpdfstring{$\OO(N)$}{O(N)} and
+\texorpdfstring{$\SO(N)$}{SO(N)}}
+
+The orthogonal group is
+\begin{equation}
+  \OO(N)=\left\{R\in GL(N,\R)\mid R^TR=I\right\}.
+  \label{eq:ONdefinition}
+\end{equation}
+It preserves the Euclidean norm of a real $N$-component vector:
+\begin{equation}
+  (R\Phi)^T(R\Phi)=\Phi^TR^TR\Phi=\Phi^T\Phi.
+  \label{eq:ONinvariant}
+\end{equation}
+The determinant separates two components,
+\begin{equation}
+  \det R=+1\quad\text{or}\quad\det R=-1.
+\end{equation}
+The identity component is
+\begin{equation}
+  \SO(N)=\left\{R\in\OO(N)\mid\det R=1\right\}.
+  \label{eq:SONdefinition}
+\end{equation}
+Its generators are real antisymmetric matrices, so
+$\dim\SO(N)=N(N-1)/2$.
+
+The same matrices may act as spacetime rotations or as internal
+transformations.  If $\Phi^a(x)$ is an $N$-component field and
+\begin{equation}
+  \Phi'^a(x)=R^a{}_b\Phi^b(x)
+  \label{eq:internalON}
+\end{equation}
+without transforming $x$, then $\OO(N)$ acts on an internal index.  The
+quadratic combination $\delta_{ab}\Phi^a\Phi^b$ is invariant.
+
+\subsection{\texorpdfstring{$\UU(N)$}{U(N)} and
+\texorpdfstring{$\SU(N)$}{SU(N)}}
+
+For an $N$-component complex vector, the preserved inner product is
+$\Phi^\dagger\Phi$.  The unitary group is
+\begin{equation}
+  \UU(N)=\left\{U\in GL(N,\C)\mid U^\dagger U=I\right\}.
+  \label{eq:UNdefinition}
+\end{equation}
+Indeed,
+\begin{equation}
+  (U\Phi)^\dagger(U\Phi)
+  =\Phi^\dagger U^\dagger U\Phi
+  =\Phi^\dagger\Phi.
+  \label{eq:UNinvariant}
+\end{equation}
+Taking determinants gives $|\det U|=1$, so $\det U=\e^{\ii\alpha}$ for some
+phase $\alpha$.  The special unitary subgroup is
+\begin{equation}
+  \SU(N)=\left\{U\in\UU(N)\mid\det U=1\right\}.
+  \label{eq:SUNdefinition}
+\end{equation}
+The real dimensions are $\dim\UU(N)=N^2$ and
+$\dim\SU(N)=N^2-1$.
+
+\begin{remarkbox}[Spacetime versus internal symmetry]
+An $\OO(d)$ spacetime rotation changes the field argument and rotates any
+spatial indices.  An internal $\OO(N)$ or $\UU(N)$ transformation mixes field
+components at the same spacetime point.  The same abstract matrix group can
+appear in either role; what matters is its action.
+\end{remarkbox}
+
+\section{Indefinite orthogonal groups}
+
+The orthogonal-group construction extends from a positive Euclidean metric
+to a nondegenerate metric of indefinite signature.  With one positive and
+\(d\) negative directions, choose
+\begin{equation}
+  \eta=\operatorname{diag}(1,-1,\ldots,-1).
+  \label{eq:MinkowskiMetric}
+\end{equation}
+The corresponding indefinite orthogonal group is
+\begin{equation}
+  \OO(1,d)
+  =\left\{
+    \Lambda\in GL(d+1,\R)
+    \ \middle|\
+    \Lambda^T\eta\Lambda=\eta
+  \right\}.
+  \label{eq:LorentzGroupDefinition}
+\end{equation}
+It preserves the Minkowski inner product:
+\begin{equation}
+  (\Lambda v)^T\eta(\Lambda w)
+  =v^T\Lambda^T\eta\Lambda w
+  =v^T\eta w.
+  \label{eq:LorentzInnerProduct}
+\end{equation}
+In index notation,
+\begin{equation}
+  \Lambda^\rho{}_\mu\eta_{\rho\sigma}
+  \Lambda^\sigma{}_\nu
+  =\eta_{\mu\nu}.
+  \label{eq:LorentzIndexCondition}
+\end{equation}
+
+Some authors write \(\OO(d,1)\) after placing the negative entries first.
+The two choices describe isomorphic groups, but the notation and metric
+signature should be kept consistent within a calculation.
+
+Taking determinants of Eq.~\eqref{eq:LorentzGroupDefinition} gives
+\(\det\Lambda=\pm1\).  The condition \(\det\Lambda=1\) defines
+\(\SO(1,d)\), but does not by itself select the component connected to the
+identity.  The proper orthochronous group additionally preserves the time
+orientation and is denoted
+\begin{equation}
+  \SO^+(1,d).
+  \label{eq:properOrthochronous}
+\end{equation}
+In spacetime applications this group is called the Lorentz group.  Here it is
+used only as an example of the general principle that a matrix group is
+defined by the form it preserves; boosts and spacetime kinematics are outside
+the scope of this lecture.
+
+\begin{remarkbox}[One pattern behind several classical groups]
+Each group is characterized by an invariant form:
+\begin{align*}
+  \OO(N)&:\quad \Phi^T\Phi,\\
+  \UU(N)&:\quad \Phi^\dagger\Phi,\\
+  \OO(1,d)&:\quad v^T\eta v.
+\end{align*}
+The difference between Euclidean rotations, unitary internal transformations,
+and indefinite orthogonal transformations is encoded in which bilinear or
+Hermitian form is preserved.
+\end{remarkbox}
+
+\section{A field can be scalar under one group and vector under another}
+
+Let \(x\in\R^2\) label physical position and let
+\begin{equation}
+  \Phi(x)=
+  \begin{pmatrix}
+    \phi_1(x)\\[-2pt]
+    \vdots\\[-2pt]
+    \phi_N(x)
+  \end{pmatrix}
+  \label{eq:internalMultiplet}
+\end{equation}
+be a real \(N\)-component field.  Under an internal orthogonal
+transformation,
+\begin{equation}
+  \Phi'(x)=U\Phi(x),
+  \qquad
+  U\in\OO(N),
+  \label{eq:internalVectorTransformation}
+\end{equation}
+the point \(x\) is unchanged.  The multiplet is therefore a vector under the
+internal group.
+
+Now let \(R\in\SO(2)\) rotate physical space.  If
+\begin{equation}
+  \Phi_R(x)=\Phi(R^{-1}x),
+  \label{eq:spatialScalarMultiplet}
+\end{equation}
+then each component is a scalar under spatial rotations.  There is no
+contradiction: the words \emph{scalar} and \emph{vector} refer to different
+group actions.
+
+When both symmetries are present, their actions combine as
+\begin{equation}
+  \Phi_{(R,U)}(x)=U\Phi(R^{-1}x),
+  \qquad
+  (R,U)\in
+  \SO(2)_{\mathrm{space}}\times\OO(N)_{\mathrm{internal}}.
+  \label{eq:combinedSpaceInternalAction}
+\end{equation}
+The spatial group acts on the argument, while the internal group acts on the
+component index.
+
+\begin{keyidea}[Representation labels are relative]
+A field is never simply a scalar or a vector without qualification.  It is a
+scalar, vector, spinor, or tensor with respect to a specified symmetry group
+and a specified representation.  The same field can carry several such
+labels at once.
+\end{keyidea}
+
+This viewpoint is more precise than imagining an additional physical sphere
+attached to each point.  The internal vector space is a space of field
+components, not necessarily an extra spatial dimension.  A geometric
+realization may sometimes be useful, but it is not part of the definition of
+an internal symmetry.
+
+\section{Questions to think about}
+
+\begin{enumerate}
+  \item Why is the \(k=0\) lattice mode not an ordinary harmonic oscillator?
+  \item Which terms generated by a cubic interaction change phonon number?
+  Which quantities remain conserved?
+  \item Why must the continuum limit keep quantities such as \(\rho\), \(C\),
+  and \(c_s\) fixed?
+  \item Which terms in the lattice dispersion break the enhanced continuum
+  symmetry?
+  \item Why does an inverse transformation appear in the argument of an
+  actively transformed scalar field?
+  \item Why do the matrices \(R(\theta)\) form \(\SO(2)\), rather than all of
+  \(\OO(2)\)?
+  \item What is the distinction between a group, a group action, and a linear
+  representation?
+  \item How do the real antisymmetric generators of \(\SO(3)\) differ from
+  Hermitian angular-momentum operators?
+  \item How can \(\Phi^a(x)\) be a scalar under spatial rotations and a vector
+  under an internal \(\OO(N)\)?
+\end{enumerate}
+
+\section*{Summary}
+\addcontentsline{toc}{section}{Summary}
+
+The harmonic chain reorganizes microscopic displacement variables into
+bosonic phonons.  The harmonic theory conserves free phonon number, while
+anharmonic interactions couple momentum modes and permit number-changing
+processes.  At wavelengths much longer than the lattice spacing, the chain is
+described by a scalar field with approximately linear dispersion and an
+enhanced long-wavelength symmetry.  The lattice supplies both the ultraviolet
+cutoff and the higher-derivative corrections that break this symmetry.
+
+Euclidean transformations illustrate the structure of symmetry.  Active
+transformations move configurations; passive transformations relabel the same
+configuration.  A scalar, vector, or tensor field is distinguished by the
+representation carried by its components in addition to the transformation
+of its argument.
+
+A group specifies composition, a group action specifies how a space is
+transformed, and a representation realizes group elements as linear maps.
+Lie groups are controlled near the identity by generators and their Lie
+algebras.  Orthogonal, unitary, and indefinite orthogonal groups are unified
+by the forms they preserve.  Finally, representation labels are relative: a
+field can be a scalar under spatial rotations and simultaneously a vector
+under an internal symmetry.
+
+\end{document}

@@ -1,0 +1,724 @@
+\documentclass[11pt]{article}
+
+\usepackage[letterpaper,margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb,mathtools,bm}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{hyperref}
+\usepackage[most]{tcolorbox}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{parskip}
+\usepackage{needspace}
+
+\definecolor{qftblue}{HTML}{245A8D}
+\definecolor{qftgreen}{HTML}{2F6B4F}
+\definecolor{qftred}{HTML}{A23B3B}
+\definecolor{qftgray}{HTML}{F4F6F8}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=qftblue,
+  urlcolor=qftblue,
+  citecolor=qftgreen,
+  pdftitle={PHYS 662 Lecture 12: Weyl Spinors and Invariant Tensors},
+  pdfauthor={Nima Lashkari}
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{PHYS 662: Quantum Field Theory I}
+\rhead{Lecture 12}
+\cfoot{\thepage}
+\setlength{\headheight}{14pt}
+
+\titleformat{\section}{\Large\bfseries\color{qftblue}}{\thesection.}{0.6em}{}
+\titleformat{\subsection}{\large\bfseries\color{qftgreen}}{\thesubsection}{0.6em}{}
+\titleformat{\subsubsection}{\normalsize\bfseries\color{qftred}}{\thesubsubsection}{0.6em}{}
+
+\setlist[itemize]{leftmargin=2em,itemsep=0.25em,topsep=0.4em}
+\setlist[enumerate]{leftmargin=2em,itemsep=0.25em,topsep=0.4em}
+
+\newcommand{\dd}{\mathrm{d}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Lag}{\mathcal{L}}
+\newcommand{\cM}{\mathcal{M}}
+\newcommand{\SO}{\mathrm{SO}}
+\newcommand{\OO}{\mathrm{O}}
+
+\newtcolorbox{keyidea}[1][]{
+  enhanced, breakable, colback=qftgray, colframe=qftblue,
+  boxrule=0.8pt, arc=1.5mm, title={#1}, fonttitle=\bfseries,
+  coltitle=white
+}
+\newtcolorbox{remarkbox}[1][]{
+  enhanced, breakable, colback=white, colframe=qftgreen,
+  boxrule=0.7pt, arc=1.5mm, title={#1}, fonttitle=\bfseries,
+  coltitle=white
+}
+\newtcolorbox{warningbox}[1][]{
+  enhanced, breakable, colback=white, colframe=qftred,
+  boxrule=0.7pt, arc=1.5mm, title={#1}, fonttitle=\bfseries,
+  coltitle=white
+}
+
+
+\newcommand{\Th}{\Theta}
+\newcommand{\Eul}{\mathcal E}
+\newcommand{\Lie}{\mathscr L}
+
+\newcommand{\C}{\mathbb C}
+\newcommand{\Z}{\mathbb Z}
+\newcommand{\SU}{\mathrm{SU}}
+\newcommand{\UU}{\mathrm{U}}
+\newcommand{\GL}{\mathrm{GL}}
+\newcommand{\SL}{\mathrm{SL}}
+\newcommand{\Sp}{\mathrm{Sp}}
+\newcommand{\tr}{\operatorname{tr}}
+\newcommand{\Ad}{\operatorname{Ad}}
+\newcommand{\ad}{\operatorname{ad}}
+\newcommand{\lieg}{\mathfrak g}
+\newcommand{\lieh}{\mathfrak h}
+\newcommand{\su}{\mathfrak{su}}
+\newcommand{\so}{\mathfrak{so}}
+\newcommand{\slie}{\mathfrak{sl}}
+
+
+\newcommand{\cH}{\mathcal H}
+\newcommand{\Spin}{\operatorname{Spin}}
+\newcommand{\id}{\mathrm{id}}
+\newcommand{\Lor}{\SO^+(1,3)}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\one}{\mathbf 1}
+
+\newcommand{\smu}{s}
+\newcommand{\tmu}{\widetilde s}
+\newcommand{\Eps}{E}
+\newcommand{\pslash}{\slashed p}
+\newcommand{\pL}{P_L}
+\newcommand{\pR}{P_R}
+\newcommand{\hc}{\mathrm{h.c.}}
+\newcommand{\diag}{\operatorname{diag}}
+\newcommand{\vol}{\mathrm{vol}}
+\newcommand{\supp}{\operatorname{supp}}
+\begin{document}
+\pagenumbering{gobble}
+\begin{titlepage}
+\centering
+\vspace*{1.2in}
+{\scshape\Large PHYS 662 --- Quantum Field Theory I\par}
+\vspace{0.35in}
+{\Huge\bfseries\color{qftblue} Lecture 12\par}
+\vspace{0.15in}
+{\LARGE\bfseries Weyl Spinors\par}
+\vspace{0.06in}
+{\LARGE\bfseries and Invariant Tensors\par}
+\vspace{0.16in}
+{\large\color{qftgreen} From Two Spin Labels to Covariant Bilinears\par}
+\vspace{0.6in}
+{\large Nima Lashkari\par}
+{\large Fall 2026\par}
+\vfill
+\begin{minipage}{0.86\textwidth}\small
+The two Lorentz spin labels lead to two inequivalent Weyl representations.
+We make their transformations explicit, distinguish conjugation from
+duality, and construct vectors and invariant tensors from spinors.
+The resulting calculus of scalar and vector bilinears, including
+Grassmann signs, supplies the ingredients for the actions of Lecture 13.
+
+\medskip
+Course page: \url{https://nimalashkari.com/quantum-field-theory-2026-part-i/}
+\end{minipage}
+\vspace{0.5in}
+\end{titlepage}
+\pagenumbering{roman}
+\begingroup\small\tableofcontents\endgroup
+\newpage
+\pagenumbering{arabic}
+
+\section*{Roadmap}
+\addcontentsline{toc}{section}{Roadmap}
+Lecture 11 classified finite-dimensional complex Lorentz representations
+by \((j_L,j_R)\). We now make the smallest nontrivial representations
+concrete and learn to combine them into quantities with definite
+Lorentz transformation laws.
+\begin{enumerate}
+\item Construct the two Weyl actions and explain how parity exchanges them.
+\item Distinguish conjugation, duality, and raising or lowering a spinor index.
+\item Build scalars, vectors, and tensor representations from spinors.
+\item Derive sigma-matrix covariance and the Grassmann signs needed for actions.
+\item Use covariance to write a first-order equation and solve a massless plane wave.
+\end{enumerate}
+This lecture develops the algebraic ingredients. Lecture 13 will derive
+the Weyl, Dirac, and Majorana actions from them; Lecture 14 will connect
+the covariant fields to one-particle states.
+
+\begin{keyidea}[Conventions continued from Lecture 11]
+We use \(\eta_{\mu\nu}=\diag(1,-1,-1,-1)\), \(\hbar=c=1\), and
+\(\eps_{123}=1\). The fundamental spinor transforms as
+\[
+ \xi'(x)=A\xi(\Lambda^{-1}x),\qquad
+ A=\exp\!\left[-\frac{i}{2}\bm\theta\cdot\bm\sigma
+                    -\frac12\bm\rho\cdot\bm\sigma\right].
+\]
+It has \(J_i=\sigma_i/2\), \(K_i=-i\sigma_i/2\), and is called
+\((\tfrac12,0)\) in our convention. Its conjugate dual transforms with
+\(\bar A=(A^\dagger)^{-1}\) and is \((0,\tfrac12)\).
+The active boost along \(z\) has
+\(t'=t\cosh\rho-z\sinh\rho\).
+We denote the two Pauli four-tuples by
+\[
+ s^\mu=(\one,\bm\sigma),\qquad
+ \widetilde s^\mu=(\one,-\bm\sigma).
+\]
+With this choice the kinetic matrix for \(\xi\) is \(s^\mu\).
+Some texts exchange the two chiral names and use \(\bar\sigma^\mu\)
+for the corresponding kinetic matrix. Explicit matrices, rather than
+the words left and right, fix every sign below.
+\end{keyidea}
+
+\section{The two Weyl representations}
+\subsection{Explicit matrices and an elementary boost}
+In \((\tfrac12,0)\), take \(L_i=\sigma_i/2\) and \(R_i=0\).
+In \((0,\tfrac12)\), interchange the roles. The relations
+\(J_i=L_i+R_i\), \(K_i=-i(L_i-R_i)\) from Lecture 11 give
+\begin{equation}
+ \begin{array}{c|cc}
+ &J_i&K_i\\ \hline
+ (\tfrac12,0)&\sigma_i/2&-i\sigma_i/2\\[2pt]
+ (0,\tfrac12)&\sigma_i/2&+i\sigma_i/2
+ \end{array}
+ \label{eq:weyl-generators}
+\end{equation}
+The rotations agree and the boosts have opposite signs. For the same
+covering-group element \(A\), the two actions are
+\begin{equation}
+ \boxed{\psi_L\mapsto A\psi_L,\qquad
+ \psi_R\mapsto(A^\dagger)^{-1}\psi_R.}
+ \label{eq:weyl-actions}
+\end{equation}
+The second action is a representation because taking the adjoint and
+then the inverse reverses the product order twice. For a pure rotation
+\(A\) is unitary, so \((A^\dagger)^{-1}=A\). For the boost \(A_z(\rho)=e^{-\rho\sigma_3/2}\),
+\[
+ \begin{pmatrix}\psi_{L1}\\\psi_{L2}\end{pmatrix}
+ \mapsto
+ \begin{pmatrix}e^{-\rho/2}\psi_{L1}\\e^{\rho/2}\psi_{L2}\end{pmatrix},
+ \qquad
+ \begin{pmatrix}\psi_{R1}\\\psi_{R2}\end{pmatrix}
+ \mapsto
+ \begin{pmatrix}e^{\rho/2}\psi_{R1}\\e^{-\rho/2}\psi_{R2}\end{pmatrix}.
+\]
+This both displays their inequivalence and makes nonunitarity visible:
+the ordinary sum of squared component magnitudes changes under a boost.
+
+\subsection{Why finite-dimensional boosts are nonunitary}
+Why are the nontrivial finite-dimensional Lorentz representations
+nonunitary? Suppose all \(J_i,K_i\) were finite Hermitian matrices.
+Cyclicity of the trace and the rotation--boost algebra of Lecture 11 imply
+\[
+ -i\tr J_3^2=\tr([K_1,K_2]J_3)
+ =\tr(K_1[K_2,J_3])=i\tr K_1^2.
+\]
+Both traces of squares are nonnegative, so both vanish. Cyclic
+permutations give \(J_i=K_i=0\) for every \(i\).
+\begin{keyidea}[Which representations have we classified?]
+Every nontrivial finite-dimensional complex representation of the
+connected Lorentz group or its cover is nonunitary. This is compatible
+with unitary quantum symmetry because a physical particle's momentum
+states form an infinite-dimensional space. The labels \((j_L,j_R)\)
+classify covariant field components; they do not by themselves specify
+a particle's mass, physical polarizations, or equations of motion.
+\end{keyidea}
+
+\subsection{Parity exchanges the two labels}
+Under spatial parity, angular momentum is unchanged but boost charge
+changes sign. The boost charge of Lecture 11,
+\(K_i=\int\dd^3x\,x^iT^{00}-tP^i\), makes this explicit:
+\[
+ P:\quad J_i\mapsto J_i,\qquad K_i\mapsto-K_i.
+\]
+Hence \(L_i\leftrightarrow R_i\), and parity maps \((j_L,j_R)\) to
+\((j_R,j_L)\). A single left Weyl representation cannot support parity
+as a linear operation within its two-component space. The direct sum
+\((\tfrac12,0)\oplus(0,\tfrac12)\) can. For
+\(\Psi=(\psi_L,\psi_R)^T\), a possible component matrix is
+\[
+ \mathsf P=\begin{pmatrix}0&I_2\\I_2&0\end{pmatrix},\qquad
+ \mathsf P\bm J\mathsf P^{-1}=\bm J,\qquad
+ \mathsf P\bm K\mathsf P^{-1}=-\bm K.
+\]
+The field transformation also evaluates the old field at \((t,-\bm x)\),
+and can include an intrinsic-parity phase. Whether this operation is
+a symmetry of the Lagrangian depends on its couplings; representation
+theory alone does not require parity invariance. Chirality labels the
+Lorentz representation. Helicity is the spin projection along momentum,
+and relating the two requires the field equations and a particle-state analysis.
+
+
+\Needspace{8\baselineskip}
+\section{Conjugation, duality, and the invariant epsilon tensor}
+\subsection{Four related transformation laws}
+Let \(\xi_\alpha\) and \(\chi_\alpha\) be columns vector with two components, with
+\(\alpha=1,2\). Suppressing the coordinate argument for a moment,
+\begin{equation}
+ \xi\mapsto A\xi,\qquad
+ \xi^*\mapsto A^*\xi^*,\qquad
+ \xi^\dagger\mapsto\xi^\dagger A^\dagger.
+ \label{eq:conjugates}
+\end{equation}
+A {\it dual} vector transforms instead with \(A^{-T}=(A^T)^{-1}\), so that its
+transpose can contract with \(\xi\). A {\it conjugate dual} vector 
+transforms with \((A^\dagger)^{-1}\). Complex conjugation and taking
+the dual are different operations; in particular \(A^*\) is not
+generally \((A^\dagger)^{-T}\) unless the matrices $A$ are unitary.
+
+Introduce the antisymmetric matrix
+\begin{equation}
+ E=(\eps_{\alpha\beta})=
+ \begin{pmatrix}0&1\\-1&0\end{pmatrix},\qquad
+ E^{-1}=-E,\qquad E^2=-\one.
+ \label{eq:E}
+\end{equation}
+For any two-by-two matrix,
+\(A^T E A=(\det A)E\). Hence for \(A\in\SL(2,\C)\),
+\begin{equation}
+ A^T E A=E,\qquad E A=A^{-T}E,\qquad
+ E A^*=(A^\dagger)^{-1}E=\bar{A}E.
+ \label{eq:intertwiner}
+\end{equation}
+The first identity can be checked by multiplying a matrix
+\(\begin{psmallmatrix}a&b\\c&d\end{psmallmatrix}\) by \(E\):
+the only surviving coefficient is \(ad-bc\). Thus the invariant
+epsilon tensor identifies a representation with its dual.
+It also turns a complex-conjugate spinor into a conjugate-dual spinor. In mathematical language, matrices $E$ are intertwiners that intertwine (identify) the two representations.
+
+
+
+\subsection{Raising and lowering indices}
+Set \(\eps^{\alpha\beta}=-\eps_{\alpha\beta}\), as matrices, and define
+\begin{equation}
+ \xi^\alpha=\eps^{\alpha\beta}\xi_\beta,\qquad
+ \xi_\alpha=\eps_{\alpha\beta}\xi^\beta,
+ \qquad \eps^{\alpha\gamma}\eps_{\gamma\beta}
+       =\delta^\alpha{}_{\beta}.
+ \label{eq:raise}
+\end{equation}
+In components, \(\xi^1=-\xi_2\) and \(\xi^2=\xi_1\).
+A dotted index keeps track of a complex-conjugate representation:
+\(\xi^*_{\dot\alpha}\) transforms with \(A^*\). Raising its dotted
+index with the same numerical epsilon matrix gives
+\begin{equation}
+ r^{\dot\alpha}=\eps^{\dot\alpha\dot\beta}\xi^*_{\dot\beta},
+ \qquad r=-E\xi^*,\qquad r\mapsto\bar A r.
+ \label{eq:r}
+\end{equation}
+The dot is a representation label, not another spatial index. It cannot
+be removed by merely relabeling \(\dot\alpha\) as \(\alpha\).
+
+The basic scalar contraction is
+\begin{equation}
+ B(\xi,\chi):=\xi^\alpha\chi_\alpha
+    =\xi^T E\chi=\xi_1\chi_2-\xi_2\chi_1.
+ \label{eq:B}
+\end{equation}
+Equation \eqref{eq:intertwiner} proves its invariance directly.
+Writing the contraction as a matrix product is often the fastest way
+to diagnose an index-sign error.
+
+\begin{warningbox}[An index identity is not yet a statistics identity]
+The invariant tensor \(E\) is antisymmetric. Whether a contraction
+changes sign when the \emph{fields} are exchanged also depends on whether
+their components commute or anticommute. These are two separate signs.
+\end{warningbox}
+
+
+\subsection{Self-duality is not equivalence to the conjugate}
+Equation \eqref{eq:intertwiner} says that the fundamental is equivalent
+to its dual, while its complex conjugate is equivalent to the opposite
+Weyl representation. These are different equivalences.
+No invertible complex-linear matrix intertwines the two Weyl actions:
+on rotations it would commute with every Pauli matrix, hence be a scalar
+by Schur's lemma. Such a scalar cannot intertwine their opposite,
+nonzero boost generators. Restricted to \(\SU(2)\), the fundamental
+is equivalent to its conjugate; the boosts obstruct extending that
+equivalence to \(\SL(2,\C)\).
+
+\begin{warningbox}[Representations are conjugate; fields can be independent]
+The column \(r=-E\xi^*\) constructs an opposite-chirality field from
+a chosen \(\xi\). It does not require an independently introduced
+right Weyl field to equal that column. A Dirac field has independent
+left and right components. A Majorana condition imposes a relation
+between them when compatible with the other symmetries.
+\end{warningbox}
+
+\subsection{Why a Hermitian product is different}
+For two fundamental columns, \(\xi^\dagger\chi\) transforms into
+\(\xi^\dagger A^\dagger A\chi\). A boost along \(z\) changes its value
+from \(1\) to \(e^{-\rho}\) when \(\xi=\chi=(1,0)^T\).
+In contrast, for \(\xi=(1,0)^T\) and \(\chi=(0,1)^T\),
+\(\xi^T E\chi=1\) stays fixed: the two components acquire opposite
+boost factors. Self-duality supplies an invariant antisymmetric
+bilinear form, not a positive Hermitian norm.
+
+If \(r\) transforms with \((A^\dagger)^{-1}\), then \(r^\dagger\xi\)
+is a scalar because \(r^\dagger\mapsto r^\dagger A^{-1}\).
+This is distinct from the Hermitian product of two fundamental columns.
+It also explains why conjugation must be tracked before deciding whether
+a mixed-chirality expression is a scalar or a vector.
+
+\section{Tensor products: what can spinors build?}
+\subsection{Two spinors of the same chirality}
+Angular-momentum addition in each complexified Lorentz factor gives
+\begin{equation}
+ (\tfrac12,0)\otimes(\tfrac12,0)=(0,0)\oplus(1,0).
+ \label{eq:samespin}
+\end{equation}
+For a general tensor \(T_{\alpha\beta}\), the decomposition is explicit:
+\begin{equation}
+ T_{\alpha\beta}=S_{\alpha\beta}+E_{\alpha\beta}b,
+ \quad S_{\alpha\beta}=S_{\beta\alpha},\quad
+ b=\tfrac12(T_{12}-T_{21})
+   =-\tfrac12\eps^{\alpha\beta}T_{\alpha\beta}.
+ \label{eq:decomp}
+\end{equation}
+The symmetric part has three components and transforms as \((1,0)\);
+the antisymmetric part has one component and is a scalar.
+Two conjugate-chirality spinors similarly give
+\((0,\tfrac12)\otimes(0,\tfrac12)=(0,0)\oplus(0,1)\).
+
+This representation-theory statement is about an unrestricted tensor
+product. For the product of one Grassmann field with itself at the same
+point, \(\xi_\alpha\xi_\beta\) is antisymmetric, so only the scalar
+part remains. For two distinct fields, a symmetric spinor tensor need
+not vanish.
+
+\subsection{A vector as a bispinor}
+Mixed chirality gives
+\begin{equation}
+ (\tfrac12,0)\otimes(0,\tfrac12)=(\tfrac12,\tfrac12).
+ \label{eq:mixed}
+\end{equation}
+The same vector representation appears in the Hermitian matrix
+\begin{equation}
+ V=v^0\one+v^i\sigma_i=v_\mu\widetilde s^\mu,
+ \qquad V'=A V A^\dagger.
+ \label{eq:vmap}
+\end{equation}
+For example, \(\xi\chi^\dagger\) has this transformation law; it is a
+complex vector in general and becomes Hermitian when \(\chi=\xi\).
+The inverse map and invariant norm are
+\begin{equation}
+ v^\mu=\tfrac12\tr(s^\mu V),\qquad
+ \det V=(v^0)^2-|\bm v|^2.
+ \label{eq:inversev}
+\end{equation}
+There is a factor of \(1/2\) in the inverse map because
+\(\tr\one=2\). Hermiticity selects real vectors; arbitrary complex
+two-by-two matrices describe the complexified vector representation.
+
+\begin{remarkbox}[A commuting spinor gives a future null vector]
+Take an ordinary complex column \(z=(a,b)^T\) and set \(X=zz^\dagger\).
+Using Eq.~\eqref{eq:inversev},
+\[
+ v^0=\tfrac12(|a|^2+|b|^2),\quad
+ v^1=\Re(a^*b),\quad v^2=\Im(a^*b),\quad
+ v^3=\tfrac12(|a|^2-|b|^2).
+\]
+The matrix has rank one for \(z\ne0\), so \(\det X=0\) and \(v^0>0\).
+Thus it describes a future null vector. For \(z=(1,0)^T\),
+\(v=(1,0,0,1)/2\); the boost \(A_z(\rho)=e^{-\rho\sigma_3/2}\) scales this
+vector by \(e^{-\rho}\). This is a concrete example of a vector made
+from two spinor factors. Positivity in this example uses ordinary
+complex numbers, not Grassmann-valued components.
+\end{remarkbox}
+
+\subsection{Rank-two tensors and two-forms}
+Taking the tensor product of two vectors gives
+\begin{equation}
+ (\tfrac12,\tfrac12)\otimes(\tfrac12,\tfrac12)
+  =(0,0)\oplus(1,0)\oplus(0,1)\oplus(1,1).
+ \label{eq:ranktwo}
+\end{equation}
+The dimensions \(1+3+3+9=16\) have a familiar spacetime meaning:
+\begin{equation}
+ T_{\mu\nu}=\frac14\eta_{\mu\nu}T^\rho{}_{\rho}
+  +\left(T_{(\mu\nu)}-\frac14\eta_{\mu\nu}T^\rho{}_{\rho}\right)
+  +T_{[\mu\nu]}.
+ \label{eq:tensordecomp}
+\end{equation}
+These are the trace transforming in $(0,0)$, symmetric traceless tensor transforming in $(1,1)$, and antisymmetric
+two-form transforming as  \((1,0)\oplus(0,1)\) (it is reducible over \(\C\)).
+
+To see why complexification matters, fix an orientation and define
+\((*F)_{\mu\nu}=\tfrac12\eps_{\mu\nu\rho\sigma}F^{\rho\sigma}\).
+With Lorentzian signature, \(*^2=-1\) on two-forms. The combinations
+\begin{equation}
+ F_+=\tfrac12(F-i*F),\qquad F_-=\tfrac12(F+i*F),
+ \qquad *F_\pm=\pm iF_\pm
+ \label{eq:selfdual}
+\end{equation}
+are the two irreducible three-dimensional pieces. Which piece is called
+\((1,0)\) depends on the orientation and chiral naming convention.
+For a real two-form, \(F_-=(F_+)^*\), so these are not two independent
+real tensors. A symmetric spinor \(S_{\alpha\beta}\) is another way
+to describe one of the complex pieces.
+
+Under spatial rotations alone,
+\begin{equation}
+ (j_L,j_R)\big|_{\SU(2)_{\rm rot}}
+     =\bigoplus_{j=|j_L-j_R|}^{j_L+j_R}j.
+ \label{eq:rotationcontent}
+\end{equation}
+Thus a four-vector restricts to \(0\oplus1\), not \(0\otimes1\):
+its time component is a rotational scalar and its spatial components
+form a triplet. This is a statement about field components, not yet a
+count of physical particle polarizations.
+
+\section{Sigma matrices and Lorentz-covariant bilinears}
+\subsection{The identities we actually need}
+The Pauli multiplication rule
+\(\sigma_i\sigma_j=\delta_{ij}\one+i\eps_{ijk}\sigma_k\)
+implies
+\begin{align}
+ s^\mu\widetilde s^\nu+s^\nu\widetilde s^\mu
+    &=2\eta^{\mu\nu}\one,\nonumber\\
+ \widetilde s^\mu s^\nu+\widetilde s^\nu s^\mu
+    &=2\eta^{\mu\nu}\one,\label{eq:sigmaclifford}\\
+ \tr(s^\mu\widetilde s^\nu)&=2\eta^{\mu\nu}.
+ \label{eq:sigmatrace}
+\end{align}
+where we have defined
+\begin{align}
+    s^\mu=({\bf 1},{\bf \sigma}),\qquad \tilde{s}^\mu=({\bf 1},-{\bf \sigma})
+\end{align}
+transforming as
+\begin{align}
+    A^\dagger s^\mu A=\Lambda^\mu_{:\nu} s^\nu
+\end{align}
+and the conjugate dual
+\begin{align}
+    \bar{A}^\dagger \tilde{s}^\mu \bar{A}=\Lambda^\mu_{:\nu} \tilde{s}^\nu\ .
+\end{align}
+
+For instance, the time-space anticommutator is
+\(-\sigma_i+\sigma_i=0\), while the space-space one is
+\(-\{\sigma_i,\sigma_j\}=-2\delta_{ij}\one\).
+Contracting the first identity with a symmetric product \(p_\mu p_\nu\)
+gives an especially useful result:
+\begin{equation}
+ (p\cdot s)(p\cdot\widetilde s)=p^2\one,
+ \quad p\cdot s=p^0\one-\bm p\cdot\bm\sigma,
+ \quad p\cdot\widetilde s=p^0\one+\bm p\cdot\bm\sigma.
+ \label{eq:sigmap}
+\end{equation}
+The Lorentz contraction uses \(p_\mu\), not four entries with all plus
+signs. One may also verify the completeness identity in ordinary
+matrix indices \(a,b,c,d\):
+\begin{equation}
+ \sum_{\mu,\nu}\eta_{\mu\nu}(s^\mu)_{ab}(s^\nu)_{cd}
+       =2 E_{ac}E_{bd}.
+ \label{eq:completeness}
+\end{equation}
+Its origin is
+\(\sum_i(\sigma_i)_{ab}(\sigma_i)_{cd}
+=2\delta_{ad}\delta_{bc}-\delta_{ab}\delta_{cd}\).
+Spinor rearrangement identities follow from this formula together
+with the appropriate Grassmann signs.
+
+\subsection{A vector bilinear and its covariance}
+The map \eqref{eq:vmap} and its inverse imply
+\begin{equation}
+ A^\dagger s^\mu A=\Lambda^\mu{}_{\nu}s^\nu,
+ \qquad
+ \bar A^\dagger\widetilde s^\mu\bar A
+       =\Lambda^\mu{}_{\nu}\widetilde s^\nu.
+ \label{eq:covsigma}
+\end{equation}
+For the first identity, take \(\tfrac12\tr(s^\mu A V A^\dagger)\)
+and use cyclicity of the trace. Since it equals
+\(\Lambda^\mu{}_{\nu}v^\nu\) for every \(V\), the matrix identity
+follows. Consequently,
+\begin{equation}
+ j^\mu(\xi,\chi)=\xi^\dagger s^\mu\chi
+ \quad\Longrightarrow\quad
+ j'^\mu(x)=\Lambda^\mu{}_{\nu}j^\nu(\Lambda^{-1}x).
+ \label{eq:j}
+\end{equation}
+Moreover \((j^\mu(\xi,\chi))^\dagger=j^\mu(\chi,\xi)\), because
+the matrices \(s^\mu\) are Hermitian. In particular
+\(\xi^\dagger s^\mu\xi\) is a Hermitian vector bilinear.
+
+For comparison, the two chiral spin generators can be written
+\begin{align}
+ S_L^{\mu\nu}&=\frac{i}{4}
+   (\widetilde s^\mu s^\nu-\widetilde s^\nu s^\mu),\nonumber\\
+ S_R^{\mu\nu}&=\frac{i}{4}
+   (s^\mu\widetilde s^\nu-s^\nu\widetilde s^\mu).
+ \label{eq:twogenerators}
+\end{align}
+Thus \(\tfrac12\eps_{ijk}S_{L,R}^{jk}=\sigma_i/2\), but
+\(S_L^{i0}=-i\sigma_i/2\) and \(S_R^{i0}=+i\sigma_i/2\).
+The rotation generators agree and the boost generators differ in sign.
+Equivalently the epsilon-lowered matrices \(E\sigma_i\) are symmetric;
+this exhibits the link between the three spin matrices and symmetric
+two-index spinors.
+
+\subsection{Spin transformation versus coordinate transformation}
+A field changes both its components and its argument:
+\begin{equation}
+ \Phi'(x)=D(\Lambda)\Phi(\Lambda^{-1}x).
+ \label{eq:fieldlaw}
+\end{equation}
+For \(\Lambda=\one+\omega+O(\omega^2)\) and
+\(D=\one+\delta D+O(\omega^2)\), expansion gives
+\begin{equation}
+ \delta\Phi(x)=\delta D\,\Phi(x)
+            -\omega^\mu{}_{\nu}x^\nu\partial_\mu\Phi(x).
+ \label{eq:orbitalspin}
+\end{equation}
+The first term acts on spin indices and the second is the orbital
+action on spacetime dependence. At \(x=0\), only the first survives.
+This explains why transformations of a field at the origin expose its
+finite-dimensional Lorentz representation without displaying the
+orbital generators.
+
+\section{Fermions and Grassmann signs}
+\subsection{Why a scalar made from one spinor need not vanish}
+Classical fermionic fields are taken to be Grassmann odd. Thus
+\(\xi_\alpha\chi_\beta=-\chi_\beta\xi_\alpha\), including when
+the two fields are the same. In a component calculation,
+\begin{align}
+ B(\chi,\xi)&=\chi_1\xi_2-\chi_2\xi_1
+             =\xi_1\chi_2-\xi_2\chi_1=B(\xi,\chi),
+             \label{eq:Bsym}\\
+ B(\xi,\xi)&=2\xi_1\xi_2.\label{eq:selfB}
+\end{align}
+The minus sign from exchanging fields cancels the minus sign from
+the antisymmetric invariant tensor. For commuting spinors the result
+would instead be antisymmetric, and the self-contraction would vanish.
+
+Hermitian conjugation reverses order:
+\begin{equation}
+ (XY)^\dagger=Y^\dagger X^\dagger,\qquad
+ B(\xi,\xi)^\dagger=2\xi_2^*\xi_1^*
+                         =-2\xi_1^*\xi_2^*.
+ \label{eq:daggerB}
+\end{equation}
+No extra minus sign is inserted into the definition of conjugation.
+A minus sign appears only if the resulting odd variables are then
+reordered. Treat \(\xi\) and \(\xi^\dagger\) as independent variables
+when varying a classical action.
+
+\begin{remarkbox}[Statistics and the scope of this argument]
+Lorentz covariance by itself does not choose commuting or
+anticommuting fields. Ordinary wavefunctions and polarization spinors
+have commuting complex components; products of quantum fields at the
+same point require an ordering or regularization prescription. Grassmann variables are the classical language
+that leads to fermionic canonical anticommutation relations. The
+spin-statistics connection requires the further physical assumptions
+of relativistic quantum field theory; it is not proved just by an
+epsilon-tensor identity.
+\end{remarkbox}
+
+
+\section{A first-order equation from covariance}
+The sigma matrices also identify a Lorentz-covariant differential
+operator. The identity \(A^\dagger s^\mu A=\Lambda^\mu{}_{\nu}s^\nu\)
+implies that \(s^\mu\partial_\mu\xi\) transforms with
+\((A^\dagger)^{-1}\). To see this, note that $\sigma^\mu$ are just fixed matrices that do not transform, so
+\begin{align}
+    \sigma^\mu(\partial_\mu\xi)\to \sigma^\mu(\Lambda^{-1})^\mu_{\:\nu}\partial_\nu(A\xi),
+\end{align}
+
+Thus, setting this column to zero is a
+Lorentz-invariant equation:
+\[
+ i s^\mu\partial_\mu\xi=0.
+\]
+This is the massless Weyl equation. Lecture 13 will derive it from an
+action and show how a mass modifies it. Here it provides a first
+application of the spinor calculus.
+
+Take \(\xi(x)=u\,e^{-ip\cdot x}\) with \(p^0>0\), where \(u\)
+is an ordinary complex coefficient column. Then
+\begin{equation}
+ (p^0-\bm\sigma\cdot\bm p)u=0.
+ \label{eq:masslessplane}
+\end{equation}
+For nonzero \(u\), the determinant condition gives \(p^2=0\), and
+\(\bm\sigma\cdot\widehat{\bm p}\,u=u\). This is one spin
+polarization at fixed positive-energy momentum. In the explicit
+convention of these lectures its helicity is \(+1/2\); the opposite
+chiral equation has helicity \(-1/2\). The words left and right are
+convention dependent here, but the eigenvalue of
+\(\bm J\cdot\widehat{\bm p}\) is not. We will distinguish these
+wavefunctions from particle and antiparticle states in Lecture 14.
+
+
+\Needspace{12\baselineskip}
+\section*{Summary}
+\addcontentsline{toc}{section}{Summary}
+The Weyl representations have the same rotation matrices and opposite
+boost generators. Parity exchanges them, while complex conjugation,
+duality, and epsilon-index operations have distinct meanings.
+The invariant epsilon tensor builds scalar contractions; mixed
+chirality builds vectors; symmetric equal-chirality tensors describe
+the complex two-form pieces. Sigma-matrix identities make these
+transformation laws explicit.
+
+For fermionic fields, the Grassmann exchange sign combines with the
+antisymmetry of epsilon so that \(B(\xi,\chi)=B(\chi,\xi)\) and
+\(B(\xi,\xi)=2\xi_1\xi_2\) need not vanish. These are precisely the
+scalar and vector structures needed for the mass and kinetic terms
+that we will derive in Lecture 13.
+
+\newpage
+\section*{Questions for review}
+\addcontentsline{toc}{section}{Questions for review}
+\begin{enumerate}
+\item Derive both Weyl generator matrices from \(J=L+R\) and
+\(K=-i(L-R)\). Compare their action under a \(z\) rotation and boost.
+\item Reproduce the trace proof excluding nontrivial finite-dimensional
+unitary Lorentz representations. Why does it not exclude unitary particle states?
+\item Why can parity act on the direct sum of the Weyl representations
+but not within one of them alone?
+\item Prove \(A^T E A=(\det A)E\), and derive the dual and conjugate-dual laws.
+\item Show that the fundamental is self-dual but inequivalent to its
+complex conjugate. Which part of the argument depends on boosts?
+\item Compute \(B(\xi,\chi)\) with explicit raised indices.
+Why does raising an undotted index not change its chirality?
+\item Decompose a general two-index spinor into symmetric and
+antisymmetric parts. What changes for \(\xi_\alpha\xi_\beta\)?
+\item Verify that \(zz^\dagger\) gives a future null vector for a nonzero
+commuting spinor. Why is a general Hermitian matrix not one such product?
+\item Decompose a rank-two Lorentz tensor into irreducibles and check
+the dimensions. Explain the reality relation between its two-form pieces.
+\item Derive the sigma anticommutator and trace identities from the
+Pauli multiplication rule. Check the vector bilinear for a \(z\) boost.
+\item Compare the invariance of \(\xi^T E\chi\), \(\xi^\dagger\chi\),
+and \(r^\dagger\xi\). State each field's transformation law.
+\item Derive the exchange and Hermitian-conjugation rules for Grassmann
+bilinears. Which rules change for ordinary complex wavefunctions?
+\item Solve the massless Weyl equation at fixed positive-energy momentum.
+Which spin polarization survives in the stated convention?
+\end{enumerate}
+
+\section*{Sources and reading}
+\addcontentsline{toc}{section}{Sources and reading}
+This lecture consolidates the Weyl-representation and contraction
+material of the supplied \emph{Lecture 10: Representations of the Lorentz
+Group} (2025), pp.\ 21--23, with \emph{Lecture 11: Spinors of the Lorentz
+Group}, pp.\ 6--14, and the notation review in \emph{Lecture 12:
+Action for Spinors}, pp.\ 1--7. The action derivations continue in
+course Lecture 13. A useful independent reference is H.~K.~Dreiner,
+H.~E.~Haber, and S.~P.~Martin,
+\href{https://arxiv.org/abs/0812.1594}{arXiv:0812.1594}.
+Translate epsilon, boost, and chirality conventions before comparing formulas.
+\end{document}

@@ -1,0 +1,297 @@
+\documentclass[11pt]{article}
+\usepackage[letterpaper,margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern,microtype}
+\usepackage{amsmath,amssymb,mathtools,bm,slashed,mathrsfs}
+\usepackage{xcolor,enumitem,booktabs,array,needspace}
+\usepackage[most]{tcolorbox}
+\usepackage{fancyhdr,titlesec,parskip,hyperref}
+\definecolor{qftblue}{HTML}{245A8D}
+\definecolor{qftgreen}{HTML}{2F6B4F}
+\definecolor{qftgray}{HTML}{F4F6F8}
+\hypersetup{colorlinks=true,linkcolor=qftblue,urlcolor=qftblue,pdfauthor={Nima Lashkari}}
+\pagestyle{fancy}\fancyhf{}
+\lhead{PHYS 662: Quantum Field Theory I}\cfoot{\thepage}
+\setlength{\headheight}{14pt}
+\titleformat{\section}{\Large\bfseries\color{qftblue}}{\thesection.}{0.6em}{}
+\titleformat{\subsection}{\large\bfseries\color{qftgreen}}{\thesubsection}{0.6em}{}
+\setlist[enumerate]{leftmargin=2em,itemsep=0.25em,topsep=0.35em}
+\setlist[itemize]{leftmargin=2em,itemsep=0.2em,topsep=0.35em}
+\newcommand{\dd}{\mathrm d}
+\newcommand{\ii}{\mathrm i}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\tr}{\operatorname{tr}}
+\newcommand{\Tr}{\operatorname{Tr}}
+\newcommand{\diag}{\operatorname{diag}}
+\newcommand{\Lag}{\mathcal L}
+\newcommand{\D}{\mathcal D}
+\newcommand{\vac}{\lvert0\rangle}
+\newcommand{\vbra}{\langle0\rvert}
+\newcommand{\Tord}{\mathrm T}
+\newcommand{\ket}[1]{\lvert#1\rangle}
+\newcommand{\bra}[1]{\langle#1\rvert}
+\newtcolorbox{keyidea}[1][]{enhanced,breakable,colback=qftgray,colframe=qftblue,
+ boxrule=0.7pt,arc=1.5mm,title={#1},fonttitle=\bfseries,coltitle=white}
+\newtcolorbox{remarkbox}[1][]{enhanced,breakable,colback=white,colframe=qftgreen,
+ boxrule=0.6pt,arc=1.5mm,title={#1},fonttitle=\bfseries,coltitle=white}
+\newcommand{\intp}{\int\!\frac{\dd^4p}{(2\pi)^4}}
+\newcommand{\MSbar}{\overline{\mathrm{MS}}}
+\newcommand{\module}[1]{\clearpage\section{#1}}
+\newcommand{\braket}[2]{\langle#1\mid#2\rangle}
+\newcommand{\dPi}{\dd\Pi}
+\newcommand{\cM}{\mathcal M}
+\newcommand{\cH}{\mathcal H}
+\newcommand{\cS}{\mathcal S}
+\newcommand{\Zp}{Z_{\rm pole}}
+\newcommand{\Kallen}{\mathcal K}
+\rhead{Homework Set 8}
+\hypersetup{pdftitle={PHYS 662 Homework Set 8: Scattering, Rates, and LSZ}}
+\newlist{parts}{enumerate}{1}
+\setlist[parts]{label=\textbf{(\alph*)},leftmargin=2.3em,itemsep=0.65em,topsep=0.5em}
+\newcommand{\problem}[2]{\clearpage\section*{\color{qftblue}Problem #1: #2}}
+\newcommand{\connection}[1]{{\small\textit{Lecture connection: #1}\par}\medskip}
+\begin{document}
+\begin{center}
+{\scshape\Large PHYS 662 --- Quantum Field Theory I\par}
+\vspace{0.3em}{\Huge\bfseries\color{qftblue}Homework Set 8\par}
+\vspace{0.3em}{\large Scattering States, Rates, and LSZ Reduction\par}
+\vspace{0.3em}{\large Lectures 23--25 \quad Fall 2026\par}
+\end{center}\medskip
+\textbf{Name:} \rule{0.43\textwidth}{0.4pt}\hfill
+\textbf{Due:} \rule{0.24\textwidth}{0.4pt}
+
+\textbf{Instructions.} Complete all four problems, worth 25 points each.
+Show the origin of normalization and identical-particle factors. Keep
+physical masses distinct from arbitrary Lagrangian parameters. Explain
+the assumptions needed for every asymptotic limit. You may use results
+from earlier parts, including when you have not completed their derivation.
+No loop integral evaluation is required.
+
+\begin{keyidea}[Common conventions]
+Use \(\hbar=c=1\), \(\eta=\diag(1,-1,-1,-1)\), and
+\[
+ \langle p,s|q,r\rangle=2E_p(2\pi)^3\delta^{(3)}(\bm p-\bm q)\delta_{sr},
+ \qquad \dPi_p=\frac{\dd^3p}{(2\pi)^3\,2E_p}.
+\]
+The connected scattering amplitude is defined by
+\[
+ \langle f|S-1|i\rangle_c
+ =\ii(2\pi)^4\delta^{(4)}(P_f-P_i)\cM_{fi},\qquad S=1+\ii T.
+\]
+A free scalar propagator includes its numerator \(\ii\):
+\[
+ D_F(p)=\frac{\ii}{p^2-m^2+\ii0},\qquad
+ (\Box+m^2)D_F(x)=-\ii\delta^{(4)}(x).
+\]
+For a stable particle, \(\langle\Omega|\phi(0)|p\rangle=\sqrt{\Zp}\)
+and \(\widetilde G_2(p)\sim\ii\Zp/(p^2-M^2+\ii0)\).
+Use \(\cS_f=\prod_a n_a!\) when integrating over all labeled final momenta,
+and
+\[
+ \dd\Phi_n(P)=(2\pi)^4\delta^{(4)}\!\left(P-\sum_jp_j\right)\prod_j\dPi_{p_j}.
+\]
+The invariant incoming flux is
+\(F=4\sqrt{(p_A\cdot p_B)^2-m_A^2m_B^2}\).
+For two-body kinematics use
+\(\Kallen(x,y,z)=x^2+y^2+z^2-2xy-2xz-2yz\).
+\end{keyidea}
+
+\textbf{Coverage.} Spectral weight and scattering states; two-body decay
+and resonances; cross sections and unitarity; scalar and fermion reduction.
+All masses are positive. External particles are stable except for the
+narrow parent in Problem 2. Assume weak couplings and no additional lighter
+bound states where needed.
+
+\problem{1}{What is a particle, and on what space is the S-matrix unitary?}
+\connection{Lecture 23, Sections 1--6 and 8.}
+Consider a Hermitian scalar \(\phi\) with \(\langle\phi\rangle=0\) in a
+positive-metric Hilbert space, with a stable isolated mass \(M\).
+\begin{parts}
+\item \textbf{(4 points)} Insert exact energy-momentum states into
+\(\langle\Omega|\phi(x)\phi(0)|\Omega\rangle\). With the convention
+\[
+ \sum_n\int\dd\mu(n)\,(2\pi)^4\delta^{(4)}(q-p_n)
+ |\langle\Omega|\phi(0)|n\rangle|^2=2\pi\theta(q^0)\rho(q^2),
+\]
+derive the spectral representation of the Feynman two-point function
+and explain why \(\rho\geq0\). Why is it not just a count of states?
+
+\item \textbf{(4 points)} Evaluate the one-particle contribution using
+the stated covariant normalization. Relate its delta-function coefficient
+to the propagator pole residue. Under \(\phi\to c\phi\), with \(c>0\),
+which of the mass, residue, and spectral weight change?
+
+\item \textbf{(4 points)} In unbroken massive \(\lambda\phi^4\) theory,
+explain why the first multiparticle continuum in \(\rho_\phi\) starts at
+\(9M^2\), whereas the even operator
+\(\phi^2-\langle\phi^2\rangle\) can have a continuum at \(4M^2\).
+State the needed spectral assumptions. Why is the four-point bubble's
+cut at \(s=4M^2\) consistent with these answers?
+
+\item \textbf{(4 points)} Derive the direct and exchange terms in the
+inner product of two identical scalar states. Verify that
+\(\tfrac1{2!}\int\dPi_p\dPi_q\,|p,q\rangle\langle p,q|\)
+acts as the identity on the two-particle sector. Explain why a local
+product \(\phi(x)\phi(y)\ket{\Omega}\) is not automatically in that sector.
+
+\item \textbf{(5 points)} Let \(\Omega_{\rm in/out}\) be isometries from
+\(\cH_{\rm as}\) onto a common scattering subspace. State the wave-packet
+comparison condition, including the two time directions, and prove that
+\(S=\Omega_{\rm out}^\dagger\Omega_{\rm in}\) is unitary. Distinguish
+equality of the two scattering ranges from asymptotic completeness in
+the full Hilbert space. Why is physical switching off of the coupling
+not required?
+
+\item \textbf{(4 points)} For an elastic projector \(P\), show that
+\((PSP)^\dagger(PSP)=P-PS^\dagger(1-P)SP\). Interpret the missing probability.
+Then derive \(-\ii(T-T^\dagger)=T^\dagger T\) and explain why a nonzero real
+tree transition amplitude requires an imaginary part at a higher order.
+\end{parts}
+
+\problem{2}{A two-body decay and its resonance pole}
+\connection{Lecture 24, Sections 2--4 and 7.}
+Take \(\Lag_{\rm int}=-gA\chi^2/2\), with \(M_A>2m_\chi\), real small
+\(g\), and stable \(\chi\) particles. Assume additional interactions
+stabilize the potential without contributing to this leading decay.
+Treat \(A\) as a narrow prepared excitation, not an exact asymptotic state.
+\begin{parts}
+\item \textbf{(4 points)} Explain how the regulated limit
+\[
+ \frac1{\mathcal T}\left|\int_{-\mathcal T/2}^{\mathcal T/2}
+ \dd t\,e^{\ii\omega t}\right|^2\longrightarrow2\pi\delta(\omega)
+\]
+and the norms \(2EV\) lead to
+\(\dd\Gamma=|\cM|^2\dd\Phi_2/(2M_A\cS_f)\).
+Show where the volume and observation time disappear.
+
+\item \textbf{(5 points)} Integrate the two-body momentum delta functions
+in the rest frame of \(A\). Derive \(\dd\Phi_2/\dd\Omega\), the momentum
+magnitude \(p_*\), and the integrated phase space. Identify the threshold
+condition rather than inferring it from a square root alone.
+
+\item \textbf{(4 points)} Derive the vertex rule, the tree amplitude,
+and the total partial width \(\Gamma_{A\to\chi\chi}\). Explain why the
+\(1/2\) in the Lagrangian does not remove the need for a final-state
+\(1/2!\). Check mass dimensions and the threshold limit.
+
+\item \textbf{(4 points)} If this is the only open channel, find the mean
+proper lifetime and half-life. Give the laboratory mean lifetime for a
+parent packet sharply peaked at energy \(E_A\). If another distinct channel
+has width \(\Gamma_Y\), state the new total lifetime and branching fraction
+to \(\chi\chi\).
+
+\item \textbf{(4 points)} Starting from
+\(\widetilde G_A(s)\simeq\ii\mathcal Z_R/(s-M_A^2+\ii M_A\Gamma_A)\),
+locate the positive-energy pole to first order in \(\Gamma_A/M_A\).
+Determine the damping of the rest-frame amplitude and of its modulus
+squared. Explain the factor of two and why this is not an exact stable
+K\"all\'en--Lehmann delta-function pole.
+
+\item \textbf{(4 points)} Prove the narrow-width identity
+\[
+ \frac1{(s-M_A^2)^2+M_A^2\Gamma_A^2}
+ \longrightarrow\frac{\pi}{M_A\Gamma_A}\delta(s-M_A^2)
+\]
+under integration against a smooth function. State two circumstances in
+which using this identity for an observed line shape is unreliable.
+\end{parts}
+
+\problem{3}{Two stable species: flux, cross sections, and unitarity}
+\connection{Lecture 24, Sections 4--6 and 8.}
+Consider two real scalar species with masses \(m_\chi>m_\phi>0\) and
+\(\Lag_{\rm int}=-g\phi^2\chi^2/4\), with \(g>0\) small. Independent
+\(\mathbb Z_2\) parities make both species stable. Work at leading order,
+and define \(\beta_a(s)=\sqrt{1-4m_a^2/s}\) in its physical region.
+\begin{parts}
+\item \textbf{(4 points)} Derive the four-leg vertex factor from Wick
+contractions. Find the tree amplitudes for
+\(\phi\phi\to\chi\chi\) and \(\phi\chi\to\phi\chi\).
+Specify their physical thresholds in \(s\) and their final-state counting
+factors. Why is there no extra incoming \(1/2!\) for two prepared beams?
+
+\item \textbf{(4 points)} Starting from
+\(F=4\sqrt{(p_A\cdot p_B)^2-m_A^2m_B^2}\), derive its center-of-mass and
+stationary-target forms. Show that \(F/(4E_AE_B)\) equals
+\(\sqrt{|\bm v_A-\bm v_B|^2-|\bm v_A\times\bm v_B|^2}\).
+Explain why this flux factor need not be less than one.
+
+\item \textbf{(5 points)} Calculate the differential and total event
+cross sections for \(\phi\phi\to\chi\chi\) above threshold, displaying
+the factor \(\beta_\chi/\beta_\phi\). Use the full labeled angular sphere.
+Explain how the answer changes if you integrate over only a nonredundant
+hemisphere without a symmetry factor.
+
+\item \textbf{(4 points)} Calculate the total cross section for
+\(\phi\chi\to\phi\chi\) at the same invariant \(s\) when both reactions
+are allowed. Compare it to part (c), separating the effects of phase space
+and identical-particle counting. In a stationary \(\chi\) target, express
+\(s\) in terms of the incident \(\phi\) energy.
+
+\item \textbf{(4 points)} Without evaluating a loop integral, use
+unitarity to determine the \(\chi\chi\) intermediate-state contribution
+to \(\operatorname{Im}\cM_{\phi\phi\to\phi\phi}(s,0)\) at order \(g^2\).
+Check it independently against \(F\sigma_{\phi\phi\to\chi\chi}/2\).
+Explain why the \(\chi\chi\) contribution vanishes below its threshold.
+
+\item \textbf{(4 points)} A collider delivers integrated luminosity
+\(\mathscr L_{\rm int}=\int\dd t\,\mathscr L(t)\) at fixed \(s\), with
+uniform event efficiency \(\epsilon\). Express the expected detected
+\(\chi\chi\) event count in terms of part (c). Contrast it with the
+inclusive number of detected \(\chi\) particles at perfect acceptance.
+Why is a cross section not a probability or a fraction of collisions?
+\end{parts}
+
+\problem{4}{Reduction from correlators and the choice of field}
+\connection{Lecture 25, Sections 2--7.}
+Use smooth wave packets before taking any plane-wave limit. In parts
+(a)--(b) consider one stable Hermitian scalar of mass \(M\) and residue
+\(\Zp\). In part (c) use the two-species interaction from Problem 3.
+\begin{parts}
+\item \textbf{(4 points)} For a positive-frequency Klein--Gordon solution
+\(f\), define
+\[
+ a_f(t)=\frac{\ii}{\sqrt{\Zp}}\int\dd^3x\,
+ f^*\overleftrightarrow{\partial_t}\phi.
+\]
+Derive its time derivative and the formula for
+\(a_{\rm out}(f)-a_{\rm in}(f)\). State the meaning of the asymptotic
+limits. Use Hermitian conjugation to show why incoming creation-operator
+reduction also contributes \(+\ii/\sqrt{\Zp}\).
+
+\item \textbf{(4 points)} Explain the origin of the spectator overlap
+when one outgoing annihilation operator is replaced by an incoming one.
+Derive the free identity \((\Box_x+M^2)D_F(x-y)=-\ii\delta^{(4)}(x-y)\)
+from the equal-time commutator and derivatives of time ordering. Why would
+using the homogeneous field equation alone give the wrong answer?
+
+\item \textbf{(5 points)} Write the leading connected position-space
+correlator with two \(\phi\) and two \(\chi\) insertions as a single vertex
+integral. Apply scalar LSZ directly to obtain
+\(\ii(2\pi)^4\delta^{(4)}(P_f-P_i)\cM_{\chi\chi,\phi\phi}\).
+Track every \(\ii\), incoming/outgoing Fourier sign, and physical mass.
+Then state the exact relation between this amplitude and the connected
+kernel amputated with full propagators, allowing residues
+\(Z_\phi\ne1\) and \(Z_\chi\ne1\).
+
+\item \textbf{(4 points)} Demonstrate invariance of the scalar LSZ result
+under \(\phi\to c\phi\), \(c>0\). For
+\(O=(1+\alpha\Box)\phi\), determine its one-particle overlap and pole
+residue. For which \(\alpha\) does this operator fail to interpolate the
+particle? Explain why local contact terms do not repair that missing pole.
+
+\item \textbf{(4 points)} For a stable Dirac field, list the external
+spinors for an incoming fermion, outgoing fermion, incoming antifermion,
+and outgoing antifermion. Explain where \(\sqrt{Z_\psi}\) enters if the
+connected kernel has been amputated with full propagators. Distinguish
+external spin sums from the average over an unpolarized incoming ensemble.
+
+\item \textbf{(4 points)} For the Yukawa interaction \(-y\phi\bar\psi\psi\),
+write the scalar-exchange tree amplitude for identical fermions:
+\[
+ \psi(p_1,s_1)\psi(p_2,s_2)\to\psi(p_3,s_3)\psi(p_4,s_4).
+\] Include both contractions and their relative sign,
+with unit residues at this order. Check antisymmetry under exchange of the
+two final fermions. No spin trace or phase-space integral is required.
+\end{parts}
+\end{document}

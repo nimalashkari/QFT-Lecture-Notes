@@ -1,0 +1,488 @@
+\documentclass[11pt]{article}
+\usepackage[letterpaper,margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern,microtype}
+\usepackage{amsmath,amssymb,mathtools,bm,slashed}
+\usepackage{xcolor,enumitem,booktabs,array,needspace}
+\usepackage[most]{tcolorbox}
+\usepackage{fancyhdr,titlesec,parskip,hyperref}
+\definecolor{qftblue}{HTML}{245A8D}
+\definecolor{qftgreen}{HTML}{2F6B4F}
+\definecolor{qftgray}{HTML}{F4F6F8}
+\hypersetup{colorlinks=true,linkcolor=qftblue,urlcolor=qftblue,pdfauthor={Nima Lashkari}}
+\pagestyle{fancy}\fancyhf{}
+\lhead{PHYS 662: Quantum Field Theory I}\cfoot{\thepage}
+\setlength{\headheight}{14pt}
+\titleformat{\section}{\Large\bfseries\color{qftblue}}{\thesection.}{0.6em}{}
+\titleformat{\subsection}{\large\bfseries\color{qftgreen}}{\thesubsection}{0.6em}{}
+\setlist[enumerate]{leftmargin=2em,itemsep=0.25em,topsep=0.35em}
+\setlist[itemize]{leftmargin=2em,itemsep=0.2em,topsep=0.35em}
+\newcommand{\dd}{\mathrm d}
+\newcommand{\ii}{\mathrm i}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\tr}{\operatorname{tr}}
+\newcommand{\Tr}{\operatorname{Tr}}
+\newcommand{\diag}{\operatorname{diag}}
+\newcommand{\Lag}{\mathcal L}
+\newcommand{\D}{\mathcal D}
+\newcommand{\vac}{\lvert0\rangle}
+\newcommand{\vbra}{\langle0\rvert}
+\newcommand{\Tord}{\mathrm T}
+\newcommand{\ket}[1]{\lvert#1\rangle}
+\newcommand{\bra}[1]{\langle#1\rvert}
+\newtcolorbox{keyidea}[1][]{enhanced,breakable,colback=qftgray,colframe=qftblue,
+ boxrule=0.7pt,arc=1.5mm,title={#1},fonttitle=\bfseries,coltitle=white}
+\newtcolorbox{remarkbox}[1][]{enhanced,breakable,colback=white,colframe=qftgreen,
+ boxrule=0.6pt,arc=1.5mm,title={#1},fonttitle=\bfseries,coltitle=white}
+\newcommand{\module}[1]{\clearpage\section{#1}}
+\newcommand{\lecturefront}[4]{%
+\rhead{Lecture #1}\hypersetup{pdftitle={PHYS 662 Lecture #1: #2}}
+\begin{document}\pagenumbering{gobble}
+\begin{titlepage}\centering\vspace*{1.05in}
+{\scshape\Large PHYS 662 --- Quantum Field Theory I\par}
+\vspace{0.35in}{\Huge\bfseries\color{qftblue}Lecture #1\par}
+\vspace{0.2in}{\LARGE\bfseries #2\par}
+\vspace{0.2in}{\large\color{qftgreen}#3\par}
+\vspace{0.6in}{\large Nima Lashkari\par}{\large Fall 2026\par}
+\vfill\begin{minipage}{0.86\textwidth}\small #4\par\medskip
+Course page: \url{https://nimalashkari.com/quantum-field-theory-2026-part-i/}
+\end{minipage}\vspace{0.5in}\end{titlepage}
+\pagenumbering{roman}\setcounter{tocdepth}{1}\tableofcontents
+\vfill\begin{remarkbox}[Place in the course]
+Lectures 17--18 develop the quantum-mechanical construction. Lecture 19
+extends Gaussian integration and source methods to scalar fields.
+Lecture 20 introduces Grassmann integration and fermionic fields.
+Problem Set 6 brings these four steps together.
+\end{remarkbox}\clearpage\pagenumbering{arabic}}
+\lecturefront{19}{Path Integrals for the Free Scalar Field}
+{Gaussian functionals, Wick contractions, and connected correlations}
+{A regulated field is a collection of coupled quantum coordinates. We
+derive its path integral, recover the canonical Feynman propagator,
+and organize correlations using sources. Euclidean decay then connects
+the Gaussian inverse to the mass spectrum.}
+
+\section{From coupled coordinates to a field}
+We now set \(\hbar=c=1\), use \(\eta_{\mu\nu}=\diag(1,-1,-1,-1)\),
+and keep the propagator convention of Lecture 16:
+\begin{equation}
+ D_F(x-y)=\langle0|\Tord\phi(x)\phi(y)|0\rangle
+ =\int\frac{\dd^4p}{(2\pi)^4}
+ \frac{\ii e^{-\ii p\cdot(x-y)}}{p^2-m^2+\ii0}.       \label{eq:DF}
+\end{equation}
+Thus \((\Box+m^2)D_F=-\ii\delta^{(4)}\). No additional factor of
+\(\ii\) is hidden in the definition of \(D_F\).
+
+Start with a finite periodic spatial lattice of spacing \(a\), in
+\(d\) spatial dimensions. At site \(\bm n\), set
+\(P_{\bm n}=a^d\pi_{\bm n}\); then
+\([\phi_{\bm n},P_{\bm m}]=\ii\delta_{\bm n\bm m}\).
+The scalar Hamiltonian is
+\begin{equation}
+ H_a=\sum_{\bm n}\left[\frac{P_{\bm n}^2}{2a^d}
+ +\frac{a^d}{2}\left(\sum_{r=1}^d
+ \frac{(\phi_{\bm n+\hat r}-\phi_{\bm n})^2}{a^2}
+ +m^2\phi_{\bm n}^2\right)\right].
+\end{equation}
+It is a finite collection of coupled oscillators. Insert field and
+momentum resolutions on every time slice exactly as in Lecture 17:
+\begin{equation}
+ K[\varphi_f,\varphi_i]=\int\D\phi\,\D\pi\,
+ \exp\!\left[\ii\int\dd t\dd^d x\,
+ (\pi\dot\phi-\mathcal H)\right].
+\end{equation}
+The boundary labels \(\varphi_i(\bm x),\varphi_f(\bm x)\) are whole
+spatial configurations. They are not values of the field at a single
+spacetime point.
+
+Each momentum Gaussian produces a factor
+\((a^d/(2\pi\ii\epsilon))^{1/2}\) per site and time step. After
+integrating momenta, the continuum notation is
+\begin{equation}
+ K[\varphi_f,\varphi_i]=\int_{\varphi_i}^{\varphi_f}\D\phi\,e^{\ii S_0[\phi]},
+ \qquad S_0=\frac12\int\dd^4x\,
+ (\partial_\mu\phi\partial^\mu\phi-m^2\phi^2).
+                                                        \label{eq:action}
+\end{equation}
+The lattice measure and the time-slicing limit define \(\D\phi\).
+Working at finite regulator makes determinants and integration by
+parts ordinary finite-dimensional operations. Absolute vacuum
+normalizations may diverge as the regulator is removed, and local
+coincident products require separate care even in the free theory.
+
+\module{The vacuum Gaussian and its source}
+Project the endpoints onto the vacuum using the contour prescription
+of Lecture 18. Integrating \eqref{eq:action} by parts gives a quadratic
+operator with Feynman boundary conditions:
+\begin{equation}
+ S_0+\frac{\ii\varepsilon}{2}\int\phi^2
+ =\frac12\phi A\phi,\qquad
+ A=-(\Box+m^2)+\ii\varepsilon,\qquad D_F=\ii A^{-1}.
+                                                        \label{eq:A}
+\end{equation}
+The shorthand \(\phi A\phi\) includes spacetime integrations. The
+\(+\ii\varepsilon\) in the action yields
+\(e^{-\varepsilon\int\phi^2/2}\) in the weight. Boundary wavefunctions
+or vacuum projection, not arbitrary fixed endpoints, select this inverse.
+
+For an ordinary real, symmetric positive-definite matrix \(B\), completing the square gives
+\begin{equation}
+ \int\frac{\dd^n x}{(2\pi)^{n/2}}
+ e^{-\frac12x^{\mathsf T}Bx+j^{\mathsf T}x}
+ =\frac{e^{\frac12j^{\mathsf T}B^{-1}j}}{\sqrt{\det B}}.
+\end{equation}
+Analytic continuation to the regulated oscillatory Gaussian replaces
+\(B\) by \(-\ii A\). At finite regulator its zero-source integral is
+proportional to \(\det(-\ii A)^{-1/2}\), with the phase fixed by the
+continuation. The normalization depends on the measure.
+
+Define the normalized vacuum functional
+\begin{equation}
+ Z_0[J]=\frac{\int\D\phi\,e^{\frac\ii2\phi A\phi+\ii J\phi}}
+ {\int\D\phi\,e^{\frac\ii2\phi A\phi}},\qquad Z_0[0]=1.
+\end{equation}
+The shift \(\phi=\chi-A^{-1}J\) gives
+\begin{equation}
+ \frac12\phi A\phi+J\phi
+ =\frac12\chi A\chi-\frac12JA^{-1}J.
+\end{equation}
+The determinant cancels between numerator and denominator. Therefore
+\begin{keyidea}[Free scalar generating functional]
+\begin{equation}
+ Z_0[J]=\exp\!\left[-\frac{\ii}{2}JA^{-1}J\right]
+       =\exp\!\left[-\frac12\int\dd^4x\dd^4y\,
+                      J(x)D_F(x-y)J(y)\right].          \label{eq:Z}
+\end{equation}
+The two equal expressions differ only in whether the inverse is written
+as \(A^{-1}\) or as the physical two-point function \(D_F=\ii A^{-1}\).
+\end{keyidea}
+The finite-regulator identity is the substantive calculation. The
+functional expression is its limit, with sources understood as suitable
+test functions so that distributional kernels can act on them.
+
+\module{Correlation functions and Wick's theorem}
+Each source derivative inserts \(\ii\phi\):
+\begin{equation}
+ G_n(x_1,\ldots,x_n)=\langle0|\Tord\phi(x_1)\cdots\phi(x_n)|0\rangle
+ =\left.\frac{1}{\ii^n}
+ \frac{\delta^n Z_0}{\delta J(x_1)\cdots\delta J(x_n)}\right|_{J=0}.
+                                                        \label{eq:moments}
+\end{equation}
+For two insertions, differentiating \eqref{eq:Z} gives
+\(\delta^2 Z_0|_0=-D_F\), and the factor \(1/\ii^2=-1\) restores
+the covariance \(G_2=D_F\). The odd functions vanish because
+the zero-source Gaussian is centered and invariant under \(\phi\to-\phi\).
+They need not vanish in a shifted state or a theory without this symmetry.
+
+For four insertions, write \(D_{ij}=D_F(x_i-x_j)\). Then
+\begin{equation}
+ G_4=D_{12}D_{34}+D_{13}D_{24}+D_{14}D_{23}.          \label{eq:four}
+\end{equation}
+For \(2n\) insertions, every term pairs all labels once, giving
+\((2n-1)!!=(2n)!/(2^n n!)\) terms. This is Wick's theorem for free
+vacuum correlation functions. The combinatorics follow by expanding
+the exponential of a quadratic form: each quadratic factor supplies
+one pair, and differentiation distributes the external labels.
+
+\subsection{A diagram is a record of a contraction}
+Represent each \(D_{ij}\) by a line joining labels \(i\) and \(j\).
+The three terms in \eqref{eq:four} are the three pairings of four
+labeled endpoints. These are not pictures of three different
+classical trajectories; they are a compact notation for products of
+distributional kernels. Integration vertices arise only when an
+interaction or a composite insertion is introduced.
+
+\begin{center}
+\begin{tikzpicture}[x=1cm,y=1cm,every node/.style={font=\small}]
+\foreach \shift/\pair in {0/1,4/2,8/3}{
+ \begin{scope}[xshift=\shift cm]
+ \coordinate (a) at (0,0);\coordinate (b) at (1.5,0);
+ \coordinate (c) at (0,-0.85);\coordinate (d) at (1.5,-0.85);
+ \ifnum\pair=1
+  \draw[qftblue,thick] (a)--(b) (c)--(d);
+  \node at (0.75,-1.4) {\(D_{12}D_{34}\)};
+ \fi
+ \ifnum\pair=2
+  \draw[qftblue,thick] (a)--(c) (b)--(d);
+  \node at (0.75,-1.4) {\(D_{13}D_{24}\)};
+ \fi
+ \ifnum\pair=3
+  \draw[qftblue,thick] (a)--(d);
+  \draw[white,line width=3pt] (b)--(c);
+  \draw[qftblue,thick] (b)--(c);
+  \node at (0.75,-1.4) {\(D_{14}D_{23}\)};
+ \fi
+ \foreach \pos/\lab in {a/1,b/2,c/3,d/4}{
+  \fill[qftblue] (\pos) circle (1.6pt);
+ }
+ \node[above] at (a) {1};\node[above] at (b) {2};
+ \node[below] at (c) {3};\node[below] at (d) {4};
+ \end{scope}
+}
+\end{tikzpicture}
+\end{center}
+The crossing in the third pairing is not an interaction vertex.
+
+The operator version also retains normal-ordered terms:
+\begin{equation}
+ \Tord e^{\ii\int J\hat\phi}
+ =:\!e^{\ii\int J\hat\phi}\!:\,
+   e^{-\frac12JD_FJ}.                               \label{eq:normal}
+\end{equation}
+Normal ordering is relative to the free vacuum. Its vacuum expectation
+is one, reducing \eqref{eq:normal} to \eqref{eq:Z}. At the operator
+level, a time-ordered product is not equal merely to the sum of
+fully contracted numbers; uncontracted normal-ordered fields remain.
+
+\begin{remarkbox}[Coincident insertions]
+\(D_F\) is a distribution. Expressions such as \(D_F(0)\), or
+\(\phi(x)^2\) without a prescription, are not automatically finite.
+The regulator, smearing, or a definition such as normal ordering must
+be retained when computing composite observables.
+\end{remarkbox}
+
+\module{Connected functions and the logarithm}
+For any normalized generating functional with \(Z[0]=1\), define
+\begin{equation}
+ C[J]=\log Z[J],\qquad W[J]=-\ii\log Z[J].
+\end{equation}
+Near zero source, the connected functions are defined by the cumulant
+expansion
+\begin{equation}
+ C[J]=\sum_{n\geq1}\frac{\ii^n}{n!}
+ \int\dd^4x_1\cdots\dd^4x_n\,
+ G_{n,c}(x_1,\ldots,x_n)J(x_1)\cdots J(x_n).          \label{eq:cumulants}
+\end{equation}
+Exponentiating this expansion partitions the labels among connected
+groups. For example,
+\begin{align}
+ G_1(1)&=G_{1,c}(1),\\
+ G_2(1,2)&=G_{2,c}(1,2)+G_1(1)G_1(2).
+\end{align}
+When the one-point function vanishes,
+\begin{equation}
+ G_4=G_{4,c}+G_{2,c}(1,2)G_{2,c}(3,4)
+ +G_{2,c}(1,3)G_{2,c}(2,4)+G_{2,c}(1,4)G_{2,c}(2,3).
+\end{equation}
+The connected function removes all contributions in which the
+insertions split into statistically disconnected groups.
+
+Careful tracking of the factor \(-\ii\) gives
+\begin{equation}
+ \left.\frac{\delta^n C}{\delta J_1\cdots\delta J_n}\right|_0
+ =\ii^nG_{n,c},\qquad
+ \left.\frac{\delta^n W}{\delta J_1\cdots\delta J_n}\right|_0
+ =\ii^{n-1}G_{n,c}.                                  \label{eq:W}
+\end{equation}
+For instance, \(\delta^2W|_0=\ii D_F\) in the free vacuum, rather
+than \(D_F\) itself. One may choose a different definition of the
+connected generator, but its derivative convention must change with it.
+
+For the free real scalar,
+\begin{equation}
+ C_0[J]=-\tfrac12JD_FJ,\qquad W_0[J]=\tfrac\ii2JD_FJ.
+\end{equation}
+Only the connected two-point function survives. Equation
+\eqref{eq:four} is nevertheless nonzero: its three terms are
+disconnected pairings. A Gaussian theory has no connected higher
+correlations, not no higher correlations.
+
+\begin{keyidea}[Two different cancellations]
+Dividing by the zero-source vacuum functional cancels vacuum diagrams
+with no external insertions. Taking a logarithm then selects connected
+groups of source insertions. Normalization and connectedness are
+related bookkeeping steps, but they are not the same operation.
+\end{keyidea}
+
+\module{Field equations inside correlation functions}
+The scalar Schwinger--Dyson identity is ordinary integration by parts
+at finite regulator. For any insertion \(F[\phi]\),
+\begin{equation}
+ \int\D\phi\,F\frac{\delta S}{\delta\phi(x)}e^{\ii S}
+ =\ii\int\D\phi\,\frac{\delta F}{\delta\phi(x)}e^{\ii S}.
+                                                        \label{eq:sd}
+\end{equation}
+The plus sign on the right is the same as in Lecture 17 with
+\(\hbar=1\). For the free action,
+\(\delta S_0/\delta\phi=-(\Box+m^2)\phi\).
+Taking \(F=\phi(y)\) yields
+\begin{equation}
+ (\Box_x+m^2)\langle0|\Tord\phi(x)\phi(y)|0\rangle
+ =-\ii\delta^{(4)}(x-y),                             \label{eq:greensign}
+\end{equation}
+which checks both the factor and sign in \eqref{eq:DF}.
+The operator equation holds without a source at distinct points;
+differentiating time ordering produces the contact term at coincidence.
+
+With \(\mathcal L_{\rm int}=-\lambda\phi^4/4!\), the same argument
+would give
+\begin{equation}
+ (\Box_x+m^2)G_2(x,y)
+ +\frac\lambda{3!}\langle\Tord\phi(x)^3\phi(y)\rangle
+ =-\ii\delta^{(4)}(x-y).                             \label{eq:hierarchy}
+\end{equation}
+The regulated composite field must be defined before taking a continuum
+limit. This example explains why interacting Schwinger--Dyson equations
+form a hierarchy: a two-point equation can involve a four-field
+expectation value.
+
+\subsection{The source equation checks the completed square}
+Integration by parts with a nonzero source gives
+\begin{equation}
+ \left[\frac1\ii\int\dd^4y\,A(x,y)\frac{\delta}{\delta J(y)}
+       +J(x)\right]Z_0[J]=0.                         \label{eq:sourceSD}
+\end{equation}
+Since \(\delta Z_0/\delta J=-D_FJZ_0\) and \(AD_F=\ii\), the two
+terms cancel. This is a compact independent sign check on the Gaussian
+formula. The source-free differential equation alone does not choose
+which inverse of \(A\) to use; vacuum boundary conditions still matter.
+
+In a field theory, integration by parts also assumes that the regulator
+and measure respect the variation being used. Simple translations of
+a free scalar integration variable have unit Jacobian. More general
+transformations can act nontrivially on the measure, a question that
+will become important when discussing quantum symmetries.
+
+\module{A complex scalar and charged sources}
+Write \(\Phi=(\phi_1+\ii\phi_2)/\sqrt2\) with two real fields of
+the same mass. Then
+\begin{equation}
+ S_0[\Phi]=\int\dd^4x\,
+ (\partial_\mu\Phi^*\partial^\mu\Phi-m^2\Phi^*\Phi)
+ =\Phi^*A\Phi
+\end{equation}
+with the same Feynman regulator as before. The factor \(1/2\) has
+disappeared because one complex field contains two real fields.
+At a finite regulator, the two real Gaussian determinants multiply:
+\begin{equation}
+ \mathcal Z_{0,\mathbb C}[0]=\mathcal N\,[\det(-\ii A)]^{-1}.
+\end{equation}
+The constant \(\mathcal N\) depends on the measure convention. This
+unnormalized vacuum integral is not the normalized value \(Z[0]=1\).
+
+Introduce independent commuting sources \(\bar J,J\), differentiating
+them independently even when they will eventually be complex conjugates:
+\begin{equation}
+ Z_0[\bar J,J]=
+ \frac{\int\D\Phi^*\D\Phi\,
+ e^{\ii(\Phi^*A\Phi+\bar J\Phi+\Phi^*J)}}{\mathcal Z_{0,\mathbb C}[0]}.
+\end{equation}
+The shift \(\Phi=\chi-A^{-1}J\),
+\(\Phi^*=\chi^*-\bar JA^{-1}\) gives
+\begin{equation}
+ Z_0[\bar J,J]=e^{-\ii\bar JA^{-1}J}=e^{-\bar JD_FJ}.
+                                                        \label{eq:complexZ}
+\end{equation}
+One derivative with respect to \(\bar J(x)\) inserts \(\ii\Phi(x)\),
+and one with respect to \(J(y)\) inserts \(\ii\Phi^*(y)\). Hence
+\begin{align}
+ \langle\Tord\Phi(x)\Phi^\dagger(y)\rangle&=D_F(x-y),\\
+ \langle\Tord\Phi(x)\Phi(y)\rangle
+ =\langle\Tord\Phi^\dagger(x)\Phi^\dagger(y)\rangle&=0.
+\end{align}
+The vanishing charged pairings follow from the unbroken global
+\(U(1)\) symmetry of the vacuum. They can also be checked by expanding
+in \(\phi_1,\phi_2\).
+
+For example,
+\begin{equation}
+ \langle\Tord\Phi_1\Phi_2\Phi^\dagger_3\Phi^\dagger_4\rangle
+ =D_{13}D_{24}+D_{14}D_{23}.                          \label{eq:complex4}
+\end{equation}
+There are two allowed pairings, not three: charge flow excludes a
+\(\Phi\Phi\) contraction. This is a useful bridge to Dirac fields,
+where sources also come in two types but are Grassmann odd, changing
+the relative sign between the two pairings.
+
+\module{The Euclidean scalar and its inverse}
+Under \(t=-\ii\tau\), the free Euclidean action is
+\begin{equation}
+ S_E=\frac12\int\dd^Dx_E\,
+ [ (\partial_E\phi)^2+m^2\phi^2]
+ =\frac12\phi A_E\phi,\qquad A_E=-\partial_E^2+m^2,
+\end{equation}
+where \(D=d+1\) is the total Euclidean dimension. For \(m>0\) the
+finite-volume quadratic form is strictly positive. Its covariance is
+\begin{equation}
+ C_E(x)=A_E^{-1}(x)=\int\frac{\dd^Dp}{(2\pi)^D}
+ \frac{e^{\ii p\cdot x}}{p^2+m^2},\qquad A_EC_E=\delta^{(D)}.
+                                                        \label{eq:CE}
+\end{equation}
+The normalized real-source functional has a positive quadratic exponent:
+\begin{equation}
+ Z_E[J]=\frac{\int\D\phi\,e^{-S_E+J\phi}}{\int\D\phi\,e^{-S_E}}
+ =e^{\frac12JC_EJ}.
+\end{equation}
+Its ordinary derivatives insert \(\phi\), with no factors of \(\ii\).
+The sign change relative to Minkowski sources is therefore expected.
+Analytic continuation includes the energy contour and its measure;
+substituting \(p^0=\ii p_D\) in a denominator alone misses a factor.
+
+\subsection{Proper time turns a propagator into a Gaussian}
+For separated points \(R=|x|>0\), use
+\(1/(p^2+m^2)=\int_0^\infty\dd s\,e^{-s(p^2+m^2)}\).
+The momentum integral then yields
+\begin{equation}
+ C_E(R)=\int_0^\infty\frac{\dd s}{(4\pi s)^{D/2}}
+ \exp\!\left(-m^2s-\frac{R^2}{4s}\right).             \label{eq:propertime}
+\end{equation}
+This representation displays ultraviolet sensitivity at small \(s\)
+and long-distance damping at large \(R\). At coincidence, the
+small-\(s\) integral diverges for \(D\geq2\), even though the
+Gaussian theory is exactly solvable.
+
+At temperature \(\beta^{-1}\), bosonic fields are periodic in
+Euclidean time with circumference \(\beta\). Replace the energy
+integral by \(\beta^{-1}\sum_{n\in\mathbb Z}\), with
+\(p_D=2\pi n/\beta\). At finite volume, the massless constant mode
+has zero action and needs an infrared prescription; one cannot
+blindly invert it. On the infinite line at zero temperature,
+\eqref{eq:CE} is the continuation of the vacuum Feynman function.
+
+\module{Bessel functions, distance scales, and the mass gap}
+Evaluating \eqref{eq:propertime} gives
+\begin{equation}
+ C_E(R)=\frac{m^\nu}{(2\pi)^{\nu+1}R^\nu}K_\nu(mR),
+ \qquad \nu=\frac D2-1=\frac{d-1}{2}.                \label{eq:bessel}
+\end{equation}
+The order is \((d-1)/2\) when \(d\) denotes spatial dimension.
+For \(D=4\), this becomes \(mK_1(mR)/(4\pi^2R)\).
+Using \(K_\nu(z)\sim\sqrt{\pi/(2z)}e^{-z}\) at large \(z\),
+\begin{equation}
+ C_E(R)\sim
+ \frac{m^{(D-3)/2}}{2(2\pi)^{(D-1)/2}}
+ \frac{e^{-mR}}{R^{(D-1)/2}}.
+                                                        \label{eq:largeR}
+\end{equation}
+The power is dimension dependent; a universal \(e^{-mR}/R\)
+would be incorrect. At short distance, for \(D>2\),
+\begin{equation}
+ C_E(R)\sim\frac{\Gamma(D/2-1)}{4\pi^{D/2}R^{D-2}}.
+\end{equation}
+In \(D=2\), \(C_E=K_0(mR)/(2\pi)\) instead behaves as
+\(-[\log(mR/2)+\gamma_E]/(2\pi)\). This logarithm is also why
+the massless limit needs an infrared convention in two dimensions.
+
+\subsection{Reading physical information from decay}
+For a general vacuum, an operator's connected Euclidean correlator
+has a spectral expansion in energy differences. Large separation
+selects the lightest state with a nonzero matrix element in that
+channel. The elementary free scalar creates a one-particle state of
+mass \(m\), so its correlation length is \(1/m\). A normal-ordered
+bilinear instead couples first to two-particle states and can decay
+with threshold \(2m\). A theory's mass gap and an individual
+operator's leading decay scale must therefore be distinguished.
+
+\subsection*{Questions to check understanding}
+\begin{enumerate}
+\item Which lattice canonical momentum has commutator \(\ii\delta_{\bm n\bm m}\)?
+\item Why does a real Gaussian give a determinant to power \(-1/2\),
+whereas a complex Gaussian gives power \(-1\)?
+\item Verify the source and Schwinger--Dyson checks of \(D_F\).
+\item Why does \(\log Z\) generate connected functions rather than all functions?
+\item Compare the three real-scalar pairings with the two charged pairings.
+\item What sets the exponential and the power law in \eqref{eq:largeR}?
+\end{enumerate}
+Next lecture replaces commuting integration variables by anticommuting
+ones, while retaining this source-and-inverse strategy.
+\end{document}

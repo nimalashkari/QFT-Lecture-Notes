@@ -1,0 +1,333 @@
+\documentclass[11pt]{article}
+
+\usepackage[letterpaper,margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb,mathtools,bm}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage[most]{tcolorbox}
+\usepackage{fancyhdr}
+\usepackage{parskip}
+
+\definecolor{qftblue}{HTML}{245A8D}
+\definecolor{qftgreen}{HTML}{2F6B4F}
+\definecolor{qftred}{HTML}{A23B3B}
+\definecolor{qftgray}{HTML}{F4F6F8}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=qftblue,
+  urlcolor=qftblue,
+  pdftitle={PHYS 662 Homework Set 1},
+  pdfauthor={Nima Lashkari}
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{PHYS 662: Quantum Field Theory I}
+\rhead{Homework Set 1}
+\cfoot{\thepage}
+\setlength{\headheight}{14pt}
+
+\setlist[enumerate]{leftmargin=2.2em,itemsep=0.55em,topsep=0.5em}
+\newlist{parts}{enumerate}{2}
+\setlist[parts,1]{label=\textbf{(\alph*)},leftmargin=2.3em,itemsep=0.7em}
+\setlist[parts,2]{label=\textbf{(\roman*)},leftmargin=2.4em,itemsep=0.45em}
+
+\newcommand{\dd}{\mathrm{d}}
+\newcommand{\ii}{\mathrm{i}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\cH}{\mathcal{H}}
+
+\newtcolorbox{conventionbox}[1][]{
+  enhanced,
+  breakable,
+  colback=qftgray,
+  colframe=qftblue,
+  boxrule=0.8pt,
+  arc=1.5mm,
+  title={#1},
+  fonttitle=\bfseries,
+  coltitle=white
+}
+
+\newcommand{\problem}[2]{%
+  \clearpage
+  \section*{\color{qftblue}Problem #1: #2}
+  \addcontentsline{toc}{section}{Problem #1: #2}
+}
+
+\begin{document}
+
+\begin{center}
+  {\scshape\Large PHYS 662 --- Quantum Field Theory I\par}
+  \vspace{0.25em}
+  {\Huge\bfseries\color{qftblue} Homework Set 1\par}
+  \vspace{0.25em}
+  {\large Lectures 1--4 \quad Fall 2026\par}
+\end{center}
+
+\vspace{0.5em}
+\noindent
+\textbf{Name:} \rule{0.44\textwidth}{0.4pt}
+\hfill
+\textbf{Due:} \rule{0.24\textwidth}{0.4pt}
+
+\begin{conventionbox}[Instructions and conventions]
+Show the reasoning leading to each result and state any additional
+assumptions. Unless a problem says otherwise, use periodic boundary
+conditions and natural units \(\hbar=c=k_B=1\). Fourier-transform
+normalizations must be stated and used consistently.
+\end{conventionbox}
+
+\noindent
+The four problems are weighted equally.
+
+\tableofcontents
+
+\problem{1}{Translation-invariant quadratic lattices}
+
+Consider \(N\) identical degrees of freedom \((q_j,p_j)\) on a periodic
+one-dimensional lattice, with \(j=0,\ldots,N-1\) understood modulo \(N\).
+Let
+\begin{equation}
+  H=
+  \sum_{j=0}^{N-1}\frac{p_j^2}{2m}
+  +\frac12\sum_{j,\ell=0}^{N-1}q_j K_{j\ell}q_\ell,
+  \qquad
+  K_{j\ell}=K(j-\ell).
+  \label{eq:generalLattice}
+\end{equation}
+Assume that \(K_{j\ell}\) is real, symmetric, and positive semidefinite.
+
+\begin{parts}
+  \item Define a discrete translation by \(n\) sites and show explicitly that
+  Eq.~\eqref{eq:generalLattice} is invariant under it. Distinguish this
+  discrete translation of lattice sites from a uniform displacement
+  \(q_j\mapsto q_j+c\).
+
+  \item Introduce the discrete Fourier transform
+  \begin{equation}
+    q_j=\frac{1}{\sqrt N}\sum_k Q_k\,e^{\ii kaj},
+    \qquad
+    p_j=\frac{1}{\sqrt N}\sum_k P_k\,e^{\ii kaj},
+    \qquad
+    k=\frac{2\pi n}{Na},\quad n=0,\ldots,N-1.
+    \label{eq:DFT}
+  \end{equation}
+  State the reality conditions on \(Q_k\) and \(P_k\). Determine the normal
+  modes and show that their frequencies satisfy
+  \begin{equation}
+    \omega^2(k)=\frac{\widetilde K(k)}{m},
+    \qquad
+    \widetilde K(k)=\sum_r K(r)e^{-\ii kar}.
+  \end{equation}
+  Explain why the assumptions on \(K\) make \(\widetilde K(k)\) real and
+  nonnegative.
+
+  \item What additional condition on \(K\) makes the Hamiltonian invariant
+  under \(q_j\mapsto q_j+c\)? Relate it to the \(k=0\) normal mode.
+
+  \item Now consider a square lattice of spacing \(a\), with one real scalar
+  displacement \(q_{\bm r}\) at each site and identical nearest-neighbor
+  springs:
+  \begin{equation}
+    H=\sum_{\bm r}\frac{p_{\bm r}^{2}}{2m}
+    +\frac{\kappa}{2}
+    \sum_{\bm r}\sum_{\alpha=1}^{2}
+    \left(q_{\bm r+a\hat e_\alpha}-q_{\bm r}\right)^2,
+    \qquad \kappa>0.
+    \label{eq:squareLattice}
+  \end{equation}
+  Find the plane-wave normal modes and derive
+  \begin{equation}
+    \omega^2(\bm k)
+    =\frac{4\kappa}{m}
+    \left[
+      \sin^2\left(\frac{k_xa}{2}\right)
+      +\sin^2\left(\frac{k_ya}{2}\right)
+    \right].
+    \label{eq:squareDispersion}
+  \end{equation}
+  Obtain the long-wavelength dispersion and identify the propagation speed.
+\end{parts}
+
+\problem{2}{The one-dimensional ferromagnetic Heisenberg model}
+
+Consider a periodic chain of quantum spins of length \(s\),
+\begin{equation}
+  H=-J\sum_{j=0}^{N-1}\bm S_j\cdot\bm S_{j+1},
+  \qquad J>0,
+  \label{eq:Heisenberg}
+\end{equation}
+with \(\hbar=1\) and
+\begin{equation}
+  [S_i^\alpha,S_j^\beta]
+  =\ii\delta_{ij}\epsilon^{\alpha\beta\gamma}S_i^\gamma,
+  \qquad
+  \bm S_i^{2}=s(s+1).
+  \label{eq:spinAlgebra}
+\end{equation}
+
+\begin{parts}
+  \item Use the Heisenberg equation \(\dot{\bm S}_i=\ii[H,\bm S_i]\) to show
+  that
+  \begin{equation}
+    \dot{\bm S}_i
+    =J\bm S_i\times
+    \left(\bm S_{i-1}+\bm S_{i+1}\right).
+    \label{eq:spinEOM}
+  \end{equation}
+  Check directly that the total spin
+  \(\bm S_{\rm tot}=\sum_i\bm S_i\) is conserved.
+
+  \item Take the large-\(s\) classical limit and write
+  \(\bm S_i=s\bm n(x_i,t)\), where \(x_i=ia\) and
+  \(|\bm n|=1\). Expand Eq.~\eqref{eq:spinEOM} through order \(a^2\) and show
+  that the long-wavelength field obeys
+  \begin{equation}
+    \partial_t\bm n
+    =Js a^2\,\bm n\times\partial_x^2\bm n
+    +\mathcal O(a^4\partial_x^4).
+    \label{eq:LandauLifshitz}
+  \end{equation}
+  Verify that this evolution preserves \(|\bm n|=1\).
+
+  \item Linearize about the ferromagnetic ground state
+  \(\bm n=\hat{\bm z}\). With
+  \(\psi=n_x+\ii n_y\), show that
+  \begin{equation}
+    \ii\partial_t\psi=-Js a^2\partial_x^2\psi.
+  \end{equation}
+  Determine the long-wavelength magnon dispersion and compare it with the
+  exact lattice result
+  \(\omega(k)=2Js(1-\cos ka)\).
+\end{parts}
+
+\problem{3}{Gaussian \texorpdfstring{\(O(N)\)}{O(N)} model and correlation length}
+
+Let \(\bm\phi=(\phi^1,\ldots,\phi^N)\) be a classical field in \(d\)
+Euclidean dimensions with free-energy functional
+\begin{equation}
+  \mathcal F[\bm\phi]
+  =\frac12\int \dd^d x\,
+  \left[
+    \partial_i\phi^a\partial_i\phi^a
+    +r\,\phi^a\phi^a
+  \right],
+  \qquad r>0,
+  \label{eq:GaussianON}
+\end{equation}
+and thermal weight \(Z^{-1}e^{-\mathcal F/T}\). Repeated indices are summed.
+
+\begin{parts}
+  \item Show that Eq.~\eqref{eq:GaussianON} is invariant under spatial
+  rotations and under the independent internal transformation
+  \(\phi^a(x)\mapsto U^a{}_b\phi^b(x)\), \(U\in O(N)\). Under which group is
+  \(\phi^a\) a scalar, and under which group is it a vector?
+
+  \item Fourier transform the field and diagonalize \(\mathcal F\). Use the
+  resulting Gaussian integral to derive
+  \begin{equation}
+    \langle\phi^a(\bm k)\phi^b(\bm k')\rangle
+    =(2\pi)^d\delta^{ab}\delta^{(d)}(\bm k+\bm k')
+    \frac{T}{\bm k^2+r}.
+    \label{eq:GaussianCorrelator}
+  \end{equation}
+
+  \item Show that the correlation length is
+  \(\xi=r^{-1/2}\). In \(d=3\), evaluate the real-space two-point function and
+  show that
+  \begin{equation}
+    \langle\phi^a(\bm x)\phi^b(\bm 0)\rangle
+    =\delta^{ab}\frac{T}{4\pi|\bm x|}
+    e^{-|\bm x|/\xi}.
+  \end{equation}
+
+  \item Define the susceptibility per component by
+  \begin{equation}
+    \chi=\frac1N\int\dd^d x\,
+    \langle\phi^a(\bm x)\phi^a(\bm 0)\rangle.
+  \end{equation}
+  Compute \(\chi\), and explain what happens to \(\xi\) and \(\chi\) as
+  \(r\to0^+\). Why does this limit make the separation between microscopic
+  and long-distance scales especially large?
+\end{parts}
+
+\problem{4}{Fock space and spatial versus internal symmetry}
+
+Consider \(N\) real quantum scalar fields in \(d\) spatial dimensions,
+\begin{equation}
+  H=\frac12\int\dd^d x\,
+  \left[
+    \pi^a\pi^a
+    +\partial_i\phi^a\partial_i\phi^a
+    +m^2\phi^a\phi^a
+  \right],
+  \label{eq:multiscalarH}
+\end{equation}
+with equal-time commutators
+\begin{equation}
+  [\phi^a(t,\bm x),\pi^b(t,\bm y)]
+  =\ii\delta^{ab}\delta^{(d)}(\bm x-\bm y),
+  \qquad
+  [\phi^a,\phi^b]=[\pi^a,\pi^b]=0.
+  \label{eq:canonicalFieldCCR}
+\end{equation}
+
+\begin{parts}
+  \item Show that the Hamiltonian is invariant under
+  \begin{align}
+    \text{spatial rotations: }&
+    \phi_R^a(t,\bm x)=\phi^a(t,R^{-1}\bm x),
+    &&R\in SO(d),\notag\\
+    \text{internal rotations: }&
+    \phi_U^a(t,\bm x)=U^a{}_b\phi^b(t,\bm x),
+    &&U\in O(N),
+  \end{align}
+  with analogous transformations for \(\pi^a\). Show that the two actions
+  commute. Explain precisely why \(\phi^a\) is a spatial scalar but an
+  internal vector.
+
+  \item Let \(\omega_{\bm k}=\sqrt{\bm k^2+m^2}\) and use
+  \begin{equation}
+    \phi^a(t,\bm x)=
+    \int\frac{\dd^d k}{(2\pi)^d}
+    \frac{1}{\sqrt{2\omega_{\bm k}}}
+    \left[
+      a^a_{\bm k}e^{-\ii\omega_{\bm k}t+\ii\bm k\cdot\bm x}
+      +a^{a\dagger}_{\bm k}
+       e^{\ii\omega_{\bm k}t-\ii\bm k\cdot\bm x}
+    \right].
+    \label{eq:multiscalarExpansion}
+  \end{equation}
+  Determine the corresponding expansion of \(\pi^a=\dot\phi^a\) and derive
+  \begin{equation}
+    [a^a_{\bm k},a^{b\dagger}_{\bm k'}]
+    =(2\pi)^d\delta^{ab}\delta^{(d)}(\bm k-\bm k').
+    \label{eq:modeCCR}
+  \end{equation}
+  Verify the remaining equal-time commutators.
+
+  \item Show that a one-particle state
+  \(a^{a\dagger}_{\bm k}|0\rangle\) transforms as a vector of \(O(N)\), while
+  its momentum is rotated by \(SO(d)\). State the transformation law for
+  \(a^{a\dagger}_{\bm k}\) under each group.
+
+  \item Construct, up to normalization, an \(O(N)\)-singlet two-particle state
+  with total momentum zero. Explain why there is no nonzero one-particle
+  singlet in the defining vector representation for \(N>1\).
+
+  \item Use Eq.~\eqref{eq:multiscalarExpansion} to verify that
+  \begin{equation}
+    [\phi^a(t,\bm x),\phi^b(t,\bm y)]=0.
+  \end{equation}
+  Explain how this equal-time statement fits into the broader locality
+  requirement discussed in Lecture 2.
+\end{parts}
+
+\end{document}

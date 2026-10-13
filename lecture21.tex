@@ -1,0 +1,494 @@
+\documentclass[11pt]{article}
+\usepackage[letterpaper,margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern,microtype}
+\usepackage{amsmath,amssymb,mathtools,bm,slashed}
+\usepackage{xcolor,enumitem,booktabs,array,needspace}
+\usepackage[most]{tcolorbox}
+\usepackage{fancyhdr,titlesec,parskip,hyperref}
+\definecolor{qftblue}{HTML}{245A8D}
+\definecolor{qftgreen}{HTML}{2F6B4F}
+\definecolor{qftgray}{HTML}{F4F6F8}
+\hypersetup{colorlinks=true,linkcolor=qftblue,urlcolor=qftblue,pdfauthor={Nima Lashkari}}
+\pagestyle{fancy}\fancyhf{}
+\lhead{PHYS 662: Quantum Field Theory I}\cfoot{\thepage}
+\setlength{\headheight}{14pt}
+\titleformat{\section}{\Large\bfseries\color{qftblue}}{\thesection.}{0.6em}{}
+\titleformat{\subsection}{\large\bfseries\color{qftgreen}}{\thesubsection}{0.6em}{}
+\setlist[enumerate]{leftmargin=2em,itemsep=0.25em,topsep=0.35em}
+\setlist[itemize]{leftmargin=2em,itemsep=0.2em,topsep=0.35em}
+\newcommand{\dd}{\mathrm d}
+\newcommand{\ii}{\mathrm i}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\tr}{\operatorname{tr}}
+\newcommand{\Tr}{\operatorname{Tr}}
+\newcommand{\diag}{\operatorname{diag}}
+\newcommand{\Lag}{\mathcal L}
+\newcommand{\D}{\mathcal D}
+\newcommand{\vac}{\lvert0\rangle}
+\newcommand{\vbra}{\langle0\rvert}
+\newcommand{\Tord}{\mathrm T}
+\newcommand{\ket}[1]{\lvert#1\rangle}
+\newcommand{\bra}[1]{\langle#1\rvert}
+\newtcolorbox{keyidea}[1][]{enhanced,breakable,colback=qftgray,colframe=qftblue,
+ boxrule=0.7pt,arc=1.5mm,title={#1},fonttitle=\bfseries,coltitle=white}
+\newtcolorbox{remarkbox}[1][]{enhanced,breakable,colback=white,colframe=qftgreen,
+ boxrule=0.6pt,arc=1.5mm,title={#1},fonttitle=\bfseries,coltitle=white}
+\newcommand{\intp}{\int\!\frac{\dd^4p}{(2\pi)^4}}
+\newcommand{\MSbar}{\overline{\mathrm{MS}}}
+\newcommand{\module}[1]{\clearpage\section{#1}}
+\newcommand{\lecturefront}[4]{%
+\rhead{Lecture #1}\hypersetup{pdftitle={PHYS 662 Lecture #1: #2}}
+\begin{document}\pagenumbering{gobble}
+\begin{titlepage}\centering\vspace*{1.05in}
+{\scshape\Large PHYS 662 --- Quantum Field Theory I\par}
+\vspace{0.35in}{\Huge\bfseries\color{qftblue}Lecture #1\par}
+\vspace{0.2in}{\LARGE\bfseries #2\par}
+\vspace{0.2in}{\large\color{qftgreen}#3\par}
+\vspace{0.6in}{\large Nima Lashkari\par}{\large Fall 2026\par}
+\vfill\begin{minipage}{0.86\textwidth}\small #4\par\medskip
+Course page: \url{https://nimalashkari.com/quantum-field-theory-2026-part-i/}
+\end{minipage}\vspace{0.5in}\end{titlepage}
+\pagenumbering{roman}\setcounter{tocdepth}{1}\tableofcontents
+\vfill\begin{remarkbox}[Place in the course]
+Lectures 19--20 established free scalar and fermion path integrals.
+Lecture 21 turns the scalar source expansion into Feynman rules.
+Lecture 22 evaluates the first scalar loops and introduces renormalization.
+Problem Set 7 connects the diagram counting to these calculations.
+\end{remarkbox}\clearpage\pagenumbering{arabic}}
+\lecturefront{21}{Interactions in the Path-Integral Formalism}
+{From source derivatives to Feynman rules}
+{We use the free scalar Gaussian as a calculational tool for an interacting
+theory. The main goals are to derive diagram weights, distinguish
+connected and one-particle-irreducible functions, and translate between
+position space, momentum space, and scattering amplitudes.}
+
+\section{An interacting theory built from the free Gaussian}
+The scalar source functional of Lecture 19 already contains all free
+correlation functions. An interaction changes their weights and connects
+contractions that were previously independent. We work in the symmetric
+vacuum of a massive real scalar, with \(m^2>0\), small positive \(\lambda\),
+\(\hbar=c=1\), and \(\eta_{\mu\nu}=\diag(1,-1,-1,-1)\):
+\begin{equation}
+ S[\phi]=S_0[\phi]+S_{\rm int}[\phi],\qquad
+ \Lag=\frac12(\partial\phi)^2-\frac12m^2\phi^2-\frac{\lambda}{4!}\phi^4,
+ \quad S_{\rm int}=-\frac{\lambda}{4!}\int\dd^4x\,\phi^4.
+ \label{eq:action}
+\end{equation}
+The minus sign in \(S_{\rm int}\) corresponds to a positive quartic
+potential. The factor \(4!\) is a useful convention, not an extra
+physical parameter. At this stage the theory is regulated; coincident
+contractions will be defined and renormalized in Lecture 22.
+
+Normalize the vacuum functional from the beginning:
+\begin{equation}
+ Z[J]=\frac{\int\D\phi\,e^{\ii S[\phi]+\ii\int J\phi}}
+ {\int\D\phi\,e^{\ii S[\phi]}},\qquad Z[0]=1,\qquad
+ G_n(x_1,\ldots,x_n)=\left.\frac{1}{\ii^n}
+ \frac{\delta^n Z}{\delta J(x_1)\cdots\delta J(x_n)}\right|_{J=0}.
+ \label{eq:Z}
+\end{equation}
+The \(\ii0\) prescription, or a small imaginary-time tilt at the
+endpoints, selects the interacting vacuum \(\ket{\Omega}\).
+Thus \(G_n=\langle\Omega|\Tord\phi(x_1)\cdots\phi(x_n)|\Omega\rangle\).
+This is a vacuum correlator, not a thermal trace or a fixed-field
+transition kernel. Those other boundary conditions give other Green
+functions even for the same action.
+
+Keep the propagator convention of the previous lectures:
+\begin{equation}
+ D_F(x-y)=\intp\frac{\ii e^{-\ii p\cdot(x-y)}}{p^2-m^2+\ii0},
+ \qquad (\Box_x+m^2)D_F(x-y)=-\ii\delta^{(4)}(x-y),
+ \label{eq:DF}
+\end{equation}
+\begin{equation}
+ Z_0[J]=\exp\!\left[-\frac12\int\dd^4x\dd^4y\,
+ J(x)D_F(x-y)J(y)\right].                         \label{eq:freeZ}
+\end{equation}
+\begin{keyidea}[One convention for every diagram]
+A contraction is \(D_F\), including its numerator \(\ii\).
+A quartic vertex will be \(-\ii\lambda\).
+Do not attach another \(\ii\) to a line. Odd vacuum correlators vanish
+because we expand about the unbroken \(\phi\mapsto-\phi\) vacuum.
+\end{keyidea}
+The denominator of \eqref{eq:Z} removes components with no external
+insertions. It does not make every remaining diagram connected.
+
+\module{Exact equations before the expansion}
+Functional integration by parts gives a useful check on perturbation
+theory. With a regulator in place and boundary terms absent,
+\begin{equation}
+ 0=\int\D\phi\,\frac{\delta}{\delta\phi(x)}
+ \left(F[\phi]e^{\ii S[\phi]}\right)
+ \quad\Longrightarrow\quad
+ \left\langle F\frac{\delta S}{\delta\phi(x)}\right\rangle
+ =\ii\left\langle\frac{\delta F}{\delta\phi(x)}\right\rangle.
+ \label{eq:ibp}
+\end{equation}
+Using a source exponential as \(F\), and
+\(\delta S/\delta\phi=-(\Box+m^2)\phi-\lambda\phi^3/3!\), gives
+\begin{equation}
+ \left[(\Box_x+m^2)\frac{1}{\ii}\frac{\delta}{\delta J(x)}
+ +\frac{\lambda}{3!}\left(\frac{1}{\ii}\frac{\delta}{\delta J(x)}\right)^3
+ -J(x)\right]Z[J]=0.                              \label{eq:SD}
+\end{equation}
+This is the Schwinger--Dyson equation. At zero source it relates the
+one-point and three-point functions. One additional source derivative
+produces a contact term:
+\begin{equation}
+ (\Box_x+m^2)G_2(x,y)+\frac{\lambda}{3!}G_4(x,x,x,y)
+ =-\ii\delta^{(4)}(x-y).                          \label{eq:SD2}
+\end{equation}
+The delta function is essential. Time ordering and coincident operator
+insertions prevent us from using the classical equation inside a
+correlator without contact terms.
+
+For \(X=(x_1,\ldots,x_n)\), let \(X_{\widehat a}\) omit \(x_a\).
+Repeated differentiation gives the hierarchy
+\begin{align}
+ (\Box_x+m^2)G_{n+1}(x,X)+\frac{\lambda}{3!}G_{n+3}(x,x,x,X)
+ &=-\ii\sum_{a=1}^n\delta^{(4)}(x-x_a)G_{n-1}(X_{\widehat a}),
+ \label{eq:hierarchy}\\
+ G_{n+1}(x,X)&=\sum_{a=1}^nD_F(x-x_a)G_{n-1}(X_{\widehat a})\notag\\
+ &\quad-\frac{\ii\lambda}{3!}\int\dd^4z\,
+ D_F(x-z)G_{n+3}(z,z,z,X).                        \label{eq:integralSD}
+\end{align}
+The last line uses the Feynman inverse and vacuum boundary conditions.
+For \(\lambda=0\), it recursively generates Wick's pairings, with
+\(G_0=1\). For nonzero coupling it is an infinite coupled system, not
+a closed equation for \(G_2\).
+
+\begin{remarkbox}[A mean field is not the full quantum equation]
+The identity \(\langle V'(\phi)\rangle\) is generally different from
+\(V'(\langle\phi\rangle)\). Replacing the former by the latter discards
+fluctuations and requires an approximation. The symmetric vacuum has
+\(\langle\phi\rangle=0\); a general interacting one-point function is
+not determined by the extrema of the classical potential alone.
+\end{remarkbox}
+
+\module{Perturbation theory and the cancellation of vacuum bubbles}
+Every field in the interaction can be replaced by a source derivative.
+Define the interaction differential operator
+\[
+ \widehat V=-\frac{\ii\lambda}{4!}\int\dd^4z\,
+ \left(\frac{1}{\ii}\frac{\delta}{\delta J(z)}\right)^4.
+\]
+Then the normalized expansion is
+\begin{equation}
+ Z[J]=\frac{e^{\widehat V}Z_0[J]}
+ {\left.e^{\widehat V}Z_0[J]\right|_{J=0}}.         \label{eq:operatorZ}
+\end{equation}
+Expanding the exponential organizes the answer by the number of
+vertices. In general this is an asymptotic expansion; we do not assume
+convergence of the infinite series.
+
+A first-order calculation shows what the normalization does. Write
+\begin{equation}
+ f(z)=\int\dd^4x\,D_F(z-x)J(x),\qquad
+ \frac{1}{\ii Z_0}\frac{\delta Z_0}{\delta J(z)}=\ii f(z).
+\end{equation}
+The Gaussian with source has mean \(\ii f\) and connected covariance
+\(D_F\). Four derivatives therefore give
+\begin{equation}
+ \frac{1}{Z_0}\left(\frac{1}{\ii}\frac{\delta}{\delta J(z)}\right)^4Z_0
+ =3D_F(0)^2-6D_F(0)f(z)^2+f(z)^4.                \label{eq:polynomial}
+\end{equation}
+There are three ways to pair four fields, six ways to choose the two
+fields replaced by their mean, and one term with four means. The
+relative minus sign follows from \((\ii f)^2=-f^2\).
+
+The term \(3D_F(0)^2\) is independent of \(J\), so the denominator of
+\eqref{eq:operatorZ} cancels it:
+\begin{equation}
+ Z[J]=Z_0[J]\left\{1-\frac{\ii\lambda}{4!}\int\dd^4z\,
+ [f(z)^4-6D_F(0)f(z)^2]+O(\lambda^2)\right\}.    \label{eq:Zfirst}
+\end{equation}
+Two source derivatives now yield
+\begin{equation}
+ G_2(x,y)=D_F(x-y)-\frac{\ii\lambda}{2}D_F(0)
+ \int\dd^4z\,D_F(x-z)D_F(z-y)+O(\lambda^2).
+ \label{eq:tadpoleposition}
+\end{equation}
+The factor \(1/2\) is the tadpole's diagram weight. Applying
+\(\Box_x+m^2\) to this expression reproduces \eqref{eq:SD2} with
+\(G_4^{(0)}(x,x,x,y)=3D_F(0)D_F(x-y)\), independently checking the sign.
+
+At higher orders, components with no external points exponentiate
+and factor out of the numerator. The denominator cancels that entire
+factor. Disconnected products attached to external points survive:
+for example the three free pairings of a four-point function.
+Vacuum-energy calculations require the unnormalized functional;
+normalization deliberately removes that information here.
+
+\module{Wick contractions and symmetry factors}
+At order \(V\), the interaction expansion contains
+\(1/[V!(4!)^V]\). Wick contraction produces many identical integrals.
+For a graph with fixed, labeled external points, its coefficient is
+\begin{equation}
+ \frac{N_{\rm contractions}}{V!(4!)^V}\equiv\frac{1}{S}.
+ \label{eq:symmetry}
+\end{equation}
+Here \(S\) is the symmetry factor. It counts relabelings of internal
+vertices and line ends that leave the graph unchanged while keeping
+external labels fixed. A reflection that exchanges two distinct
+external particles is not automatically such a symmetry.
+
+\begin{center}
+\begin{tikzpicture}[scale=0.95,thick,every node/.style={font=\small}]
+ \draw (0,0) circle (0.4);\draw (0,0.8) circle (0.4);
+ \fill (0,0.4) circle (2pt);\node at (0,-0.75){vacuum: \(S=8\)};
+ \draw (2,0)--(4,0);\draw (3,0.4) circle (0.4);
+ \fill (3,0) circle (2pt);\node[left] at (2,0){\(x\)};
+ \node[right] at (4,0){\(y\)};\node at (3,-0.75){tadpole: \(S=2\)};
+ \begin{scope}[xshift=1cm]
+ \draw (5.2,-0.25)--(6,0.4)--(6.8,-0.25);
+ \draw (5.2,1.05)--(6,0.4)--(6.8,1.05);
+ \fill (6,0.4) circle (2pt);\node at (6,-0.75){four-point tree: \(S=1\)};
+ \end{scope}
+\end{tikzpicture}
+\end{center}
+For the one-vertex vacuum graph there are three pairings, so
+\(3/4!=1/8\). For the tadpole, attach the first external field to one
+of four vertex fields and the second to one of the remaining three.
+The last two contract with each other: \(4\cdot3/4!=1/2\).
+For a four-point tree, all four external fields attach to the vertex:
+\(4!/4!=1\).
+
+A less immediate example is a four-point bubble with the partition
+\((12|34)\). Two lines join its two vertices. Either integrated vertex
+can receive \(x_1,x_2\), and each receives its two external fields in
+\(4\cdot3\) ways. The remaining ends join in \(2!\) ways. Consequently
+\begin{equation}
+ \frac{2(4\cdot3)^2\,2!}{2!(4!)^2}=\frac12.
+ \label{eq:bubblecount}
+\end{equation}
+There are three partitions, \((12|34),(13|24),(14|23)\). Each has
+weight \(1/2\); this is separate from summing the three channels.
+
+\begin{keyidea}[Position-space rules for the real scalar]
+Draw the desired graphs with labeled external points. Put \(D_F(x-y)\)
+on every line, \(-\ii\lambda\) at each quartic vertex, and integrate
+each vertex over \(\dd^4z\). Multiply by \(1/S\). For normalized
+correlators exclude vacuum components; for connected correlators keep
+only connected graphs. Include each distinct external assignment once.
+\end{keyidea}
+These rules abbreviate a derivation from the Gaussian. When a diagram
+weight is uncertain, counting contractions is more reliable than
+judging the apparent symmetry of a particular drawing.
+
+\module{Connected functions and irreducible interaction kernels}
+Define \(W[J]=-\ii\log Z[J]\), as in Lecture 19. The exponential formula
+for disconnected graphs gives
+\begin{equation}
+ \log Z[J]=\sum_{n\geq1}\frac{\ii^n}{n!}\int J(x_1)\cdots J(x_n)
+ G_{n,c}(x_1,\ldots,x_n),\qquad
+ \left.\delta_J^nW\right|_0=\ii^{n-1}G_{n,c}.     \label{eq:connected}
+\end{equation}
+Spacetime integrations are implicit in the first expression. In the
+symmetric vacuum \(G_{2,c}=G_2\), while
+\begin{equation}
+ G_4(1,2,3,4)=G_{4,c}(1,2,3,4)
+ +G_2(1,2)G_2(3,4)+G_2(1,3)G_2(2,4)+G_2(1,4)G_2(2,3).
+ \label{eq:G4decompose}
+\end{equation}
+The two-point functions in this identity are the full interacting ones.
+At leading order the new connected part is
+\begin{equation}
+ G_{4,c}^{(1)}(x_1,x_2,x_3,x_4)
+ =-\ii\lambda\int\dd^4z\,\prod_{a=1}^4D_F(x_a-z).
+ \label{eq:tree4}
+\end{equation}
+A connected graph is \emph{one-particle irreducible} (1PI) if cutting any
+one internal line cannot disconnect it. A self-energy insertion on an
+external leg of \eqref{eq:tree4} is connected but one-particle reducible.
+The two lines in a bubble provide two paths between its vertices;
+cutting just one leaves it connected.
+
+\begin{center}
+\begin{tikzpicture}[thick,every node/.style={font=\small}]
+ \draw (-0.8,-0.6)--(0,0)--(-0.8,0.6);
+ \draw (2.3,-0.6)--(1.5,0)--(2.3,0.6);
+ \draw (0,0) to[bend left=48] (1.5,0);
+ \draw (0,0) to[bend right=48] (1.5,0);
+ \fill (0,0) circle (2pt);\fill (1.5,0) circle (2pt);
+ \node at (0.75,-1){1PI bubble};
+ \draw (4,-0.6)--(4.8,0)--(4,0.6);
+ \draw (4.8,0)--(5.6,-0.6);\draw (4.8,0)--(6.8,0.6);
+ \draw (5.899,0.695) circle (0.35);\fill (6,0.36) circle (2pt);
+ \fill (4.8,0) circle (2pt);\node at (5.4,-1){external-leg correction};
+\end{tikzpicture}
+\end{center}
+At order \(\lambda^2\), the four-point function contains both the three
+1PI bubbles and the four choices for a tadpole on an external leg of
+the tree vertex. Merely taking a logarithm removes neither type.
+Using full external propagators absorbs these leg corrections into
+those propagators; it leaves the amputated interaction kernel to be
+computed separately.
+
+The \(\mathbb Z_2\) symmetry forbids a three-point vertex in this vacuum.
+As a result the fully amputated connected four-point kernel is 1PI.
+This special simplification does not generalize to the six-point
+function: two quartic vertices joined by one line already give a
+connected, reducible six-point tree.
+
+\module{Momentum-space rules and independent loop momenta}
+Fourier transform with \(\phi(x)=\intp e^{-\ii p\cdot x}\widetilde\phi(p)\).
+The integral over a vertex position gives
+\begin{equation}
+ \int\dd^4z\,e^{-\ii(p_1+p_2+p_3+p_4)\cdot z}
+ =(2\pi)^4\delta^{(4)}(p_1+p_2+p_3+p_4).
+\end{equation}
+Use all momenta entering each vertex, reversing a sign when an oriented
+internal momentum leaves it. Lines represent a real scalar, so these
+arrows track momentum, not a conserved particle charge.
+
+\begin{keyidea}[Momentum-space Feynman rules]
+\begin{enumerate}
+\item An internal line of momentum \(k\) contributes
+\(\ii/(k^2-m^2+\ii0)\).
+\item A quartic vertex contributes \(-\ii\lambda\), with momentum
+conservation at that vertex.
+\item Integrate each independent loop momentum with
+\(\int\dd^4\ell/(2\pi)^4\), and multiply the graph by \(1/S\).
+\item Factor out the remaining overall
+\((2\pi)^4\delta^{(4)}(\sum p_a)\). Include external propagators for a
+correlator; omit them only when specifying an amputated quantity.
+\end{enumerate}
+\end{keyidea}
+One may instead assign an integral to every internal line and keep all
+vertex delta functions. Both procedures agree: for a connected graph
+with \(I\) internal lines and \(V\) vertices, \(V-1\) independent
+constraints eliminate momenta, leaving
+\begin{equation}
+ L=I-V+1.                                         \label{eq:loops}
+\end{equation}
+Thus it is the number of independent loops, rather than the number of
+internal lines, that counts the integrals remaining after conservation.
+For a quartic graph with \(E\) external legs,
+\begin{equation}
+ 4V=2I+E,\qquad L=V-\frac E2+1.                  \label{eq:topology}
+\end{equation}
+A tadpole has \((V,I,E,L)=(1,1,2,1)\); a four-point bubble has
+\((2,2,4,1)\). Both are one-loop graphs, although their powers of
+\(\lambda\) differ. A six-point tree has \((2,1,6,0)\).
+
+For example, the two-point self-energy insertion is conventionally
+written \(-\ii\Sigma\). The tadpole rules give
+\begin{equation}
+ -\ii\Sigma_{\rm tad}(p^2)
+ =\frac{-\ii\lambda}{2}\int\frac{\dd^4k}{(2\pi)^4}
+ \frac{\ii}{k^2-m^2+\ii0}.                         \label{eq:sigma}
+\end{equation}
+No external momentum flows through its loop, so it is independent of
+\(p\). The integral is ultraviolet divergent. The rules specify the
+integrand and its weight; a regulator is still needed to evaluate it.
+
+\module{Amputation and the first scattering amplitudes}
+For a connected four-point function, factor out its momentum delta
+function and call the remaining transform \(\widetilde G_{4,c}^{\rm red}\).
+At tree level \eqref{eq:tree4} becomes
+\begin{equation}
+ \widetilde G_{4,c}^{\rm red}(p_1,p_2,p_3,p_4)
+ =\left[\prod_{a=1}^4\frac{\ii}{p_a^2-m^2+\ii0}\right](-\ii\lambda).
+ \label{eq:amputate}
+\end{equation}
+Amputation removes the four external propagators, leaving
+\(-\ii\lambda\). It does not remove an internal propagator or impose
+on-shell kinematics by itself.
+
+To connect with particles, use relativistically normalized states
+\(\langle\bm p|\bm q\rangle=2E_{\bm p}(2\pi)^3
+\delta^{(3)}(\bm p-\bm q)\), and define
+\begin{equation}
+ \langle f|S-1|i\rangle
+ =\ii(2\pi)^4\delta^{(4)}(P_f-P_i)\,\mathcal M_{fi}.
+ \label{eq:Smatrix}
+\end{equation}
+For \(p_1+p_2\to p_3+p_4\), the all-incoming vertex momenta are
+\(p_1,p_2,-p_3,-p_4\). At tree level
+\begin{equation}
+ \mathcal M_{2\to2}^{\rm tree}=-\lambda,\qquad
+ s=(p_1+p_2)^2,\quad t=(p_1-p_3)^2,\quad u=(p_1-p_4)^2,
+ \quad s+t+u=4m^2.
+\end{equation}
+The last identity uses equal on-shell masses. An off-shell vertex
+function has no such kinematic constraint.
+
+Beyond tree level, write the pole of the full propagator as
+\begin{equation}
+ \widetilde G_2(p)=\frac{\ii Z_{\rm pole}}{p^2-M^2+\ii0}
+ +\text{terms regular at }p^2=M^2.                 \label{eq:pole}
+\end{equation}
+Here \(M\) is the physical mass. The residue \(Z_{\rm pole}\) is a
+number, distinct from the functional \(Z[J]\). The LSZ prescription
+removes the external poles, divides by \(\sqrt{Z_{\rm pole}}\) for each
+external field, and takes the external momenta on shell. Equivalently,
+if amputation is performed using full propagators and leaves the
+kernel \(\ii\mathcal V_4\), then
+\begin{equation}
+ \mathcal M_{2\to2}=Z_{\rm pole}^{,2}
+ \mathcal V_4\big|_{p_a^2=M^2}.                    \label{eq:LSZbrief}
+\end{equation}
+We use this pole statement here; a full derivation of LSZ can follow
+later. In quartic theory \(Z_{\rm pole}=1+O(\lambda^2)\), so residue
+corrections first affect this scattering amplitude at order \(\lambda^3\).
+External-leg self-energies still determine the physical mass and must
+not be counted again as vertex corrections.
+
+\module{What the first loops teach us to expect}
+The one-loop four-point kernel contains the three partitions found in
+Section 4. For the channel with momentum \(q\) through the bubble,
+\begin{equation}
+ \ii\mathcal V_{4,q}^{(1)}=
+ \frac{(-\ii\lambda)^2}{2}\int\frac{\dd^4k}{(2\pi)^4}
+ \frac{\ii}{k^2-m^2+\ii0}
+ \frac{\ii}{(k+q)^2-m^2+\ii0},\qquad q^2=s,t,u.
+ \label{eq:bubble}
+\end{equation}
+The external propagators are absent. The \(1/2\) remains even when
+the external particles are labeled. Identical-particle factors in
+cross sections or phase space have a different origin.
+
+Power counting predicts which integrals require attention. A scalar
+propagator falls as \(k^{-2}\), so simultaneous scaling of all loop
+momenta gives the superficial degree of divergence
+\begin{equation}
+ \omega=dL-2I=(d-4)V+d-\frac{d-2}{2}E.
+\end{equation}
+In four dimensions, \(\omega=4-E\). Two-point graphs can diverge
+quadratically; four-point graphs can diverge logarithmically. Graphs
+with more external legs have negative superficial degree, although
+at higher loops divergent subgraphs can still occur. The tadpole and
+bubble realize precisely the first two cases.
+
+A dimensional check gives the same organizing principle:
+\begin{equation}
+ [\phi]=\frac{d-2}{2},\qquad [m]=1,\qquad[\lambda]=4-d.
+\end{equation}
+Here brackets denote mass dimension. In \(d=4\), the operators
+\(1,\phi^2,(\partial\phi)^2,\phi^4\) are the local terms compatible
+with the symmetry that we will need to discuss for ultraviolet
+renormalization. The vacuum term drops out of normalized correlators;
+the wavefunction term first becomes necessary at two loops in this model.
+
+\begin{keyidea}[A practical order of operations]
+Specify the quantity: full, connected, 1PI, or scattering. Fix its
+external labels and perturbative order. Enumerate the graphs and
+count their weights. Assign momenta and eliminate redundant delta
+functions. Only then regulate and evaluate the remaining integrals.
+Check the result against dimensions, symmetry, and the
+Schwinger--Dyson equations.
+\end{keyidea}
+Lecture 22 will turn the divergent expressions into predictions by
+fixing a physical mass and a coupling convention. This requires both
+regularization, which defines an intermediate integral, and
+renormalization, which relates its parameters to specified data.
+
+\smallskip{\footnotesize\textbf{Reading.} Based on the supplied interaction
+slides, with the derivations organized alongside R.~G.~Leigh,
+\emph{Quantum Field Theory}, Sec.~6.5 (printed pp.~115--123), and
+D.~Harlow, \emph{Quantum Field Theory I} (2024), Secs.~7 and 10.
+Their metric and propagator conventions have been translated to those
+of Lectures 15--20.}
+\end{document}

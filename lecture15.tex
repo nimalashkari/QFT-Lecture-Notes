@@ -1,0 +1,794 @@
+\documentclass[11pt]{article}
+
+\usepackage[letterpaper,margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb,mathtools,bm}
+\usepackage{slashed}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{tocloft}
+\usepackage{hyperref}
+\usepackage[most]{tcolorbox}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{parskip}
+\usepackage{needspace}
+\setlength{\cftsecnumwidth}{2.4em}
+
+\definecolor{qftblue}{HTML}{245A8D}
+\definecolor{qftgreen}{HTML}{2F6B4F}
+\definecolor{qftred}{HTML}{A23B3B}
+\definecolor{qftgray}{HTML}{F4F6F8}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=qftblue,
+  urlcolor=qftblue,
+  citecolor=qftgreen,
+  pdftitle={PHYS 662 Lecture 15: Canonical Quantization of Free Fields},
+  pdfauthor={Nima Lashkari}
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{PHYS 662: Quantum Field Theory I}
+\rhead{Lecture 15}
+\cfoot{\thepage}
+\setlength{\headheight}{14pt}
+
+\titleformat{\section}{\Large\bfseries\color{qftblue}}{\thesection.}{0.6em}{}
+\titleformat{\subsection}{\large\bfseries\color{qftgreen}}{\thesubsection}{0.6em}{}
+\titleformat{\subsubsection}{\normalsize\bfseries\color{qftred}}{\thesubsubsection}{0.6em}{}
+
+\setlist[itemize]{leftmargin=2em,itemsep=0.25em,topsep=0.4em}
+\setlist[enumerate]{leftmargin=2em,itemsep=0.25em,topsep=0.4em}
+
+\newcommand{\dd}{\mathrm{d}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Lag}{\mathcal{L}}
+\newcommand{\cM}{\mathcal{M}}
+\newcommand{\SO}{\mathrm{SO}}
+\newcommand{\OO}{\mathrm{O}}
+
+\newtcolorbox{keyidea}[1][]{
+  enhanced, breakable, colback=qftgray, colframe=qftblue,
+  boxrule=0.8pt, arc=1.5mm, title={#1}, fonttitle=\bfseries,
+  coltitle=white
+}
+\newtcolorbox{remarkbox}[1][]{
+  enhanced, breakable, colback=white, colframe=qftgreen,
+  boxrule=0.7pt, arc=1.5mm, title={#1}, fonttitle=\bfseries,
+  coltitle=white
+}
+\newtcolorbox{warningbox}[1][]{
+  enhanced, breakable, colback=white, colframe=qftred,
+  boxrule=0.7pt, arc=1.5mm, title={#1}, fonttitle=\bfseries,
+  coltitle=white
+}
+
+
+\newcommand{\Th}{\Theta}
+\newcommand{\Eul}{\mathcal E}
+\newcommand{\Lie}{\mathscr L}
+
+\newcommand{\C}{\mathbb C}
+\newcommand{\Z}{\mathbb Z}
+\newcommand{\SU}{\mathrm{SU}}
+\newcommand{\UU}{\mathrm{U}}
+\newcommand{\GL}{\mathrm{GL}}
+\newcommand{\SL}{\mathrm{SL}}
+\newcommand{\Sp}{\mathrm{Sp}}
+\newcommand{\tr}{\operatorname{tr}}
+\newcommand{\Ad}{\operatorname{Ad}}
+\newcommand{\ad}{\operatorname{ad}}
+\newcommand{\lieg}{\mathfrak g}
+\newcommand{\lieh}{\mathfrak h}
+\newcommand{\su}{\mathfrak{su}}
+\newcommand{\so}{\mathfrak{so}}
+\newcommand{\slie}{\mathfrak{sl}}
+
+
+\newcommand{\cH}{\mathcal H}
+\newcommand{\Spin}{\operatorname{Spin}}
+\newcommand{\id}{\mathrm{id}}
+\newcommand{\Lor}{\SO^+(1,3)}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\one}{\mathbf 1}
+
+\newcommand{\smu}{s}
+\newcommand{\tmu}{\widetilde s}
+\newcommand{\Eps}{E}
+\newcommand{\pslash}{\slashed p}
+\newcommand{\ISO}{\mathrm{ISO}}
+\newcommand{\pL}{P_L}
+\newcommand{\pR}{P_R}
+\newcommand{\hc}{\mathrm{h.c.}}
+\newcommand{\diag}{\operatorname{diag}}
+\newcommand{\vol}{\mathrm{vol}}
+\newcommand{\supp}{\operatorname{supp}}
+
+\newcommand{\ddPi}{\dd\Pi}
+\newcommand{\vac}{\lvert0\rangle}
+\newcommand{\vbra}{\langle0\rvert}
+\newcommand{\ii}{\mathrm i}
+\newcommand{\Dc}{\mathcal C}
+\newcommand{\Dp}{\mathcal P}
+\newcommand{\Dt}{\mathcal T}
+\begin{document}
+\pagenumbering{gobble}
+\begin{titlepage}
+\centering
+\vspace*{1.2in}
+{\scshape\Large PHYS 662 --- Quantum Field Theory I\par}
+\vspace{0.35in}
+{\Huge\bfseries\color{qftblue} Lecture 15\par}
+\vspace{0.18in}
+{\LARGE\bfseries Canonical Quantization of Free Fields\par}
+\vspace{0.16in}
+{\large\color{qftgreen} Scalar and Dirac Fields, Fock Space, and Antiparticles\par}
+\vspace{0.6in}
+{\large Nima Lashkari\par}
+{\large Fall 2026\par}
+\vfill
+\begin{minipage}{0.86\textwidth}\small
+We construct quantum scalar and Dirac fields from their classical modes. The comparison makes the roles of normalization, statistics, vacuum choice, energy, and conserved charge explicit.
+
+\medskip
+Course page: \url{https://nimalashkari.com/quantum-field-theory-2026-part-i/}
+\end{minipage}
+\vspace{0.5in}
+\end{titlepage}
+\pagenumbering{roman}
+\setcounter{tocdepth}{1}\begingroup\small\tableofcontents\endgroup
+\newpage
+\pagenumbering{arabic}
+
+\section*{Roadmap}
+\addcontentsline{toc}{section}{Roadmap}
+Lectures 11--14 supplied the particle representations and classical wavefunctions.
+We now quantize both scalar and Dirac fields. The common steps are to fix
+canonical data, normalize the modes, choose a vacuum, and derive energy and
+charge. Their different oscillator algebras produce Bose symmetry and Fermi
+exclusion. Lecture 16 will use these constructions to study discrete
+symmetries, locality, and propagators.
+
+\begin{keyidea}[One normalization throughout]
+Use \(\eta=\diag(1,-1,-1,-1)\), \(\hbar=c=1\),
+\(p\cdot x=E_{\bm p}t-\bm p\cdot\bm x\), and
+\[
+ E_{\bm p}=\sqrt{\bm p^2+m^2},\qquad
+ \dd\Pi_p=\frac{\dd^d p}{(2\pi)^d2E_{\bm p}}.
+\]
+There are \(d\) spatial dimensions; set \(d=3\) unless indicated otherwise.
+The covariantly normalized operators obey
+\([a(\bm p),a^\dagger(\bm q)]=(2\pi)^d2E_{\bm p}
+\delta^{(d)}(\bm p-\bm q)\). The measure and this commutator must be
+changed together if another normalization is used.
+\end{keyidea}
+
+\Needspace{7\baselineskip}
+\section{From a lattice of oscillators to a field}
+\subsection{What survives the continuum limit?}
+The harmonic chain gives a regulated example of the construction. Let
+\(q_j\) be the displacement of an atom of mass \(M\), with lattice
+spacing \(\ell\), periodic circumference \(L=N\ell\), nearest-neighbor
+spring constant \(\kappa\), and an on-site restoring constant \(\beta\):
+\begin{equation}
+ L_{\rm chain}=\sum_{j=0}^{N-1}\left[
+ \frac M2\dot q_j^2-\frac\kappa2(q_{j+1}-q_j)^2-\frac\beta2q_j^2\right].
+ \label{s-eq:chain}
+\end{equation}
+A discrete Fourier transform diagonalizes this quadratic form. Substituting
+\(q_j\propto e^{i(kj\ell-\omega t)}\) into the equations of motion gives
+\begin{equation}
+ \omega_k^2=\frac\beta M+\frac{4\kappa}{M}\sin^2\frac{k\ell}{2}
+ =\Omega_0^2+c_s^2k^2+O(\ell^2k^4),\qquad
+ c_s=\ell\sqrt{\frac\kappa M},\quad \Omega_0^2=\frac\beta M.
+ \label{s-eq:dispersion}
+\end{equation}
+Only long wavelengths, \(|k|\ell\ll1\), have the relativistic form.
+With \(\phi=\sqrt{M/\ell}\,q\), the continuum Lagrangian is
+\[
+ L=\frac12\int\dd x\,[\dot\phi^2-c_s^2(\partial_x\phi)^2-\Omega_0^2\phi^2].
+\]
+Choose time and length units with \(c_s=1\), and write the gap as \(m\).
+A continuum limit holds these continuum parameters fixed while the
+microscopic parameters scale with \(\ell\). Merely sending \(\ell\) to
+zero at fixed \(M,\kappa\) would also send the wave speed to zero.
+
+\subsection{Canonical data for the Klein--Gordon field}
+The relativistic theory in \(d+1\) dimensions is
+\begin{equation}
+ \Lag=\frac12\partial_\mu\phi\partial^\mu\phi-\frac12m^2\phi^2,
+ \quad \pi=\dot\phi,\quad
+ H=\frac12\int\dd^d x\,[\pi^2+(\bm\nabla\phi)^2+m^2\phi^2].
+ \label{s-eq:realaction}
+\end{equation}
+The field equation is \((\Box+m^2)\phi=0\).
+Canonical quantization promotes the field and its momentum to operators:
+\begin{equation}
+ [\phi(t,\bm x),\pi(t,\bm y)]=i\delta^{(d)}(\bm x-\bm y),\qquad
+ [\phi(t,\bm x),\phi(t,\bm y)]=[\pi(t,\bm x),\pi(t,\bm y)]=0.
+ \label{s-eq:CCR}
+\end{equation}
+These are initial-data relations at equal time. They do not say that
+fields commute at arbitrary spacetime separation. Hats will be omitted.
+
+\Needspace{7\baselineskip}
+\section{Mode expansion and oscillator algebra}
+\subsection{Deriving the normalization}
+At \(t=0\), use spatial Fourier transforms with
+\(\widetilde\phi(\bm p)=\int\dd^d x\,e^{-i\bm p\cdot\bm x}\phi(\bm x)\),
+and similarly for \(\pi\). Reality implies
+\(\widetilde\phi(\bm p)^\dagger=\widetilde\phi(-\bm p)\), and the canonical
+commutator becomes
+\[
+ [\widetilde\phi(\bm p),\widetilde\pi(\bm q)]
+   =i(2\pi)^d\delta^{(d)}(\bm p+\bm q).
+\]
+Define
+\begin{equation}
+ a(\bm p)=E_{\bm p}\widetilde\phi(\bm p)+i\widetilde\pi(\bm p),\qquad
+ \widetilde\phi(\bm p)=\frac{a(\bm p)+a^\dagger(-\bm p)}{2E_{\bm p}},
+ \quad \widetilde\pi(\bm p)=\frac{a(\bm p)-a^\dagger(-\bm p)}{2i}.
+ \label{s-eq:inverse}
+\end{equation}
+The two cross terms in \([a,a^\dagger]\) each contribute
+\(E_{\bm p}(2\pi)^d\delta^{(d)}(\bm p-\bm q)\). Thus
+\begin{equation}
+ [a(\bm p),a^\dagger(\bm q)]=(2\pi)^d2E_{\bm p}\delta^{(d)}(\bm p-\bm q),
+ \qquad [a,a]=[a^\dagger,a^\dagger]=0.
+ \label{s-eq:modeCCR}
+\end{equation}
+Solving the field equation with these initial data yields
+\begin{align}
+ \phi(x)&=\int\dd\Pi_p\,[a(\bm p)e^{-ip\cdot x}+a^\dagger(\bm p)e^{ip\cdot x}],
+ \label{s-eq:realmode}\\
+ \pi(x)&=-i\int\dd\Pi_p\,E_{\bm p}
+ [a(\bm p)e^{-ip\cdot x}-a^\dagger(\bm p)e^{ip\cdot x}].
+ \label{s-eq:pimode}
+\end{align}
+Checking \eqref{s-eq:CCR} now gives two identical Fourier integrals, each
+with coefficient \(i/2\). Their sum is \(i\delta^{(d)}\), as required.
+
+\begin{remarkbox}[The other common convention]
+Writing \(c(\bm p)=a(\bm p)/\sqrt{2E_{\bm p}}\) gives
+\([c(\bm p),c^\dagger(\bm q)]=(2\pi)^d\delta^{(d)}(\bm p-\bm q)\).
+Then the mode measure is
+\(\dd^d p/[(2\pi)^d\sqrt{2E_{\bm p}}]\).
+Both conventions describe the same field. A factor \(1/(2E)\) in the
+expansion together with the \(c\)-commutator would not reproduce the
+canonical relation.
+\end{remarkbox}
+
+\subsection{The Hamiltonian and the sign of the frequency}
+Inserting the modes into \eqref{s-eq:realaction}, spatial integration sets
+opposite momenta in the \(aa\) and \(a^\dagger a^\dagger\) terms.
+Their coefficient is \(-E_{\bm p}^2+\bm p^2+m^2=0\). The remaining terms give
+\begin{equation}
+ H=\frac12\int\dd\Pi_p\,E_{\bm p}
+ [a^\dagger(\bm p)a(\bm p)+a(\bm p)a^\dagger(\bm p)].
+ \label{s-eq:Hsym}
+\end{equation}
+Consequently \([H,a^\dagger(\bm p)]=E_{\bm p}a^\dagger(\bm p)\) and
+\([H,a(\bm p)]=-E_{\bm p}a(\bm p)\). The creation operator multiplies
+\(e^{+ip\cdot x}\), yet creates a positive-energy excitation. The sign
+of a classical Fourier frequency is not, by itself, the energy of the
+state created by its coefficient.
+
+\Needspace{7\baselineskip}
+\section{Vacuum, Fock space, and relativistic states}
+\subsection{Regulate before counting occupation numbers}
+In a periodic box of volume \(V\), momenta are discrete and
+\[
+ \int\frac{\dd^d p}{(2\pi)^d}\longrightarrow\frac1V\sum_{\bm p},
+ \qquad (2\pi)^d\delta^{(d)}(\bm p-\bm q)\longrightarrow V\delta_{\bm p\bm q}.
+\]
+Then \(c_{\bm p}=a(\bm p)/\sqrt{2E_{\bm p}V}\) satisfies
+\([c_{\bm p},c_{\bm q}^\dagger]=\delta_{\bm p\bm q}\). Choose a normalized
+vacuum annihilated by every \(c_{\bm p}\). The occupation basis is
+\begin{equation}
+ |\{n_{\bm p}\}\rangle=\prod_{\bm p}
+ \frac{(c_{\bm p}^\dagger)^{n_{\bm p}}}{\sqrt{n_{\bm p}!}}\vac,
+ \qquad n_{\bm p}=0,1,2,\ldots.
+ \label{s-eq:fock}
+\end{equation}
+Creation operators commute, so exchange of two identical excitations
+leaves their state unchanged. In the continuum the construction is
+\(\mathcal F_B(\cH_1)=\bigoplus_{n=0}^{\infty}\operatorname{Sym}^n\cH_1\).
+The number operator is
+\begin{equation}
+ N=\int\dd\Pi_p\,a^\dagger(\bm p)a(\bm p).
+ \label{s-eq:N}
+\end{equation}
+An expression such as \(a^\dagger(\bm p)a(\bm p)\) at a fixed continuum
+momentum is a density, not a single normalized oscillator number.
+The box or a normalized wave packet makes that distinction precise.
+For a massless scalar in finite volume, the exactly zero momentum mode
+is a free-particle degree of freedom, not an oscillator with a normalizable
+Gaussian ground state. Use \(m>0\), or treat that mode separately.
+
+\subsection{The one-particle sector of Lecture 14}
+Set \(|\bm p\rangle=a^\dagger(\bm p)\vac\). Then
+\begin{equation}
+ \langle\bm q|\bm p\rangle=(2\pi)^d2E_{\bm p}\delta^{(d)}(\bm p-\bm q),
+ \qquad I_1=\int\dd\Pi_p\,|\bm p\rangle\langle\bm p|.
+ \label{s-eq:1particle}
+\end{equation}
+The invariant measure follows by doing the \(p^0\) integral in
+\[
+ \frac{\dd^{d+1}p}{(2\pi)^d}\,\theta(p^0)\delta(p^2-m^2).
+\]
+The derivative of \((p^0)^2-E_{\bm p}^2\) supplies the factor \(2E_{\bm p}\).
+For a spin-zero particle,
+\(U(\Lambda)|\bm p\rangle=|\boldsymbol{\Lambda p}\rangle\).
+An invariant vacuum then gives
+\(U(\Lambda)a^\dagger(\bm p)U(\Lambda)^{-1}=a^\dagger(\boldsymbol{\Lambda p})\)
+and \(U(\Lambda)\phi(x)U(\Lambda)^{-1}=\phi(\Lambda x)\).
+The equivalent form with \(U^{-1}\) on the left has \(\Lambda^{-1}x\).
+
+For \(|f\rangle=\int\dd\Pi_p\,f(\bm p)|\bm p\rangle\),
+\(\|f\|^2=\int\dd\Pi_p|f(\bm p)|^2\). The field connects this state to a
+positive-frequency wavefunction:
+\begin{equation}
+ \vbra\phi(x)|\bm p\rangle=e^{-ip\cdot x},\qquad
+ \vbra\phi(x)|f\rangle=\int\dd\Pi_p f(\bm p)e^{-ip\cdot x}.
+ \label{s-eq:wavefunction}
+\end{equation}
+The formal state \(\phi(x)\vac\) is not a normalized position eigenstate.
+It must be smeared, and its overlap with \(\phi(y)\vac\) is a two-point
+function rather than a spatial delta function. Lecture 16 explains its
+nonzero spacelike overlap.
+
+\Needspace{7\baselineskip}
+\section{Vacuum energy, normal ordering, and ultraviolet scales}
+\subsection{Volume divergence versus short-distance divergence}
+With a finite box and a momentum cutoff, \eqref{s-eq:Hsym} reads
+\begin{equation}
+ H=\sum_{\bm p}E_{\bm p}\left(c_{\bm p}^\dagger c_{\bm p}+\frac12\right),
+ \qquad E_0=\frac12\sum_{\bm p}E_{\bm p}.
+ \label{s-eq:vacuumenergy}
+\end{equation}
+Taking large volume gives \(E_0=V\rho_0\), where in three spatial dimensions
+\begin{align}
+ \rho_0(\Lambda)&=\frac12\int_{|\bm p|<\Lambda}
+   \frac{\dd^3p}{(2\pi)^3}\sqrt{\bm p^2+m^2}
+   =\frac{1}{4\pi^2}\int_0^\Lambda\dd p\,p^2\sqrt{p^2+m^2},\notag\\
+ &=\frac{\Lambda^4}{16\pi^2}
+   +\frac{m^2\Lambda^2}{16\pi^2}
+   -\frac{m^4}{32\pi^2}\log\frac{2\Lambda}{m}+O(m^4).
+ \label{s-eq:rho}
+\end{align}
+The factor \(V\) is extensivity in infinite volume. The divergence of
+\(\rho_0\) as \(\Lambda\to\infty\) is ultraviolet. These are different
+limits; the volume factor is not a divergence of the small-momentum
+integral for this massive theory. In \(d\) dimensions a radial ultraviolet
+integral behaves as \(\int^\Lambda\dd p\,p^{d-1}f(p)\), so \(f(p)\sim p^{-d}\)
+gives a logarithm.
+
+Normal ordering relative to this vacuum places every creation operator
+to the left without adding the commutators generated by the reordering.
+For the free Hamiltonian it defines
+\begin{equation}
+ H_N\equiv:H:=H-E_0=\int\dd\Pi_p E_{\bm p}a^\dagger(\bm p)a(\bm p),
+ \qquad \bm P=\int\dd\Pi_p\bm p\,a^\dagger(\bm p)a(\bm p).
+ \label{s-eq:normalH}
+\end{equation}
+The shift leaves energy differences and Heisenberg evolution unchanged.
+It is a choice of vacuum-energy reference in flat spacetime; coupling to
+gravity requires a separate treatment of the vacuum-energy parameter.
+
+\subsection{What cutoff independence means}
+Fields at points are operator-valued distributions. Products such as
+\(\phi(x)^2\) require a prescription; free-field normal ordering supplies
+one, for example \(:\phi^2:=\phi^2-\vbra\phi^2\vac\) with a common regulator.
+Normal ordering alone does not renormalize general interacting theories.
+
+\begin{warningbox}[A regulator is not the same as a physical high-energy scale]
+Renormalized predictions become independent of an arbitrary regulator
+only after parameters are adjusted to fixed physical conditions.
+In an effective field theory, short-distance physics enters masses,
+couplings, and coefficients of higher-dimension operators. Once those
+coefficients are matched, truncation errors are suppressed by powers of
+energy divided by the physical high-energy scale, under the assumptions
+of the effective expansion. Large cutoff by itself does not remove this
+dependence. A sharp spatial cutoff also selects a frame; it is a useful
+intermediate regulator, not an exactly Lorentz-invariant final theory.
+\end{warningbox}
+
+\Needspace{7\baselineskip}
+\section{Schr\"odinger and Heisenberg descriptions}
+In the Schr\"odinger picture, a state is a wavefunctional
+\(\Psi[\varphi]=\langle\varphi|\Psi\rangle\), where \(\varphi(\bm x)\) labels a
+field configuration, not a one-particle wavefunction. The regulated
+operators act as
+\[
+ \phi(\bm x)\Psi=\varphi(\bm x)\Psi,\qquad
+ \pi(\bm x)\Psi=-i\frac{\delta\Psi}{\delta\varphi(\bm x)}.
+\]
+The condition \(a(\bm p)\vac=0\) gives the Gaussian vacuum functional
+\begin{equation}
+ \Psi_0[\varphi]=\mathcal N\exp\left[-\frac12\int
+ \frac{\dd^dp}{(2\pi)^d}E_{\bm p}\,
+ \widetilde\varphi(\bm p)\widetilde\varphi(-\bm p)\right].
+ \label{s-eq:gaussian}
+\end{equation}
+This is the product of oscillator ground states. Its normalization is
+understood first with a finite regulator.
+
+In the Heisenberg picture the state is fixed and
+\begin{equation}
+ O_H(t)=e^{iHt}O_S e^{-iHt},\qquad
+ \partial_tO_H=i[H,O_H],\qquad
+ a_H(\bm p,t)=e^{-iE_{\bm p}t}a(\bm p).
+ \label{s-eq:Heisenberg}
+\end{equation}
+Thus \eqref{s-eq:realmode} already includes all free time evolution.
+One may put the time dependence in \(a_H(t)\) or in the plane wave;
+putting it in both would count it twice. The equal-time commutators hold
+at every time by unitary conjugation. The interaction picture will later
+separate the free evolution from interactions.
+
+\Needspace{7\baselineskip}
+\section{A complex scalar: two species and one charge}
+\subsection{Independent canonical pairs}
+Let \(\Phi=(\phi_1+i\phi_2)/\sqrt2\). Two canonically normalized real fields give
+\begin{equation}
+ \Lag=\partial_\mu\Phi^\dagger\partial^\mu\Phi-m^2\Phi^\dagger\Phi,
+ \quad \Pi=\dot\Phi^\dagger,\quad \Pi^\dagger=\dot\Phi,
+ \quad \mathcal H=\Pi^\dagger\Pi+\bm\nabla\Phi^\dagger\cdot\bm\nabla\Phi
+                 +m^2\Phi^\dagger\Phi.
+ \label{s-eq:complexaction}
+\end{equation}
+There is no extra factor \(1/2\) in this complex-field convention.
+The two canonical brackets are
+\([\Phi,\Pi]=i\delta^{(d)}\) and
+\([\Phi^\dagger,\Pi^\dagger]=i\delta^{(d)}\); all others vanish at equal time.
+Taking the adjoint of the first bracket also reverses its order, which
+explains the same plus sign in the second.
+
+The mode expansion and its adjoint are
+\begin{align}
+ \Phi(x)&=\int\dd\Pi_p[a(\bm p)e^{-ipx}+b^\dagger(\bm p)e^{ipx}],\notag\\
+ \Phi^\dagger(x)&=\int\dd\Pi_p[b(\bm p)e^{-ipx}+a^\dagger(\bm p)e^{ipx}].
+ \label{s-eq:complexmode}
+\end{align}
+Both \(a\) and \(b\) obey \eqref{s-eq:modeCCR}, and the two families commute.
+Unlike a real scalar, Hermiticity no longer identifies the coefficients
+in the two frequency sectors. After normal ordering,
+\begin{equation}
+ H_N=\int\dd\Pi_p E_{\bm p}(a^\dagger a+b^\dagger b),\qquad
+ N=N_a+N_b=\int\dd\Pi_p(a^\dagger a+b^\dagger b).
+ \label{s-eq:complexH}
+\end{equation}
+Both species have positive energy.
+
+\subsection{Phase symmetry and antiparticles}
+For \(\delta\Phi=-i\alpha\Phi\), Noether's theorem gives
+\begin{equation}
+ j^\mu=i(\Phi^\dagger\partial^\mu\Phi-
+              (\partial^\mu\Phi^\dagger)\Phi),\qquad
+ Q=\int\dd^dx:j^0:=\int\dd\Pi_p(a^\dagger a-b^\dagger b).
+ \label{s-eq:charge}
+\end{equation}
+Indeed \([Q,a^\dagger]=a^\dagger\), \([Q,b^\dagger]=-b^\dagger\), and
+\([Q,\Phi]=-\Phi\). The unitary \(e^{i\alpha Q}\) acts on the field as
+\(\Phi\mapsto e^{-i\alpha}\Phi\). Reversing the phase parameter reverses
+this naming convention, without changing the opposite charges.
+
+Interactions respecting this \(U(1)\), such as \((\Phi^\dagger\Phi)^2\),
+conserve \(Q\) while generally failing to conserve \(N\). Charge-neutral
+particle--antiparticle pairs can be produced when energy and momentum
+allow it. This does not imply that the vacuum of a stable isolated theory
+spontaneously produces pairs: its energy cannot supply them.
+
+\subsection{Charge conjugation}
+With phases chosen consistently, the free theory admits a unitary
+operator \(\Dc\) satisfying
+\begin{equation}
+ \Dc\Phi(x)\Dc^{-1}=\Phi^\dagger(x),\qquad
+ \Dc a\Dc^{-1}=b,\quad \Dc b\Dc^{-1}=a,\qquad
+ \Dc Q\Dc^{-1}=-Q,\quad \Dc H_N\Dc^{-1}=H_N.
+ \label{s-eq:C}
+\end{equation}
+Charge conjugation exchanges the two species; it is distinct from a
+continuous phase rotation. A definite nonzero-charge state is not also a
+charge-conjugation eigenstate. In a theory with an electromagnetic
+coupling, invariance requires \(A_\mu\mapsto-A_\mu\) along with
+\(j^\mu\mapsto-j^\mu\); in a charge-conjugation-invariant vacuum this gives
+a single photon \(C=-1\). This is a symmetry statement about the whole
+theory, not a consequence of Lorentz covariance alone.
+
+
+
+\Needspace{7\baselineskip}
+\section{A fermionic oscillator and exclusion}
+A single fermionic mode has the canonical anticommutation relations (CAR)
+\begin{equation}
+ \{c,c^\dagger\}=cc^\dagger+c^\dagger c=1,
+ \qquad c^2=(c^\dagger)^2=0.
+ \label{f-eq:oneCAR}
+\end{equation}
+Choose \(c\vac=0\), \(\langle0|0\rangle=1\), and define \(|1\rangle=c^\dagger\vac\).
+The norm of \(|1\rangle\) is one and no second excitation is possible.
+In this basis,
+\[
+ c=\begin{pmatrix}0&1\\0&0\end{pmatrix},\qquad
+ c^\dagger=\begin{pmatrix}0&0\\1&0\end{pmatrix},\qquad
+ n=c^\dagger c=\begin{pmatrix}0&0\\0&1\end{pmatrix}.
+\]
+Thus \(n^2=n\); its eigenvalues are zero and one. A symmetric choice of
+energy origin is
+\begin{equation}
+ H=\frac\omega2(c^\dagger c-cc^\dagger)=\omega(n-\tfrac12),
+ \qquad :H:=\omega n.
+ \label{f-eq:fermionoscillator}
+\end{equation}
+The negative vacuum constant is not a negative excitation energy.
+The energy difference is \(\omega>0\).
+
+For distinct modes, all creation operators anticommute. Hence
+\(c_r^\dagger c_s^\dagger\vac=-c_s^\dagger c_r^\dagger\vac\): the two-particle
+wavefunction is antisymmetric. The many-mode space is
+\(\mathcal F_F(\cH_1)=\bigoplus_n\bigwedge^n\cH_1\).
+This exchange sign is different from the minus sign in a commutator.
+For comparison, the bosonic relation is \(aa^\dagger-a^\dagger a=1\),
+whereas \eqref{f-eq:oneCAR} has a plus sign.
+
+\Needspace{7\baselineskip}
+\section{Canonical quantization of the Dirac field}
+\begin{keyidea}[Conventions inherited from the spinor lectures]
+We use \(\eta=\diag(1,-1,-1,-1)\), \(p\cdot x=E_{\bm p}t-\bm p\cdot\bm x\),
+and \(\dd\Pi_p=\dd^3p/[(2\pi)^3 2E_{\bm p}]\). The explicit matrices are
+\[
+ \gamma^0=\begin{pmatrix}0&1\\1&0\end{pmatrix},\qquad
+ \gamma^i=\begin{pmatrix}0&-\sigma_i\\\sigma_i&0\end{pmatrix},\qquad
+ \bar\Psi=\Psi^\dagger\gamma^0.
+\]
+Each displayed block is two dimensional. They satisfy
+\(\{\gamma^\mu,\gamma^\nu\}=2\eta^{\mu\nu}\) and
+\((\gamma^\mu)^\dagger=\gamma^0\gamma^\mu\gamma^0\).
+The classical field is Grassmann odd; after quantization its coefficients
+are operators on a fermionic Fock space. Ordinary mode spinors \(u_s,v_s\)
+are complex-number columns, not Grassmann variables.
+\end{keyidea}
+\subsection{First-order dynamics and canonical momentum}
+Start with the real-mass action
+\begin{equation}
+ S=\int\dd^4x\,\bar\Psi(i\gamma^\mu\partial_\mu-m)\Psi
+   =\int\dd^4x\,[i\Psi^\dagger\dot\Psi-\Psi^\dagger h_D\Psi],
+ \qquad h_D=-i\bm\alpha\cdot\bm\nabla+\beta m,
+ \label{f-eq:action}
+\end{equation}
+where \(\alpha^i=\gamma^0\gamma^i\), \(\beta=\gamma^0\).
+With the derivative convention corresponding to the displayed kinetic
+term, the canonical momentum is \(\Pi_\Psi=i\Psi^\dagger\).
+There is no independent momentum containing \(\dot\Psi^\dagger\).
+These are constraints of a first-order action; one must not apply two
+independent scalar canonical pairs. Equivalently, the reduced canonical
+structure gives
+\begin{equation}
+ \{\Psi_\alpha(t,\bm x),\Psi_\beta^\dagger(t,\bm y)\}
+ =\delta_{\alpha\beta}\delta^{(3)}(\bm x-\bm y),\qquad
+ \{\Psi_\alpha,\Psi_\beta\}=\{\Psi_\alpha^\dagger,\Psi_\beta^\dagger\}=0.
+ \label{f-eq:fieldCAR}
+\end{equation}
+The Hamiltonian is \(H=\int\dd^3x\,\Psi^\dagger h_D\Psi\).
+The matrices \(\alpha^i,\beta\) are Hermitian, so this operator is formally
+Hermitian with appropriate spatial boundary conditions.
+The on-shell rewriting \(H=\int\dd^3x\,i\Psi^\dagger\dot\Psi\) follows from
+the Dirac equation; it is not the starting definition of the Hamiltonian.
+
+\subsection{Promoting the mode coefficients to operators}
+Recall the spinors of Lecture 14:
+\begin{gather}
+ (\slashed p-m)u_s(p)=0,\qquad(\slashed p+m)v_s(p)=0,\notag\\
+ u_s^\dagger u_t=v_s^\dagger v_t=2E_{\bm p}\delta_{st},\qquad
+ \sum_su_s\bar u_s=\slashed p+m,\quad
+ \sum_sv_s\bar v_s=\slashed p-m.
+ \label{f-eq:spinorinput}
+\end{gather}
+Expand
+\begin{equation}
+ \Psi(x)=\sum_{s=1}^2\int\dd\Pi_p\,
+ [b_s(\bm p)u_s(p)e^{-ipx}+d_s^\dagger(\bm p)v_s(p)e^{ipx}].
+ \label{f-eq:modes}
+\end{equation}
+The two independent species have mode algebra
+\begin{align}
+ \{b_s(\bm p),b_t^\dagger(\bm q)\}
+ &=\{d_s(\bm p),d_t^\dagger(\bm q)\}
+  =(2\pi)^3 2E_{\bm p}\delta_{st}\delta^{(3)}(\bm p-\bm q),
+ \label{f-eq:modeCAR}
+\end{align}
+with every other independent anticommutator zero, including mixed
+particle--antiparticle ones. The vacuum obeys \(b_s\vac=d_s\vac=0\).
+In a finite box divide the modes by \(\sqrt{2E_{\bm p}V}\) to obtain the
+unit-normalized oscillators of \eqref{f-eq:oneCAR}.
+
+\subsection{Checking the equal-time anticommutator}
+It is useful to do this once rather than infer it by analogy with a scalar.
+The mode algebra gives
+\begin{align}
+ \{\Psi_\alpha(t,\bm x),\Psi_\beta^\dagger(t,\bm y)\}
+ &=\int\dd\Pi_p\sum_s\left[
+ (u_su_s^\dagger)_{\alpha\beta}e^{i\bm p\cdot(\bm x-\bm y)}
+ +(v_sv_s^\dagger)_{\alpha\beta}e^{-i\bm p\cdot(\bm x-\bm y)}\right].
+ \label{f-eq:CARcheck}
+\end{align}
+Change \(\bm p\to-\bm p\) only in the second term, and set
+\(p_-=(E_{\bm p},-\bm p)\). The numerator becomes
+\begin{equation}
+ (\slashed p+m)\gamma^0+(\slashed p_- -m)\gamma^0=2E_{\bm p}I_4.
+ \label{f-eq:completeness}
+\end{equation}
+The mass and spatial-momentum terms cancel. The remaining Fourier
+integral is exactly \eqref{f-eq:fieldCAR}. Omitting the reversed momentum
+would spoil this check. The same-momentum statement
+\(u_s^\dagger(\bm p)v_t(\bm p)=0\) is generally false; the needed identity is
+\(u_s^\dagger(\bm p)v_t(-\bm p)=0\).
+
+\Needspace{8\baselineskip}
+\Needspace{7\baselineskip}
+\section{Energy, charge, and particle states}
+\subsection{Why antiparticles have positive excitation energy}
+The positive-frequency term obeys
+\(h_D[u_s(p)e^{i\bm p\cdot\bm x}]=E_{\bm p}u_s(p)e^{i\bm p\cdot\bm x}\).
+For the negative-frequency term the eigenvalue is \(-E_{\bm p}\).
+Spatial integration and the orthogonality just discussed remove the
+mixed terms, giving
+\begin{equation}
+ H=\sum_s\int\dd\Pi_p E_{\bm p}
+ [b_s^\dagger(\bm p)b_s(\bm p)-d_s(\bm p)d_s^\dagger(\bm p)].
+ \label{f-eq:unordH}
+\end{equation}
+The minus sign here precedes use of the operator algebra. For a normalized
+mode, \(-dd^\dagger=d^\dagger d-1\). Consequently
+\begin{equation}
+ H_N\equiv:H:=\sum_s\int\dd\Pi_p E_{\bm p}(b_s^\dagger b_s+d_s^\dagger d_s),
+ \qquad \bm P=\sum_s\int\dd\Pi_p\bm p\,(b_s^\dagger b_s+d_s^\dagger d_s).
+ \label{f-eq:normalH}
+\end{equation}
+In a box the un-subtracted vacuum energy is
+\(-\sum_{\bm p,s}E_{\bm p}\): there are two spin labels and two charge
+sectors, each with the oscillator offset \(-E/2\).
+The normal-ordered excitation spectrum is nonnegative.
+In particular \([H_N,b_s^\dagger]=E_{\bm p}b_s^\dagger\) and
+\([H_N,d_s^\dagger]=E_{\bm p}d_s^\dagger\).
+
+\begin{warningbox}[What goes wrong with a bosonic assignment?]
+If both mode families were ordinary positive-norm bosonic oscillators,
+\(-dd^\dagger=-d^\dagger d-1\); repeated \(d^\dagger\) excitations would
+lower the energy without bound. Trying instead to impose the usual
+local field commutator leads to a negative sign in the \(d\)-mode
+commutator and hence negative-norm excitations for a vacuum annihilated
+by \(d\). These are obstructions to combining positivity, locality,
+and the Dirac transformation law. This free-field calculation motivates
+the spin--statistics connection; it is not a proof of the full theorem.
+\end{warningbox}
+
+\subsection{A sum in the energy, a difference in the charge}
+The continuous transformation \(\Psi\mapsto e^{-i\alpha}\Psi\) has current
+\(j^\mu=\bar\Psi\gamma^\mu\Psi\). Before normal ordering, the charge
+contains \(b^\dagger b+dd^\dagger\), because both \(u^\dagger u\) and
+\(v^\dagger v\) are positive. Fermionic normal ordering then gives
+\begin{equation}
+ Q=\int\dd^3x:\Psi^\dagger\Psi:
+   =\sum_s\int\dd\Pi_p(b_s^\dagger b_s-d_s^\dagger d_s).
+ \label{f-eq:Q}
+\end{equation}
+Thus \([Q,b_s^\dagger]=b_s^\dagger\), \([Q,d_s^\dagger]=-d_s^\dagger\), and
+\([Q,\Psi]=-\Psi\). As for the scalar field, \(e^{i\alpha Q}\) implements the
+stated field phase. The normal-ordering rule includes a minus sign for
+each exchange of odd operators; for example \(:dd^\dagger:=-d^\dagger d\).
+Energy and charge distinguish the two sectors as follows:
+\begin{center}
+\begin{tabular}{lcc}
+\toprule
+State & Energy above vacuum & Charge\\
+\midrule
+\(b_s^\dagger(\bm p)\vac\) & \(E_{\bm p}\) & \(+1\)\\
+\(d_s^\dagger(\bm p)\vac\) & \(E_{\bm p}\) & \(-1\)\\
+\bottomrule
+\end{tabular}
+\end{center}
+These generalized momentum states have norm
+\((2\pi)^3 2E_{\bm p}\delta_{st}\delta^{(3)}(\bm p-\bm q)\).
+Their matrix elements reproduce the classical wavefunctions:
+\begin{equation}
+ \vbra\Psi(x)b_s^\dagger(\bm p)\vac=u_s(p)e^{-ipx},\qquad
+ \vbra\bar\Psi(x)d_s^\dagger(\bm p)\vac=\bar v_s(p)e^{-ipx}.
+ \label{f-eq:matrixelements}
+\end{equation}
+There are two particle and two antiparticle polarizations at each
+momentum, not four independent particle spin states.
+
+\Needspace{7\baselineskip}
+\section{The Dirac sea as a change of vacuum language}
+With a finite number of regulated modes, write the coefficient of the
+negative-frequency term as an annihilator \(f_s=d_s^\dagger\). Equation
+\eqref{f-eq:unordH} then contains \(-E f_s^\dagger f_s\). If the reference
+vacuum is empty in these modes, filling one lowers the energy. Since each
+fermionic mode can be occupied only once, the energy is minimized by
+filling all the negative-energy modes.
+
+Relative to that filled state, a hole is created by removing an \(f\)
+particle. In formulas,
+\begin{equation}
+ d_s=f_s^\dagger,\qquad d_s^\dagger=f_s,\qquad
+ f_s^\dagger f_s=1-d_s^\dagger d_s.
+ \label{f-eq:holes}
+\end{equation}
+A hole costs positive energy and carries the opposite charge. Subtracting
+the energy and charge of the filled state gives precisely
+\eqref{f-eq:normalH} and \eqref{f-eq:Q}. The particle--antiparticle vacuum
+\(b_s\vac=d_s\vac=0\) encodes this directly.
+
+The sea picture is a useful finite-regulator explanation of the signs,
+not a literal finite-density medium in the Lorentz-invariant vacuum.
+An infinite product of filled modes requires a limiting construction;
+it need not be a vector in the original empty-sea Fock representation.
+The physical lesson is that an operator algebra alone does not specify
+a quantum theory's state or vacuum representation. Also, scalar
+antiparticles exist without any exclusion principle or filled sea.
+
+\section*{Summary}
+\addcontentsline{toc}{section}{Summary}
+Canonical quantization turns classical mode coefficients into operators on
+Fock space. Covariant normalization fixes the factors of \(2E\).
+Commutators build symmetric scalar states; anticommutators build
+antisymmetric spinor states. Both theories have positive-energy
+antiparticles. Energy adds the two charge sectors, while charge subtracts
+them. Normal ordering removes a vacuum reference constant, and is not a
+general replacement for renormalization. The finite-regulator hole picture
+explains the fermionic signs without making a filled sea necessary for
+scalar antiparticles. These operator constructions are the starting point
+for the symmetry and locality tests of Lecture 16.
+
+\newpage
+\section*{Questions for review}
+\addcontentsline{toc}{section}{Questions for review}
+\begin{enumerate}
+\item Derive the chain dispersion and identify the parameters held fixed
+in its continuum limit.
+\item Derive \eqref{s-eq:modeCCR} from the canonical brackets, then check the
+inverse calculation directly in position space.
+\item Show explicitly why the \(aa\) terms cancel in the free Hamiltonian.
+\item Explain the difference between an occupation number in a box and a
+continuum momentum density.
+\item Derive the invariant one-particle measure and the wave-packet norm.
+Why is \(\phi(x)\vac\) not a normalized localized particle?
+\item Separate the infinite-volume factor in \(E_0\) from the ultraviolet
+divergence of \(\rho_0\). Which changes of the energy zero affect free evolution?
+\item Verify the Gaussian vacuum functional by applying \(a(\bm p)\).
+\item Derive the complex-scalar Hamiltonian and charge. Why does normal
+ordering give a sum in one and a difference in the other?
+\item Compare particle-number conservation, charge conservation, and
+charge-conjugation symmetry.
+\item What must be specified before a claim of cutoff independence is meaningful?
+\item Prove \(n^2=n\) for one fermionic oscillator and derive its two energies.
+\item Why is \(\Pi_\Psi=i\Psi^\dagger\), rather than \(\dot\Psi^\dagger\)?
+What feature of the action makes the canonical system constrained?
+\item Verify the equal-time CAR using the two spin sums and the change
+\(\bm p\to-\bm p\).
+\item Derive the un-normal-ordered Hamiltonian, then track the reordering
+sign in the antiparticle sector.
+\item Repeat the argument for \(Q\), explaining why its intermediate sign
+differs from the Hamiltonian's.
+\item Describe the hole transformation for a finite set of modes.
+What extra issue arises for an infinite sea?
+\end{enumerate}
+
+\section*{Sources and reading}
+\addcontentsline{toc}{section}{Sources and reading}
+Based on the supplied scalar-field slides and the quantization/Dirac-sea
+sections of the supplied Dirac-field slides. Their discrete-symmetry and
+locality discussions continue in Lecture 16. For comparison, see D.~Tong,
+\emph{Quantum Field Theory}, Chapters 2 and 5,
+\url{https://www.damtp.cam.ac.uk/user/tong/qft.htm}.
+\end{document}

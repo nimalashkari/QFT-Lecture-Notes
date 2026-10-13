@@ -1,0 +1,786 @@
+\documentclass[11pt]{article}
+
+\usepackage[letterpaper,margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb,mathtools,bm}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{hyperref}
+\usepackage[most]{tcolorbox}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{parskip}
+\usepackage{needspace}
+
+\definecolor{qftblue}{HTML}{245A8D}
+\definecolor{qftgreen}{HTML}{2F6B4F}
+\definecolor{qftred}{HTML}{A23B3B}
+\definecolor{qftgray}{HTML}{F4F6F8}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=qftblue,
+  urlcolor=qftblue,
+  citecolor=qftgreen,
+  pdftitle={PHYS 662 Lecture 8: Lie Groups, Lie Algebras, and Representations},
+  pdfauthor={Nima Lashkari}
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{PHYS 662: Quantum Field Theory I}
+\rhead{Lecture 8}
+\cfoot{\thepage}
+\setlength{\headheight}{14pt}
+
+\titleformat{\section}{\Large\bfseries\color{qftblue}}{\thesection.}{0.6em}{}
+\titleformat{\subsection}{\large\bfseries\color{qftgreen}}{\thesubsection}{0.6em}{}
+\titleformat{\subsubsection}{\normalsize\bfseries\color{qftred}}{\thesubsubsection}{0.6em}{}
+
+\setlist[itemize]{leftmargin=2em,itemsep=0.25em,topsep=0.4em}
+\setlist[enumerate]{leftmargin=2em,itemsep=0.25em,topsep=0.4em}
+
+\newcommand{\dd}{\mathrm{d}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Lag}{\mathcal{L}}
+\newcommand{\cM}{\mathcal{M}}
+\newcommand{\SO}{\mathrm{SO}}
+\newcommand{\OO}{\mathrm{O}}
+
+\newtcolorbox{keyidea}[1][]{
+  enhanced, breakable, colback=qftgray, colframe=qftblue,
+  boxrule=0.8pt, arc=1.5mm, title={#1}, fonttitle=\bfseries,
+  coltitle=white
+}
+\newtcolorbox{remarkbox}[1][]{
+  enhanced, breakable, colback=white, colframe=qftgreen,
+  boxrule=0.7pt, arc=1.5mm, title={#1}, fonttitle=\bfseries,
+  coltitle=white
+}
+\newtcolorbox{warningbox}[1][]{
+  enhanced, breakable, colback=white, colframe=qftred,
+  boxrule=0.7pt, arc=1.5mm, title={#1}, fonttitle=\bfseries,
+  coltitle=white
+}
+
+
+\newcommand{\Th}{\Theta}
+\newcommand{\Eul}{\mathcal E}
+\newcommand{\Lie}{\mathscr L}
+
+\newcommand{\C}{\mathbb C}
+\newcommand{\Z}{\mathbb Z}
+\newcommand{\SU}{\mathrm{SU}}
+\newcommand{\UU}{\mathrm{U}}
+\newcommand{\GL}{\mathrm{GL}}
+\newcommand{\SL}{\mathrm{SL}}
+\newcommand{\Sp}{\mathrm{Sp}}
+\newcommand{\tr}{\operatorname{tr}}
+\newcommand{\Ad}{\operatorname{Ad}}
+\newcommand{\ad}{\operatorname{ad}}
+\newcommand{\lieg}{\mathfrak g}
+\newcommand{\lieh}{\mathfrak h}
+\newcommand{\su}{\mathfrak{su}}
+\newcommand{\so}{\mathfrak{so}}
+\newcommand{\slie}{\mathfrak{sl}}
+
+
+\newcommand{\cH}{\mathcal H}
+\newcommand{\Spin}{\operatorname{Spin}}
+\newcommand{\id}{\mathrm{id}}
+\begin{document}
+\pagenumbering{gobble}
+\begin{titlepage}
+\centering
+\vspace*{1.2in}
+{\scshape\Large PHYS 662 --- Quantum Field Theory I\par}
+\vspace{0.35in}
+{\Huge\bfseries\color{qftblue} Lecture 8\par}
+\vspace{0.15in}
+{\LARGE\bfseries Lie Groups, Lie Algebras,\par}
+\vspace{0.06in}
+{\LARGE\bfseries and Representations\par}
+\vspace{0.16in}
+{\large\color{qftgreen} From Finite Transformations to Infinitesimal Structure\par}
+\vspace{0.6in}
+{\large Nima Lashkari\par}
+{\large Fall 2026\par}
+\vfill
+\begin{minipage}{0.86\textwidth}
+\small
+A symmetry has a composition law, an action on a vector space, and
+infinitesimal generators. We develop these three descriptions through
+matrix groups, invariant subspaces, and Lie brackets. The adjoint action
+then explains ideals and simple algebras. This gives the language needed
+to construct spin and tensor representations in Lecture 9 and to study
+central extensions and Noether charges in Lecture 10.
+
+\medskip
+Course page: \url{https://nimalashkari.com/quantum-field-theory-2026-part-i/}
+\end{minipage}
+\vspace{0.5in}
+\end{titlepage}
+\pagenumbering{roman}
+\begingroup\small
+\tableofcontents
+\endgroup
+\newpage
+\pagenumbering{arabic}
+
+\section*{Roadmap}
+\addcontentsline{toc}{section}{Roadmap}
+Lecture 7 related continuous symmetries of an action to conserved
+currents. We now develop the language in which symmetry transformations
+and their generators are organized. Our three questions are:
+\begin{enumerate}
+\item How do finite transformations compose, and what does a representation
+tell us about the objects being transformed?
+\item How do invariant subspaces and infinitesimal generators help us
+understand a representation?
+\item What distinguishes an ideal of a Lie algebra from an invariant
+subspace of an arbitrary representation?
+\end{enumerate}
+Lecture 9 applies this language to spin, tensors, and quantum rotations.
+Lecture 10 connects projective phases and central extensions to the
+algebra of Noether charges.
+
+\begin{keyidea}[Conventions]
+Representation spaces are complex unless a real space is explicitly
+specified. We write \(R(g)\) for a general representation and \(U(g)\)
+for a unitary one. For Hermitian generators our convention is
+\[
+U(\theta)=e^{-i\theta^a T_a},\qquad
+[T_a,T_b]=i f_{ab}{}^cT_c.
+\]
+The tangent matrices are \(X_a=-iT_a\), so
+\([X_a,X_b]=f_{ab}{}^cX_c\). Matrix Lie algebras are described using
+\(X\), with the ordinary commutator. The \(T\) convention is useful in
+quantum mechanics; the \(X\) convention makes reality conditions clear.
+We use \(\hbar=1\), \(\epsilon_{123}=+1\), and mostly-minus Minkowski
+signature when spacetime appears.
+\end{keyidea}
+
+\section{Groups and the main matrix examples}
+\label{sec:groups}
+
+\subsection{Composition is the starting point}
+A group \(G\) is a set with a multiplication satisfying closure,
+associativity, an identity \(e\), and an inverse for every element:
+\begin{equation}
+(g_1g_2)g_3=g_1(g_2g_3),\qquad eg=ge=g,\qquad
+g^{-1}g=gg^{-1}=e.
+\end{equation}
+Commutativity is an additional property, not an axiom. An Abelian group
+obeys \(g_1g_2=g_2g_1\). Our convention is that \(g_1g_2\) acts by
+applying \(g_2\) first, then \(g_1\).
+
+A Lie group is a finite-dimensional smooth manifold for which
+multiplication and inversion are smooth. Its dimension counts local real
+parameters, not the size of a matrix representation. The group may have
+several connected components. Its identity component \(G_0\) contains
+the transformations continuously connected to \(e\).
+
+A useful first example is a rotation in a plane:
+\[
+ R(\theta)=\begin{pmatrix}\cos\theta&-\sin\theta\\
+ \sin\theta&\cos\theta\end{pmatrix},\qquad
+ R(\theta)R(\varphi)=R(\theta+\varphi).
+\]
+One angle labels the transformation, even though its action on a vector
+requires a two-by-two matrix. The group has dimension one and this
+representation has dimension two. Keeping these two counts separate
+will help with SU(2) later.
+
+For a spacetime example, write a Poincar\'e transformation as
+\(g=(\Lambda,a)\). Applying the two transformations in order gives
+\[
+ x\ \longmapsto\ \Lambda_2x+a_2
+ \ \longmapsto\ \Lambda_1(\Lambda_2x+a_2)+a_1.
+\]
+Reading off the new linear part and displacement, we obtain
+\begin{equation}
+(\Lambda_1,a_1)(\Lambda_2,a_2)
+=(\Lambda_1\Lambda_2,\,a_1+\Lambda_1a_2),\qquad
+(\Lambda,a)^{-1}=(\Lambda^{-1},-\Lambda^{-1}a).
+\label{eq:PoincareProduct}
+\end{equation}
+The Lorentz transformation rotates the translation parameter. This is
+why the group is a semidirect product
+\(\R^{1,d}\rtimes O(1,d)\), rather than an ordinary direct product.
+The action is a functional \(S[\phi]\); its symmetry is properly written
+\(S[g\cdot\phi]=S[\phi]\), with the domain and backgrounds handled
+as in Lecture 7: the action assigns a number to an entire field
+configuration.
+
+\subsection{Orthogonal and unitary groups}
+The real orthogonal group and its special subgroup are
+\begin{equation}
+O(N)=\{R\in\GL(N,\R):R^TR=I\},\qquad
+SO(N)=\{R\in O(N):\det R=1\}.
+\end{equation}
+Orthogonality gives \((\det R)^2=1\). The determinant-minus-one
+component contains improper rotations, including reflections. For
+\(N\ge2\), \(SO(N)\) is the identity component. For a real multiplet, \(\phi\mapsto R\phi\) preserves
+\(\phi^T\phi\), which can take any allowed value.
+
+Similarly,
+\begin{equation}
+U(N)=\{U\in\GL(N,\C):U^\dagger U=I\},\qquad
+SU(N)=\{U\in U(N):\det U=1\}.
+\end{equation}
+Unitarity implies \(|\det U|=1\). It preserves
+\begin{equation}
+(U\Phi)^\dagger(U\Phi)=\Phi^\dagger\Phi,
+\end{equation}
+not the number one unless \(\Phi\) was normalized beforehand.
+For scalar field components there is usually no such normalization.
+
+\subsection{Indefinite orthogonal and symplectic groups}
+The Lorentz group satisfies
+\begin{equation}
+\Lambda^T\eta\Lambda=\eta,\qquad
+\eta=\operatorname{diag}(1,-1,\ldots,-1).
+\end{equation}
+We denote it by \(O(1,d)\). Relabeling the signature convention gives
+the isomorphic notation \(O(d,1)\). The condition \(\det\Lambda=1\)
+defines \(SO(1,d)\), but does not impose preservation of time orientation.
+The identity component is the proper orthochronous group
+\(SO^+(1,d)\), with \(\Lambda^0{}_0\ge1\).
+
+The real symplectic group preserves an antisymmetric form:
+\begin{equation}
+Sp(2n,\R)=\{M\in\GL(2n,\R):M^T\Omega M=\Omega\},\qquad
+\Omega=\begin{pmatrix}0&I_n\\-I_n&0\end{pmatrix}.
+\label{eq:symplecticGroup}
+\end{equation}
+It describes linear transformations preserving the canonical symplectic
+form on phase space. It is different from the compact group often called
+\(Sp(n)=USp(2n)\), defined by the same form-preserving condition for
+complex matrices together with unitarity. Both have real dimension
+\(n(2n+1)\), but their reality and compactness properties differ.
+We will keep the notation explicit.
+
+\section{Representations and invariant subspaces}
+
+\subsection{Representations, equivalence, and faithfulness}
+A group specifies how transformations compose. A representation specifies
+what they act on: scalar components, vectors, tensors, or later quantum
+states. A linear representation of \(G\) on \(V\) is a map into
+\(\GL(V)\), the invertible linear maps on \(V\):
+\begin{equation}
+R:G\longrightarrow\GL(V),\qquad
+\boxed{R(g_1g_2)=R(g_1)R(g_2).}
+\label{eq:repDefinition}
+\end{equation}
+It follows that \(R(e)=I\) and \(R(g^{-1})=R(g)^{-1}\).
+For Lie groups we take finite-dimensional representations to be smooth.
+A representation is \emph{faithful} if its kernel is trivial: only the
+identity acts as \(I\). The trivial representation sends every element
+to \(1\). Thus even a non-Abelian group can have a representation with
+commuting images; a representation need not retain every distinction
+between group elements.
+
+Representations \(R_1\) and \(R_2\) are equivalent if a fixed invertible
+linear map \(S\) intertwines them:
+\begin{equation}
+R_2(g)=S R_1(g)S^{-1}\qquad\text{for all }g.
+\label{eq:equivalence}
+\end{equation}
+For finite-dimensional unitary representations an equivalence can be
+chosen unitary, in which case \(S^{-1}=S^\dagger\). A general basis
+change need not be an isometry.
+
+\subsection{Reducibility means an invariant vector subspace}
+A subspace \(W\subset V\) is invariant if \(R(g)W\subset W\) for all
+\(g\). A vector that starts in W stays there under every symmetry
+transformation, so the components in W form a closed multiplet.
+For rotations about the z-axis, the z-axis itself is an invariant line;
+for the full SO(3), rotations about x or y move that line. Invariance
+must always be tested against the whole group being represented.
+
+A representation is irreducible if the only invariant subspaces
+are \(0\) and \(V\). Otherwise it is reducible.
+Choosing a basis beginning with a basis of a nontrivial invariant \(W\)
+gives
+\begin{equation}
+R(g)=\begin{pmatrix}A(g)&B(g)\\0&C(g)\end{pmatrix}.
+\label{eq:upperBlock}
+\end{equation}
+Reducibility alone gives block \emph{triangular} form. It gives a block
+diagonal direct sum only if an invariant complementary subspace exists.
+A representation is completely reducible if it is a direct sum of
+irreducible representations.
+
+For example, the additive group \(\R\) acts by
+\begin{equation}
+R(t)=\begin{pmatrix}1&t\\0&1\end{pmatrix},\qquad
+R(t)R(s)=R(t+s).
+\label{eq:shear}
+\end{equation}
+The line spanned by \(e_1\) is invariant. An independent line spanned by
+\(ae_1+be_2\), \(b\ne0\), cannot be invariant for every \(t\), since
+the first component changes by \(tb\). The representation is reducible
+but has no invariant complement and cannot be diagonalized into two
+one-dimensional representations.
+
+\begin{warningbox}[Three different meanings of invariance]
+An invariant subspace \(W\subset V\) is a property of a representation.
+A normal subgroup \(H\subset G\) obeys \(gHg^{-1}=H\).
+An ideal \(\lieh\subset\lieg\) obeys \([\lieg,\lieh]\subset\lieh\).
+These objects live in different spaces. Irreducibility is about subspaces
+of \(V\), not subgroups of \(G\).
+\end{warningbox}
+
+\subsection{Why finite-dimensional unitary representations split}
+If \(W\) is invariant and \(R\) is unitary, then its orthogonal
+complement is invariant too. For \(v\in W^\perp\) and \(w\in W\),
+\begin{equation}
+\langle w,R(g)v\rangle
+=\langle R(g)^{-1}w,v\rangle=0.
+\end{equation}
+Hence \(V=W\oplus W^\perp\). Repeating in finite dimensions proves
+complete reducibility.
+
+Every continuous finite-dimensional representation of a compact group
+can be made unitary. The idea is to average any positive inner product
+over all its rotated versions, so that no group element is preferred.
+For a finite group this is an ordinary average over its elements. For a
+compact Lie group the sum becomes an integral with normalized invariant
+Haar measure \(\dd\mu(g)\):
+\begin{equation}
+\langle v,w\rangle_G=\int_G\dd\mu(g)\,
+\langle R(g)v,R(g)w\rangle.
+\end{equation}
+The result is positive and invariant. Consequently, finite-dimensional
+representations of compact groups decompose into irreducible pieces.
+There is also a complete-reducibility theorem for finite-dimensional
+representations of semisimple Lie algebras over \(\R\) or \(\C\);
+it does not require the representation to be unitary.
+
+In infinite-dimensional Hilbert spaces, continuous spectra can require
+direct integrals and additional analytic hypotheses. Our spin and tensor
+decompositions are finite dimensional, where the argument above applies.
+
+\subsection{Schur's lemma: what commutes with an irreducible action?}
+For a finite-dimensional complex irreducible representation, any linear
+operator \(A\) commuting with all \(R(g)\) is a scalar multiple of the
+identity. To see this, choose an eigenvalue \(a\); the nonzero eigenspace
+\(\ker(A-aI)\) is invariant because
+\(A R(g)v=R(g)Av=aR(g)v\) whenever \(Av=av\). Irreducibility makes
+that eigenspace all of \(V\), so \(A=aI\).
+This is Schur's lemma. In Lecture 9 it will let us label spin
+representations by the scalar value of an operator commuting with all
+generators.
+
+\Needspace{9\baselineskip}
+\Needspace{10\baselineskip}
+\section{From a Lie group to its Lie algebra}
+\label{sec:algebra}
+\subsection{One-parameter subgroups and generators}
+A differentiable one-parameter matrix subgroup satisfies
+\(U(s+t)=U(s)U(t)\) and \(U(0)=I\). Differentiating with respect to \(t\)
+at zero gives
+\[
+\frac{\dd U(s)}{\dd s}=U(s)X,
+\qquad X=\left.\frac{\dd U(t)}{\dd t}\right|_{t=0},
+\qquad U(s)=e^{sX}.
+\]
+For the planar rotation above, the derivative is especially concrete:
+\[
+ X=R'(0)=\begin{pmatrix}0&-1\\1&0\end{pmatrix},\qquad X^2=-I.
+\]
+The even and odd terms of \(e^{\theta X}\) sum to
+\(I\cos\theta+X\sin\theta=R(\theta)\). Thus the generator is the
+first-order change; exponentiation builds the finite motion from it.
+The tangent vectors \(X\) at the identity form the Lie algebra
+\(\lieg\). For a unitary representation, differentiating
+\(U(t)^\dagger U(t)=I\) shows that \(X^\dagger=-X\).
+Physicists usually write \(X=-iT\), with \(T\) Hermitian:
+\begin{equation}
+ U(\theta)=e^{-i\theta^aT_a},
+ \qquad [T_a,T_b]=i f_{ab}{}^cT_c.
+ \label{eq:generator-convention}
+\end{equation}
+Here the parameters and structure constants are real for a real Lie
+algebra in a real basis. In the anti-Hermitian basis \(X_a=-iT_a\),
+\begin{equation}
+ [X_a,X_b]=f_{ab}{}^cX_c.
+ \label{eq:antihermitian}
+\end{equation}
+The Lie algebra itself is independent of either convention. For a
+nonunitary representation the matrices \(T_a\) need not be Hermitian;
+for a nonfaithful representation some generators may act as zero.
+
+The bracket is bilinear, antisymmetric, and obeys the Jacobi identity,
+\begin{equation}
+ [X,[Y,Z]]+[Y,[Z,X]]+[Z,[X,Y]]=0.
+ \label{eq:jacobi}
+\end{equation}
+For matrices this follows by expanding the twelve products and cancelling
+them in pairs. In components it constrains the structure constants:
+\[
+ f_{bc}{}^d f_{ad}{}^e+
+ f_{ca}{}^d f_{bd}{}^e+
+ f_{ab}{}^d f_{cd}{}^e=0.
+\]
+A Lie algebra representation is a linear map \(\rho\) satisfying
+\(\rho([X,Y])=[\rho(X),\rho(Y)]\). Differentiating a group
+representation always produces such a map.
+
+\subsection{Why the commutator measures noncommutativity}
+Compare the two orders of small transformations generated by \(X\) and
+\(Y\) by forming their group commutator. Multiplication of its four power
+series gives
+\begin{equation}
+ e^{sX}e^{tY}e^{-sX}e^{-tY}
+ =I+st[X,Y]+O(s^2t,st^2).
+ \label{eq:group-commutator}
+\end{equation}
+The result is not generally the identity. The surviving term is another
+tangent direction, which explains closure of the Lie algebra under
+commutators. In the Hermitian convention this term is
+\(-ist f_{ab}{}^cT_c\) when \(X=-iT_a\), \(Y=-iT_b\).
+
+Two useful forms of the same local information are
+\begin{align}
+ e^Ae^B&=\exp\!\left(A+B+\tfrac12[A,B]+\cdots\right),
+ \label{eq:bch}\\
+ e^AYe^{-A}&=Y+[A,Y]+\tfrac12[A,[A,Y]]+\cdots.
+ \label{eq:conjugation}
+\end{align}
+The first is the Baker--Campbell--Hausdorff formula, understood here near
+the identity. The second follows by differentiating
+\(e^{tA}Ye^{-tA}\) and is the expansion of conjugation.
+
+\subsection{Extracting the bracket from a composition law}
+We can now see where the structure constants enter the group law itself.
+The calculation below keeps the mixed second-order terms: first-order
+terms alone cannot distinguish the two orders of composition. Let \(g(\theta)g(\varphi)=g(F(\theta,\varphi))\), with
+\(g(0)=e\). The identity conditions imply
+\begin{equation}
+ F^c(\theta,\varphi)=\theta^c+\varphi^c+
+ B_{ab}{}^c\theta^a\varphi^b+O(3).
+ \label{eq:coordinate-composition}
+\end{equation}
+There are no pure quadratic terms in \(\theta\) or \(\varphi\), but the
+mixed coefficients need not be antisymmetric in arbitrary coordinates.
+Expand a representation as
+\[
+ R(g(\theta))=I-i\theta^aT_a+
+ \tfrac12\theta^a\theta^b C_{ab}+O(\theta^3),
+ \qquad C_{ab}=C_{ba}.
+\]
+Comparing mixed terms in
+\(R(g(\theta))R(g(\varphi))=R(g(F(\theta,\varphi)))\) yields
+\[
+ -T_aT_b=C_{ab}-iB_{ab}{}^cT_c.
+\]
+Subtract the equation with \(a\) and \(b\) exchanged. The symmetric
+second derivative drops out, leaving
+\begin{equation}
+ [T_a,T_b]=i\bigl(B_{ab}{}^c-B_{ba}{}^c\bigr)T_c,
+ \qquad f_{ab}{}^c=B_{ab}{}^c-B_{ba}{}^c.
+ \label{eq:structure-from-composition}
+\end{equation}
+Thus the bracket detects precisely the antisymmetric part of local
+composition. This computation may be performed in a faithful local
+realization; other representations inherit the same constants, although
+their images may not distinguish every generator.
+
+In exponential coordinates, \(g(\theta)=\exp(\theta^aX_a)\),
+Eq.~\eqref{eq:bch} gives
+\[
+ B_{ab}{}^c=\tfrac12 f_{ab}{}^c,
+ \qquad C_{ab}=-\tfrac12\{T_a,T_b\}.
+\]
+In particular,
+\begin{equation}
+ e^{-i\theta^aT_a}
+ =I-i\theta^aT_a-\tfrac12\theta^a\theta^bT_aT_b+O(\theta^3).
+ \label{eq:second-order}
+\end{equation}
+The quadratic term has a minus sign. Also,
+\(g(\theta)^{-1}=g(-\theta)\) holds in these coordinates, but need not
+hold in an arbitrary parametrization.
+
+\subsection{Algebras of the matrix groups}
+The infinitesimal constraints follow by putting \(M=I+tX+O(t^2)\)
+into each defining group equation. For example,
+\[
+ M^TM=I+t(X^T+X)+O(t^2)=I
+ \quad\Longrightarrow\quad X^T=-X.
+\]
+A real antisymmetric matrix has one independent entry for each pair
+\(i<j\), giving \(N(N-1)/2\) rotation generators. The same procedure
+produces the other rows below. All dimensions are real.
+\begin{center}
+\small
+\begin{tabular}{@{}lll@{}}
+\toprule
+Group & Constraint on \(X\) & Dimension \\
+\midrule
+\(\UU(N)\) & \(X^\dagger+X=0\) & \(N^2\) \\
+\(\SU(N)\) & \(X^\dagger+X=0,\ \tr X=0\) & \(N^2-1\) \\
+\(\OO(N),\ \SO(N)\) & \(X^T+X=0\) & \(N(N-1)/2\) \\
+\(\OO(1,d),\ \SO^+(1,d)\) & \(X^T\eta+\eta X=0\) & \(d(d+1)/2\) \\
+\(\Sp(2n,\R)\) & \(X^T\Omega+\Omega X=0\) & \(n(2n+1)\) \\
+\bottomrule
+\end{tabular}
+\end{center}
+For example, differentiating \(\det e^{tX}=e^{t\tr X}\) explains the
+traceless condition for a special unitary matrix. A real antisymmetric
+matrix is already traceless, so imposing determinant one does not
+remove an additional generator from \(\OO(N)\). The groups
+\(\OO(N)\) and \(\SO(N)\) have the same Lie algebra because their
+identity components agree.
+
+For the symplectic group, write \(X\) in \(n\)-by-\(n\) blocks.
+The constraint is equivalent to
+\begin{equation}
+ X=\begin{pmatrix}A&B\\ C&-A^T\end{pmatrix},
+ \qquad B=B^T,\quad C=C^T.
+ \label{eq:symplectic-algebra}
+\end{equation}
+There are \(n^2+n(n+1)=n(2n+1)\) independent entries.
+It is \(\Omega X\), not generally \(X\), that is symmetric.
+The compact group usually denoted \(\Sp(n)\) has the same real dimension,
+but is a different real group: in its complex \(2n\)-dimensional defining
+representation one imposes both unitarity and preservation of the
+symplectic form.
+
+\subsection{From local generators to a connected group}
+The exponential map covers a neighborhood of the identity. Every element
+of a connected Lie group is a finite product of exponentials, though a
+single exponential need not suffice for a general connected group.
+An invariant subspace for all generators is therefore invariant under
+the connected group, and conversely.
+
+The algebra determines local composition, but not global identifications
+or disconnected components. If its bracket vanishes, the identity
+component is abelian; the full group need not be. For example, a
+reflection in \(\OO(2)\) conjugates a rotation through \(\theta\) into
+one through \(-\theta\). Lecture 9 develops the global question using
+covering groups and projective representations.
+
+\Needspace{10\baselineskip}
+\section{Ideals, simple algebras, and real forms}
+\label{sec:ideals}
+The algebra has an action on itself: conjugation moves one generator
+into a linear combination of generators. Studying its invariant
+subspaces reveals the internal structure of the symmetry algebra.
+
+\subsection{Subalgebras, ideals, and the adjoint representation}
+A \emph{subalgebra} \(\lieh\subseteq\lieg\) is a linear subspace closed
+under its own bracket: \([\lieh,\lieh]\subseteq\lieh\).
+An \emph{ideal} satisfies the stronger condition
+\begin{equation}
+ [\lieg,\lieh]\subseteq\lieh.
+ \label{eq:ideal}
+\end{equation}
+This means that bracketing with any generator of the full algebra keeps
+one inside \(\lieh\). It is the infinitesimal version of a normal subgroup,
+whose defining condition is \(gHg^{-1}=H\) for every \(g\in G\).
+
+The connection is made by the adjoint representation. For a matrix group,
+\begin{equation}
+ \Ad_g(X)=gXg^{-1},\qquad \ad_X(Y)=[X,Y].
+ \label{eq:adjoint}
+\end{equation}
+Conjugation preserves the Lie algebra, and
+\(\Ad_{g_1g_2}=\Ad_{g_1}\Ad_{g_2}\). Differentiating gives \(\ad\);
+the Jacobi identity says
+\([\ad_X,\ad_Y]=\ad_{[X,Y]}\), so it too is a representation.
+Ideals are exactly invariant subspaces of the adjoint Lie algebra
+representation. For connected \(G\), this also means invariance under
+\(\Ad_g\) for all \(g\). The connected subgroup generated by the
+exponentials of an ideal is normal in a connected group; it need not be
+closed, so global subgroup statements require care.
+
+For example, take rotation generators obeying
+\([J_i,J_j]=i\epsilon_{ijk}J_k\). The span of \(J_3\) is a subalgebra,
+but not an ideal, since \([J_1,J_3]=-iJ_2\).
+By contrast, translations form an abelian ideal of the Poincar\'e algebra:
+bracketing a Lorentz generator with a translation gives a translation.
+This is the infinitesimal origin of the semidirect product in
+Eq.~\eqref{eq:PoincareProduct}.
+
+\subsection{Simple and semisimple algebras}
+A Lie algebra is \emph{simple} if it is nonabelian and has no nonzero
+proper ideals. It is \emph{semisimple} if it has no nonzero solvable
+ideals.\footnote{An algebra is solvable if its derived series
+\(\lieh^{(0)}=\lieh\), \(\lieh^{(r+1)}=[\lieh^{(r)},\lieh^{(r)}]\)
+eventually becomes zero.} In finite dimensions over \(\R\) or \(\C\),
+this is equivalent
+to being a direct sum of simple Lie algebras; it is also equivalent to
+having no nonzero abelian ideals.
+
+Neither condition says that every pair of independent generators has
+a nonzero commutator. The two independent traceless diagonal Hermitian
+matrices in \(\su(3)\) commute. Generators belonging to different simple
+factors of a semisimple direct sum also commute.
+
+What is true is
+\begin{equation}
+ [\lieg,\lieg]=\lieg
+ \quad\text{for a semisimple Lie algebra},
+ \label{eq:perfect}
+\end{equation}
+where \([\lieg,\lieg]\) denotes the linear span of all commutators.
+For a simple algebra that span is a nonzero ideal and hence is the whole
+algebra; the result then follows factor by factor. Thus, in any
+finite-dimensional representation,
+\begin{equation}
+ \tr\rho(X)=0\qquad\text{for every }X\in\lieg,
+ \label{eq:semisimple-trace}
+\end{equation}
+since every \(X\) is a sum of commutators and the trace of a commutator
+vanishes. Thus tracelessness follows from the structure of the algebra.
+
+Some useful examples, stated at the level of real Lie algebras, are
+\begin{itemize}
+\item \(\su(N)\) is simple for \(N\geq2\).
+\item \(\so(3)\) and \(\so(N)\) for \(N\geq5\) are simple;
+\(\so(4)\cong\su(2)\oplus\su(2)\) is semisimple but not simple,
+and \(\so(2)\) is abelian.
+\item \(\mathfrak u(N)=\su(N)\oplus\mathfrak u(1)\) is reductive,
+meaning a direct sum of a semisimple algebra and an abelian center;
+it is not semisimple because of its central \(\mathfrak u(1)\) ideal.
+\item \(\so(1,d)\) is real simple for \(d\geq2\), while
+\(\so(1,1)\) is one-dimensional and abelian.
+\item The Poincar\'e algebra is not semisimple because its translation
+ideal is nonzero and abelian.
+\end{itemize}
+
+A simple Lie algebra need not belong to a group with no nontrivial
+normal subgroups. For example, \(\SU(N)\) has the finite center
+\(\Z_N\), although its Lie algebra is simple. Discrete central
+subgroups have no tangent directions and therefore are not detected by
+the Lie algebra. Likewise the algebra direct sum for \(\mathfrak u(N)\)
+does not give a global direct product without a quotient:
+\[
+ \UU(N)\cong\bigl(\SU(N)\times\UU(1)\bigr)/\Z_N.
+\]
+The map \((S,z)\mapsto zS\) is onto; its kernel consists of
+\((z^{-1}I,z)\) with \(z^N=1\).
+
+\Needspace{34\baselineskip}
+\subsection{Real algebras and their complexifications}
+This subsection records distinctions needed later for Lorentz
+representations. Its main point is that allowing complex coefficients
+can identify algebras that were different over the reals. The detailed
+Lorentz applications can be revisited when we study relativistic fields.
+The scalars over which an algebra is defined matter. For a real algebra,
+its complexification \(\lieg_{\C}=\lieg\otimes_{\R}\C\) allows complex
+linear combinations of its generators. Distinct real algebras can have
+the same complexification:
+\begin{equation}
+ \su(2)_{\C}\cong\slie(2,\C),\qquad
+ \slie(2,\R)_{\C}\cong\slie(2,\C).
+ \label{eq:real-forms}
+\end{equation}
+Nevertheless \(\su(2)\) and \(\slie(2,\R)\) are not isomorphic as real
+Lie algebras. One is the compact real form; the other is noncompact.
+The correct real isomorphisms relevant here are
+\[
+ \su(2)\cong\so(3),\qquad
+ \slie(2,\R)\cong\so(1,2).
+\]
+At the connected group level,
+\(\SO^+(1,2)\cong\mathrm{PSL}(2,\R)
+=\SL(2,\R)/\{I,-I\}\).
+
+Similarly, the Euclidean rotation algebra and Lorentz algebra in four
+dimensions must not be interchanged:
+\begin{align}
+ \so(4)&\cong\su(2)\oplus\su(2)
+ &&\text{as real algebras},\\
+ \so(1,3)_{\C}&\cong\slie(2,\C)\oplus\slie(2,\C)
+ &&\text{as complex algebras}.
+ \label{eq:lorentz-complexification}
+\end{align}
+The real algebra \(\so(1,3)\) is simple even though its
+complexification splits. The familiar two spin labels of complex
+finite-dimensional Lorentz representations come from the second line.
+Their derivation belongs to the later discussion of relativistic fields.
+
+\begin{warningbox}[Algebra classification is not the whole group problem]
+Structure constants in a specified basis determine a Lie algebra.
+They do not determine a representation or a unique global Lie group.
+Classifying semisimple algebras is a central part of the subject, but
+more general Lie algebras also contain solvable ideals and extensions.
+Global quotients and disconnected components are additional group data.
+\end{warningbox}
+
+\clearpage
+\section*{Questions and checks}
+\addcontentsline{toc}{section}{Questions and checks}
+\begin{enumerate}
+\item Derive the Poincar\'e composition law by applying two transformations
+to \(x^\mu\). Why is the product semidirect?
+\item For the shear representation \(R(t)=\left(\begin{smallmatrix}1&t\\0&1\end{smallmatrix}\right)\),
+identify an invariant line and prove that it has no invariant complement.
+Which hypothesis of the unitary complete-reducibility argument fails?
+\item Expand the group commutator in Eq.~\eqref{eq:group-commutator}
+through order \(st\). Track the sign after putting \(X=-iT_a\).
+\item Derive the infinitesimal conditions for \(\SO(N)\), \(\SU(N)\),
+and \(\Sp(2n,\R)\), and count their independent real parameters.
+\item Give a subalgebra of \(\su(2)\) that is not an ideal, and two
+independent commuting generators of \(\su(3)\). Why is neither example
+in conflict with simplicity?
+\item Distinguish these four statements: a group is connected; an algebra
+is simple; a representation is irreducible; a representation is faithful.
+Use the shear representation, the trivial representation of \(\SU(2)\),
+and the algebra \(\su(2)\) for examples.
+\item Use the Jacobi identity to prove that the span \([\lieg,\lieg]\)
+of commutators is an ideal. Explain why it equals \(\lieg\) for a
+semisimple algebra, and deduce tracelessness in a finite-dimensional
+representation.
+\item Distinguish a real algebra from its complexification using
+\(\su(2)\) and \(\slie(2,\R)\). Why does the complex splitting of
+\(\so(1,3)_{\C}\) not contradict real simplicity of \(\so(1,3)\)?
+\end{enumerate}
+
+\clearpage
+\section*{Summary}
+\addcontentsline{toc}{section}{Summary}
+\begin{keyidea}[Three levels of a symmetry]
+The group describes finite composition. A representation specifies the
+space on which it acts. The Lie algebra records the local generators
+and their commutators. Keeping these levels distinct is the starting
+point for the spin and tensor constructions in Lecture 9.
+\end{keyidea}
+\begin{itemize}
+\item A Lie group's dimension counts continuous parameters, not the
+dimension of a chosen representation.
+\item Irreducibility concerns invariant vector subspaces. Finite-dimensional
+unitary representations are completely reducible; compact groups allow
+an invariant positive inner product to be constructed by averaging.
+\item Schur's lemma makes an operator commuting with an irreducible
+complex action a scalar. This will determine the spin Casimir.
+\item Differentiation gives tangent matrices \(X_a=-iT_a\), with
+\([X_a,X_b]=f_{ab}{}^cX_c\). Antisymmetric local composition determines
+the structure constants.
+\item Ideals are invariant subspaces of the adjoint action. Simple and
+semisimple describe algebras, independently of irreducibility of some
+other representation. A semisimple algebra is spanned by commutators.
+\item Reality conditions, global quotients, and disconnected components
+are additional data. A Lie algebra does not determine a unique global
+group; Lecture 9 makes this explicit for rotations.
+\end{itemize}
+
+\section*{Further reading}
+\addcontentsline{toc}{section}{Further reading}
+These notes reorganize the supplied symmetry and representation slide
+sets into Lectures 8--10. For mathematical background and further proofs:
+\begin{itemize}
+\item B. C. Hall, \emph{An Elementary Introduction to Groups and
+Representations}, \href{https://arxiv.org/abs/math-ph/0005032}{arXiv:math-ph/0005032}.
+\item P. Etingof, \emph{Lie Groups and Lie Algebras I}, MIT 18.745,
+\href{https://ocw.mit.edu/courses/18-745-lie-groups-and-lie-algebras-i-fall-2020/mit18_745_f20_lec18.pdf}{Lecture 18: representations of semisimple Lie algebras}.
+\end{itemize}
+\end{document}

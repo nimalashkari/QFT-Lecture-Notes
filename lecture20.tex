@@ -1,0 +1,490 @@
+\documentclass[11pt]{article}
+\usepackage[letterpaper,margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern,microtype}
+\usepackage{amsmath,amssymb,mathtools,bm,slashed}
+\usepackage{xcolor,enumitem,booktabs,array,needspace}
+\usepackage[most]{tcolorbox}
+\usepackage{fancyhdr,titlesec,parskip,hyperref}
+\definecolor{qftblue}{HTML}{245A8D}
+\definecolor{qftgreen}{HTML}{2F6B4F}
+\definecolor{qftgray}{HTML}{F4F6F8}
+\hypersetup{colorlinks=true,linkcolor=qftblue,urlcolor=qftblue,pdfauthor={Nima Lashkari}}
+\pagestyle{fancy}\fancyhf{}
+\lhead{PHYS 662: Quantum Field Theory I}\cfoot{\thepage}
+\setlength{\headheight}{14pt}
+\titleformat{\section}{\Large\bfseries\color{qftblue}}{\thesection.}{0.6em}{}
+\titleformat{\subsection}{\large\bfseries\color{qftgreen}}{\thesubsection}{0.6em}{}
+\setlist[enumerate]{leftmargin=2em,itemsep=0.25em,topsep=0.35em}
+\setlist[itemize]{leftmargin=2em,itemsep=0.2em,topsep=0.35em}
+\newcommand{\dd}{\mathrm d}
+\newcommand{\ii}{\mathrm i}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\tr}{\operatorname{tr}}
+\newcommand{\Tr}{\operatorname{Tr}}
+\newcommand{\diag}{\operatorname{diag}}
+\newcommand{\Lag}{\mathcal L}
+\newcommand{\D}{\mathcal D}
+\newcommand{\vac}{\lvert0\rangle}
+\newcommand{\vbra}{\langle0\rvert}
+\newcommand{\Tord}{\mathrm T}
+\newcommand{\ket}[1]{\lvert#1\rangle}
+\newcommand{\bra}[1]{\langle#1\rvert}
+\newtcolorbox{keyidea}[1][]{enhanced,breakable,colback=qftgray,colframe=qftblue,
+ boxrule=0.7pt,arc=1.5mm,title={#1},fonttitle=\bfseries,coltitle=white}
+\newtcolorbox{remarkbox}[1][]{enhanced,breakable,colback=white,colframe=qftgreen,
+ boxrule=0.6pt,arc=1.5mm,title={#1},fonttitle=\bfseries,coltitle=white}
+\newcommand{\module}[1]{\clearpage\section{#1}}
+\newcommand{\lecturefront}[4]{%
+\rhead{Lecture #1}\hypersetup{pdftitle={PHYS 662 Lecture #1: #2}}
+\begin{document}\pagenumbering{gobble}
+\begin{titlepage}\centering\vspace*{1.05in}
+{\scshape\Large PHYS 662 --- Quantum Field Theory I\par}
+\vspace{0.35in}{\Huge\bfseries\color{qftblue}Lecture #1\par}
+\vspace{0.2in}{\LARGE\bfseries #2\par}
+\vspace{0.2in}{\large\color{qftgreen}#3\par}
+\vspace{0.6in}{\large Nima Lashkari\par}{\large Fall 2026\par}
+\vfill\begin{minipage}{0.86\textwidth}\small #4\par\medskip
+Course page: \url{https://nimalashkari.com/quantum-field-theory-2026-part-i/}
+\end{minipage}\vspace{0.5in}\end{titlepage}
+\pagenumbering{roman}\setcounter{tocdepth}{1}\tableofcontents
+\vfill\begin{remarkbox}[Place in the course]
+Lectures 17--18 develop the quantum-mechanical construction. Lecture 19
+extends Gaussian integration and source methods to scalar fields.
+Lecture 20 introduces Grassmann integration and fermionic fields.
+Problem Set 6 brings these four steps together.
+\end{remarkbox}\clearpage\pagenumbering{arabic}}
+\lecturefront{20}{Path Integrals for Fermionic Fields}
+{Coherent states, Grassmann sources, and the fermion-loop sign}
+{Fermionic paths carry anticommuting values. We build their integration
+rules from a single mode, derive the Dirac Gaussian with explicit source
+conventions, and trace the signs in time ordering, thermal boundary
+conditions, and a closed fermion loop.}
+
+\section{Why coherent states are the useful starting point}
+Use \(\hbar=c=1\) and the mostly-minus metric of Lectures 15--19.
+A fermionic annihilation operator cannot have an arbitrary ordinary
+complex eigenvalue: from \(c^2=0\), an eigenvalue would obey
+\(\xi^2=0\). Grassmann numbers will provide such labels. First recall
+how a coherent-state path integral works for a bosonic oscillator.
+
+For \([a,a^\dagger]=1\), define unnormalized states
+\begin{equation}
+ |z\rangle=e^{za^\dagger}|0\rangle,\qquad
+ \langle\bar z|=\langle0|e^{\bar za},\qquad
+ a|z\rangle=z|z\rangle.
+\end{equation}
+Their overlap and resolution of the identity are
+\begin{equation}
+ \langle\bar z'|z\rangle=e^{\bar z'z},\qquad
+ 1=\int\frac{\dd^2z}{\pi}e^{-\bar zz}|z\rangle\langle\bar z|.
+                                                        \label{eq:bosonidentity}
+\end{equation}
+Here \(\bar z=z^*\) on the integration contour. Expanding in number
+states proves the identity, using
+\(\int\dd^2z\,e^{-|z|^2}z^n\bar z^m/\pi=n!\delta_{nm}\).
+
+If \(H=:h(a^\dagger,a):\) is normal ordered, then
+\begin{equation}
+ \langle\bar z_{j+1}|e^{-\ii\epsilon H}|z_j\rangle
+ =e^{\bar z_{j+1}z_j}
+ [1-\ii\epsilon h(\bar z_{j+1},z_j)+O(\epsilon^2)].
+\end{equation}
+The product of overlaps and Gaussian measures produces a first-order
+kinetic term \(\ii\bar z\dot z\). The normal symbol uses labels from
+adjacent time slices; replacing it by another symbol without correcting
+the discretization can change the Hamiltonian.
+
+The continuum expression for a matrix element between unnormalized
+coherent states contains an endpoint factor:
+\begin{equation}
+ K(\bar z_f,z_i)=\int\D\bar z\D z\,
+ \exp\!\left\{\bar z_fz(t_f)+\ii\int_{t_i}^{t_f}\dd t\,
+ [\ii\bar z\dot z-h(\bar z,z)]\right\}.             \label{eq:bosonpath}
+\end{equation}
+Fix \(z(t_i)=z_i\) and \(\bar z(t_f)=\bar z_f\); the discrete
+construction defines the remaining endpoint prescription. Treating
+both variables as independently fixed at both ends would overconstrain
+the first-order equations.
+
+For an oscillator, \(z=\sqrt{m\omega/2}\,q+\ii p/\sqrt{2m\omega}\).
+The Hamiltonian \(\omega(a^\dagger a+1/2)\) has symbol
+\(\omega(\bar zz+1/2)\). The vacuum constant is not generated by
+silently replacing this symbol with \(\omega\bar zz\).
+
+\module{Grassmann algebra and Berezin integration}
+Independent odd generators satisfy
+\begin{equation}
+ \theta_a\theta_b=-\theta_b\theta_a,\qquad \theta_a^2=0.
+\end{equation}
+Every function is a finite polynomial in finitely many generators.
+Even elements commute with all elements, whereas two homogeneous odd
+elements anticommute. Barred variables are independent generators;
+the bar is a label, not a constraint imposed during integration.
+
+Use \emph{left} derivatives throughout. Their product rule is
+\begin{equation}
+ \partial^L_\theta(FG)=(\partial^L_\theta F)G
+ +(-1)^{|F|}F(\partial^L_\theta G),                   \label{eq:leibniz}
+\end{equation}
+for homogeneous parity \(|F|\). Thus
+\(\partial^L_\theta(\bar\theta\theta)=-\bar\theta\),
+whereas \(\partial^L_{\bar\theta}(\bar\theta\theta)=\theta\).
+Odd derivatives anticommute. Write their order explicitly, remembering
+that the rightmost derivative acts first.
+
+Berezin integration is defined by
+\begin{equation}
+ \int\dd\theta\,1=0,\qquad \int\dd\theta\,\theta=1.
+\end{equation}
+Choose the paired orientation
+\begin{equation}
+ \int\dd\bar\theta\,\dd\theta\,\theta\bar\theta=1,
+ \qquad
+ \int\dd\bar\theta\,\dd\theta\,\bar\theta\theta=-1.
+                                                        \label{eq:measure}
+\end{equation}
+Then
+\begin{equation}
+ \int\dd\bar\theta\dd\theta\,e^{-\bar\theta a\theta}
+ =\int\dd\bar\theta\dd\theta(1-a\bar\theta\theta)=a.
+                                                        \label{eq:onegauss}
+\end{equation}
+Unlike an ordinary Gaussian, this integral produces a positive power
+of the quadratic coefficient. It is an algebraic operation and
+requires no convergence condition on \(a\).
+
+Translation leaves the measure invariant. Consequently the integral
+of a total Grassmann derivative vanishes, the starting point for
+fermionic Schwinger--Dyson identities. Under \(\theta'=a\theta\),
+one instead has \(\dd\theta'=a^{-1}\dd\theta\): the Jacobian is
+inverse to the ordinary one, as follows by preserving
+\(\int\dd\theta'\theta'=1\).
+
+\begin{keyidea}[Signs require a complete convention]
+An integration order, a field order, and a left/right derivative
+convention must be specified together. Changing a convention is
+allowed, but changing just one displayed sign is not. Equations
+\eqref{eq:leibniz}--\eqref{eq:measure} fix the conventions used below.
+\end{keyidea}
+
+\module{Fermionic coherent states and time slicing}
+For \(\{c,c^\dagger\}=1\), let odd labels anticommute with \(c,c^\dagger\).
+Choose
+\begin{equation}
+ |\xi\rangle=e^{-\xi c^\dagger}|0\rangle,\qquad
+ \langle\bar\xi|=\langle0|e^{-c\bar\xi}.
+\end{equation}
+Expanding the finite exponentials gives
+\begin{equation}
+ c|\xi\rangle=\xi|\xi\rangle,\qquad
+ \langle\bar\xi|c^\dagger=\langle\bar\xi|\bar\xi,
+ \qquad \langle\bar\xi|\xi\rangle=e^{\bar\xi\xi}.
+\end{equation}
+With the measure of \eqref{eq:measure},
+\begin{equation}
+ 1=\int\dd\bar\xi\dd\xi\,e^{-\bar\xi\xi}
+ |\xi\rangle\langle\bar\xi|.                         \label{eq:fermidentity}
+\end{equation}
+For a direct check, expand the outer product in the states
+\(|0\rangle,|1\rangle=c^\dagger|0\rangle\). The integrated coefficient
+of each diagonal projector is one; the odd off-diagonal terms integrate
+to zero. The same construction extends to several modes with a fixed
+mode order.
+
+For a normal-ordered even Hamiltonian, inserting \eqref{eq:fermidentity}
+between \(N\) short evolution steps gives
+\begin{align}
+ K(\bar\xi_f,\xi_i)
+ =\lim_{N\to\infty}\int\prod_{j=1}^{N-1}\dd\bar\xi_j\dd\xi_j\,
+ \exp\Bigg[&-\sum_{j=1}^{N-1}\bar\xi_j\xi_j
+ +\sum_{j=0}^{N-1}\bar\xi_{j+1}\xi_j\nonumber\\[-2pt]
+ &-\ii\epsilon\sum_{j=0}^{N-1}h(\bar\xi_{j+1},\xi_j)\Bigg],
+                                                        \label{eq:discreteferm}
+\end{align}
+where \(\xi_0=\xi_i\) and \(\bar\xi_N=\bar\xi_f\). The short-step
+formula is accurate to the order needed for the limit. The overlap
+terms combine into
+\(\bar\xi_f\xi_{N-1}-\sum_{j=1}^{N-1}\bar\xi_j(\xi_j-\xi_{j-1})\).
+Thus the continuum notation is
+\begin{equation}
+ K=\int\D\bar\xi\D\xi\,
+ e^{\bar\xi_f\xi(t_f)+\ii\int\dd t\,[\ii\bar\xi\dot\xi-h(\bar\xi,\xi)]}.
+                                                        \label{eq:fermpath}
+\end{equation}
+Only \(\xi(t_i)\) and \(\bar\xi(t_f)\) are prescribed. The endpoint
+factor is essential for the first-order variational problem and for
+the correct coherent-state matrix element.
+
+For \(H=\omega c^\dagger c\), direct evaluation in the two-dimensional
+Hilbert space gives
+\begin{equation}
+ K(\bar\xi_f,\xi_i;T)=1+\bar\xi_f\xi_i e^{-\ii\omega T}
+ =e^{\bar\xi_f\xi_i e^{-\ii\omega T}}.
+\end{equation}
+It reduces to the overlap at \(T=0\). This is a useful exact check
+of the kinetic sign and the boundary factor in \eqref{eq:fermpath}.
+
+\module{The Grassmann Gaussian gives a determinant}
+For \(n\) pairs, orient the measure so that the product of the
+\(n\) monomials \(\theta_a\bar\theta_a\) integrates to one.
+For an invertible ordinary matrix \(M\),
+\begin{equation}
+ \int\D\bar\theta\D\theta\,e^{-\bar\theta M\theta}=\det M.
+                                                        \label{eq:det}
+\end{equation}
+Only the term containing every integration variable survives.
+Its antisymmetrized coefficient is
+\(\sum_\sigma\operatorname{sgn}(\sigma)\prod_a M_{a\sigma(a)}\),
+which is the determinant. For two pairs this is
+\(M_{11}M_{22}-M_{12}M_{21}\); the minus sign follows directly
+from exchanging odd variables.
+
+With independent odd sources \(\bar\eta,\eta\), completion of the square
+works provided their order is retained:
+\begin{align}
+ &\int\D\bar\theta\D\theta\,
+ e^{-\bar\theta M\theta+\bar\eta\theta+\bar\theta\eta}
+   =\det M\,e^{\bar\eta M^{-1}\eta},                 \label{eq:euclgauss}\\
+ &-\bar\theta M\theta+\bar\eta\theta+\bar\theta\eta
+ =-(\bar\theta-\bar\eta M^{-1})M(\theta-M^{-1}\eta)
+   +\bar\eta M^{-1}\eta.
+\end{align}
+Translation invariance of Berezin integration proves the first line.
+No complex conjugacy condition relates the shifted barred and unbarred
+variables: they are independent integration coordinates.
+
+The normalized two-point integral is
+\begin{equation}
+ \frac{\int\D\bar\theta\D\theta\,
+             \theta_a\bar\theta_b e^{-\bar\theta M\theta}}
+      {\det M}=(M^{-1})_{ab}.
+                                                        \label{eq:finitecov}
+\end{equation}
+For one pair, its numerator is one and its denominator is \(M\),
+which verifies the orientation. Reversing the insertion order gives
+minus the transposed-index expression.
+
+\begin{keyidea}[Three Gaussian measures]
+At a finite regulator, a real commuting Gaussian gives
+\((\det M)^{-1/2}\), a complex commuting Gaussian gives
+\((\det M)^{-1}\), and a complex Grassmann Gaussian gives
+\(\det M\), up to source-independent measure constants.
+Their covariances are inverses; their vacuum determinants differ.
+\end{keyidea}
+Fermionic nilpotence removes a convergence question at fixed dimension.
+It does not remove ultraviolet divergences when the number of field
+modes tends to infinity. A Dirac determinant still requires a regulator.
+
+\module{The Dirac functional and ordered source derivatives}
+Apply the coherent-state construction to every regulated spinor mode.
+The canonical Hamiltonian has one-particle operator
+\(-\ii\bm\alpha\cdot\bm\nabla+\beta m\), with
+\(\alpha^j=\gamma^0\gamma^j\) and \(\beta=\gamma^0\).
+Combining it with the coherent kinetic term gives
+\(\ii\psi^\dagger\dot\psi-
+\psi^\dagger(-\ii\bm\alpha\cdot\bm\nabla+\beta m)\psi
+=\bar\psi(\ii\slashed\partial-m)\psi\).
+Consequently the independent Grassmann fields have action
+\begin{equation}
+ S_0=\int\dd^4x\,\bar\psi D\psi,\qquad
+ D=\ii\gamma^\mu\partial_\mu-m.
+\end{equation}
+In operator language \(\bar\psi=\psi^\dagger\gamma^0\); in the
+functional integral its components are independent odd variables.
+Vacuum boundary conditions select the Feynman inverse, so
+\begin{equation}
+ S_F=\ii R_D,\qquad
+ S_F(x-y)=\int\frac{\dd^4p}{(2\pi)^4}
+ \frac{\ii(\slashed p+m)e^{-\ii p\cdot(x-y)}}{p^2-m^2+\ii0}.
+                                                        \label{eq:SF}
+\end{equation}
+Here \(R_D\) is the Feynman inverse of the Dirac operator,
+with \(DR_D=1\). Keep it distinct from the scalar propagator
+\(D_F\). The two physical propagators obey
+\(S_F=(\ii\slashed\partial+m)D_F\) using the scalar \(D_F\) of Lecture 19.
+
+Introduce odd sources in the fixed order
+\begin{equation}
+ Z_0[\bar\eta,\eta]=
+ \frac{\int\D\bar\psi\D\psi\,
+ e^{\ii(\bar\psi D\psi+\bar\eta\psi+\bar\psi\eta)}}
+ {\int\D\bar\psi\D\psi\,e^{\ii\bar\psi D\psi}}
+ =e^{-\ii\bar\eta R_D\eta}=e^{-\bar\eta S_F\eta}.     \label{eq:fermZ}
+\end{equation}
+The shifts are \(\psi\mapsto\psi+R_D\eta\) and
+\(\bar\psi\mapsto\bar\psi+\bar\eta R_D\). The determinant
+\(\det(-\ii D)\) cancels in this normalized free functional.
+
+With all derivatives acting from the left,
+\begin{equation}
+ \frac{\delta^L Z}{\delta\bar\eta_a(x)}
+ =\ii\langle\psi_a(x)\rangle_{\rm unnorm},\qquad
+ \frac{\delta^L Z}{\delta\eta_b(y)}
+ =-\ii\langle\bar\psi_b(y)\rangle_{\rm unnorm}.
+\end{equation}
+The bracket here includes the source exponential and the zero-source
+normalization, not division by \(Z[\bar\eta,\eta]\). In particular,
+\begin{equation}
+ \langle\Tord\psi_a(x)\bar\psi_b(y)\rangle
+ =\left.\frac{\delta^L}{\delta\bar\eta_a(x)}
+           \frac{\delta^L}{\delta\eta_b(y)}Z_0\right|_0
+ =S_{F,ab}(x-y).                                     \label{eq:derivatives}
+\end{equation}
+Reversing these two derivatives gives \(-S_{F,ab}\).
+Indeed differentiating \(-\bar\eta S_F\eta\) first with respect to
+\(\eta\) gives \(+\bar\eta S_F\). This one-line check fixes the sign.
+
+\module{Fermionic Wick contractions and the source equation}
+Fermionic time ordering includes the sign of the permutation:
+\begin{equation}
+ \Tord\psi_a(x)\bar\psi_b(y)=
+ \theta(x^0-y^0)\psi_a(x)\bar\psi_b(y)
+ -\theta(y^0-x^0)\bar\psi_b(y)\psi_a(x).
+\end{equation}
+Expanding the Gaussian source functional gives Wick's theorem with
+the same permutation signs. Writing \(S_{ab}\) for the appropriate
+spacetime and spinor kernel, two useful orderings are
+\begin{align}
+ \langle\Tord\psi_a\bar\psi_b\psi_c\bar\psi_d\rangle
+ &=S_{ab}S_{cd}-S_{ad}S_{cb},                        \label{eq:wickinterleaved}\\
+ \langle\Tord\psi_a\psi_b\bar\psi_c\bar\psi_d\rangle
+ &=S_{ad}S_{bc}-S_{ac}S_{bd}.                         \label{eq:wickgrouped}
+\end{align}
+The relative minus sign is fixed by exchanging odd fields. The
+overall form also depends on the stated external field order; one
+cannot copy a bosonic pairing formula and append an arbitrary sign.
+
+Let \(j^\mu(x)=\bar\psi(x)\gamma^\mu\psi(x)\). Removing the product
+of one-point expectations, the connected contraction is
+\begin{equation}
+ \langle\Tord j^\mu(x)j^\nu(y)\rangle_c
+ =-\tr[\gamma^\mu S_F(x-y)\gamma^\nu S_F(y-x)].       \label{eq:current}
+\end{equation}
+The trace closes the spinor indices around the loop. The minus sign
+is the exchange sign left over from closing the fermion chain.
+Coincident composite operators are understood with a regulator.
+
+\subsection{Schwinger--Dyson check}
+A total left derivative with respect to \(\bar\psi\) gives
+\begin{equation}
+ \left[\frac1\ii D_{ab}(x)
+       \frac{\delta^L}{\delta\bar\eta_b(x)}+\eta_a(x)\right]Z_0=0.
+                                                        \label{eq:fermSD}
+\end{equation}
+The source term order is as displayed. Since
+\(\delta^L Z_0/\delta\bar\eta=-S_F\eta Z_0\), this identity is
+equivalent to
+\begin{equation}
+ (\ii\slashed\partial_x-m)S_F(x-y)=\ii\delta^{(4)}(x-y)I_4.
+\end{equation}
+It agrees with the canonical result because differentiating fermionic
+time ordering produces the equal-time anticommutator. In momentum
+space, \((\slashed p-m)(\slashed p+m)=p^2-m^2\); in position
+space, \((\ii\slashed\partial-m)(\ii\slashed\partial+m)
+=-(\Box+m^2)\). This also verifies the scalar-to-Dirac relation.
+
+\module{Thermal fermions and antiperiodicity}
+A trace is not obtained by imposing the bosonic coherent-state closure
+without a sign. For an even operator \(O\), one mode obeys
+\begin{equation}
+ \Tr O=\int\dd\bar\xi\dd\xi\,e^{-\bar\xi\xi}
+ \langle-\bar\xi|O|\xi\rangle.                      \label{eq:trace}
+\end{equation}
+This identity follows by expanding in the empty and occupied states.
+For \(O=1\), the integrand is
+\((1-\bar\xi\xi)^2=1-2\bar\xi\xi\), whose integral is two.
+Omitting the minus sign in the bra would give zero, the supertrace
+\(\Tr(-1)^F\), rather than the ordinary trace.
+
+For \(H=\omega c^\dagger c\), the coherent kernel of Section 3 gives
+\begin{equation}
+ Z_\beta=\int\dd\bar\xi\dd\xi\,e^{-\bar\xi\xi}
+ e^{-\bar\xi\xi e^{-\beta\omega}}
+ =1+e^{-\beta\omega}.
+\end{equation}
+Its two terms are the empty and occupied states. Inserting intermediate
+states around the trace moves the sign in \eqref{eq:trace} to the seam
+of the Euclidean time circle. Therefore
+\begin{equation}
+ \psi(\tau+\beta,\bm x)=-\psi(\tau,\bm x),\qquad
+ \bar\psi(\tau+\beta,\bm x)=-\bar\psi(\tau,\bm x).
+                                                        \label{eq:AP}
+\end{equation}
+The allowed frequencies are \(\omega_n=(2n+1)\pi/\beta\). Bosonic
+thermal fields instead have \(2n\pi/\beta\). These boundary conditions
+are imposed by the trace and statistics, not by a change in the local
+classical field equation.
+
+\subsection{The Euclidean Dirac operator}
+Choose \(\gamma_E^4=\gamma^0\), \(\gamma_E^j=-\ii\gamma^j\).
+They satisfy \(\{\gamma_E^a,\gamma_E^b\}=2\delta^{ab}\). Then
+\begin{equation}
+ S_E=\int\dd^4x_E\,\bar\psi D_E\psi,\qquad
+ D_E=\gamma_E^a\partial_a+m,
+\end{equation}
+and the Euclidean functional is \(\det D_E\) at zero source, up to
+normalization. On infinite Euclidean space,
+\begin{equation}
+ S_E^{(2)}(x)=\int\frac{\dd^4p}{(2\pi)^4}e^{\ii p\cdot x}
+ \frac{-\ii\gamma_E^ap_a+m}{p^2+m^2}.
+\end{equation}
+At finite temperature replace the energy integral by the antiperiodic
+frequency sum. The superscript distinguishes this two-point kernel
+from the Euclidean action. In both cases barred fields remain
+independent integration variables.
+
+\module{Closed loops and a first look at a gauge interaction}
+Treat \(A_\mu(x)\) as a prescribed external field and choose
+\begin{equation}
+ \mathcal L=\bar\psi(\ii\slashed\partial-m)\psi
+ -e\bar\psi\gamma^\mu\psi A_\mu.
+\end{equation}
+This corresponds to \(D_\mu=\partial_\mu+\ii eA_\mu\); the vertex
+from \(e^{\ii S}\) is \(-\ii e\gamma^\mu\). There is no need to
+quantize the gauge field to see the fermion-loop sign.
+
+Integrating the fermions gives the vacuum response
+\begin{align}
+ \frac{\mathcal Z[A]}{\mathcal Z[0]}
+ &=\frac{\det(D-e\slashed A)}{\det D},\\
+ \log\frac{\mathcal Z[A]}{\mathcal Z[0]}
+ &=\Tr\log(1-eR_D\slashed A)
+ =-\sum_{n\geq1}\frac{e^n}{n}\Tr[(R_D\slashed A)^n]. \label{eq:looplog}
+\end{align}
+\(\Tr\) includes spacetime and spinor indices. Each term is a cyclic
+chain of propagators and insertions. A commuting complex Gaussian
+has the inverse determinant and the opposite logarithm. This is the
+origin of one extra minus sign for each closed fermion loop.
+
+For illustration, define \(\ii\Pi^{\mu\nu}(q)\) as the amputated
+two-background-field insertion. Its loop integrand is
+\begin{equation}
+ \ii\Pi^{\mu\nu}(q)=-( -\ii e)^2
+ \int\frac{\dd^4k}{(2\pi)^4}
+ \tr\!\left[
+ \gamma^\mu\frac{\ii(\slashed k+m)}{k^2-m^2+\ii0}
+ \gamma^\nu\frac{\ii(\slashed k+\slashed q+m)}{(k+q)^2-m^2+\ii0}
+ \right].                                            \label{eq:polarization}
+\end{equation}
+The leading minus is the closed-loop sign; the other factors come
+from the two vertices and two propagators. The \(1/2!\) in the
+interaction expansion is canceled by the two assignments of labeled
+external insertions. Evaluating this ultraviolet-divergent integral
+requires a regulator and renormalization, beyond this lecture.
+
+This object contributes to vacuum polarization. It is not a claim
+that an isolated on-shell photon spontaneously decays into a real
+electron--positron pair. Its external energy and momentum, analytic
+structure, and eventual gauge-field dynamics must be treated separately.
+
+\subsection*{Questions to check understanding}
+\begin{enumerate}
+\item Why do coherent-state amplitudes fix different variables at the two ends?
+\item Verify the one-pair Gaussian and the derivative order in \eqref{eq:derivatives}.
+\item Derive the relative sign in \eqref{eq:wickinterleaved} by one exchange.
+\item How does the ordinary thermal trace enforce antiperiodicity?
+\item Where do the determinant and closed-loop signs enter \eqref{eq:looplog}?
+\end{enumerate}
+\end{document}

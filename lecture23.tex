@@ -1,0 +1,493 @@
+\documentclass[11pt]{article}
+\usepackage[letterpaper,margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern,microtype}
+\usepackage{amsmath,amssymb,mathtools,bm,slashed}
+\usepackage{xcolor,enumitem,booktabs,array,needspace}
+\usepackage[most]{tcolorbox}
+\usepackage{fancyhdr,titlesec,parskip,hyperref}
+\definecolor{qftblue}{HTML}{245A8D}
+\definecolor{qftgreen}{HTML}{2F6B4F}
+\definecolor{qftgray}{HTML}{F4F6F8}
+\hypersetup{colorlinks=true,linkcolor=qftblue,urlcolor=qftblue,pdfauthor={Nima Lashkari}}
+\pagestyle{fancy}\fancyhf{}
+\lhead{PHYS 662: Quantum Field Theory I}\cfoot{\thepage}
+\setlength{\headheight}{14pt}
+\titleformat{\section}{\Large\bfseries\color{qftblue}}{\thesection.}{0.6em}{}
+\titleformat{\subsection}{\large\bfseries\color{qftgreen}}{\thesubsection}{0.6em}{}
+\setlist[enumerate]{leftmargin=2em,itemsep=0.25em,topsep=0.35em}
+\setlist[itemize]{leftmargin=2em,itemsep=0.2em,topsep=0.35em}
+\newcommand{\dd}{\mathrm d}
+\newcommand{\ii}{\mathrm i}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\tr}{\operatorname{tr}}
+\newcommand{\Tr}{\operatorname{Tr}}
+\newcommand{\diag}{\operatorname{diag}}
+\newcommand{\Lag}{\mathcal L}
+\newcommand{\D}{\mathcal D}
+\newcommand{\vac}{\lvert0\rangle}
+\newcommand{\vbra}{\langle0\rvert}
+\newcommand{\Tord}{\mathrm T}
+\newcommand{\ket}[1]{\lvert#1\rangle}
+\newcommand{\bra}[1]{\langle#1\rvert}
+\newtcolorbox{keyidea}[1][]{enhanced,breakable,colback=qftgray,colframe=qftblue,
+ boxrule=0.7pt,arc=1.5mm,title={#1},fonttitle=\bfseries,coltitle=white}
+\newtcolorbox{remarkbox}[1][]{enhanced,breakable,colback=white,colframe=qftgreen,
+ boxrule=0.6pt,arc=1.5mm,title={#1},fonttitle=\bfseries,coltitle=white}
+\newcommand{\intp}{\int\!\frac{\dd^4p}{(2\pi)^4}}
+\newcommand{\MSbar}{\overline{\mathrm{MS}}}
+\newcommand{\module}[1]{\clearpage\section{#1}}
+\newcommand{\braket}[2]{\langle#1\mid#2\rangle}
+\newcommand{\dPi}{\dd\Pi}
+\newcommand{\cM}{\mathcal M}
+\newcommand{\cH}{\mathcal H}
+\newcommand{\cS}{\mathcal S}
+\newcommand{\Zp}{Z_{\rm pole}}
+\newcommand{\Kallen}{\mathcal K}
+\newcommand{\lecturefront}[4]{%
+\rhead{Lecture #1}\hypersetup{pdftitle={PHYS 662 Lecture #1: #2}}
+\begin{document}\pagenumbering{gobble}
+\begin{titlepage}\centering\vspace*{1.05in}
+{\scshape\Large PHYS 662 --- Quantum Field Theory I\par}
+\vspace{0.35in}{\Huge\bfseries\color{qftblue}Lecture #1\par}
+\vspace{0.2in}{\LARGE\bfseries #2\par}
+\vspace{0.2in}{\large\color{qftgreen}#3\par}
+\vspace{0.6in}{\large Nima Lashkari\par}{\large Fall 2026\par}
+\vfill\begin{minipage}{0.86\textwidth}\small #4\par\medskip
+Course page: \url{https://nimalashkari.com/quantum-field-theory-2026-part-i/}
+\end{minipage}\vspace{0.5in}\end{titlepage}
+\pagenumbering{roman}\setcounter{tocdepth}{1}\tableofcontents
+\vfill\begin{remarkbox}[Place in the course]
+Lectures 21--22 developed interacting correlators and scalar loops.
+Lecture 23 defines the scattering states and the S-matrix.
+Lecture 24 converts amplitudes into rates and cross sections.
+Lecture 25 derives the reduction formula connecting these subjects.
+Homework 8 covers this three-lecture sequence.
+\end{remarkbox}
+\small\textbf{Reading and conventions.} These notes use the course slides and
+D.~Harlow, \href{https://www.mit.edu/~harlow/HarlowQFT1.pdf}{\textit{QFT I}},
+Sections 8--9, with our covariant state normalization and mostly-minus metric.
+Useful online companions are D.~Tong,
+\href{https://www.damtp.cam.ac.uk/user/tong/qft/qfthtml/S3.html}{\textit{QFT}, Sections 3.6--3.7},
+and D.~Buchholz and W.~Dybalski,
+\href{https://arxiv.org/abs/math-ph/0509047}{\textit{Scattering in relativistic quantum field theory}},
+Sections 1--3, for the scope of the asymptotic construction.
+For textbook study, see Weinberg, \textit{The Quantum Theory of Fields},
+Vol.~I, Chapter 3, and Peskin--Schroeder, \textit{An Introduction to QFT},
+Chapters 4 and 7. The accompanying editorial memo records the online
+sources consulted and the corrections to the slides.
+\normalsize\clearpage\pagenumbering{arabic}}
+\lecturefront{23}{Multiparticle States and the Scattering Matrix}
+{What comes in, what goes out, and what a particle means}
+{A scattering amplitude compares two descriptions of the same interacting
+system. We first identify stable particles in the exact spectrum, construct
+asymptotic multiparticle states, and then define the S-matrix. This order
+separates physical assumptions from perturbative calculational tools.}
+
+\section{Stable particles are properties of the exact theory}
+A field is a local operator; a particle is a particular kind of state.
+The two are related, but they are not interchangeable. Let \(\ket{\Omega}\)
+be the unique translation-invariant vacuum and choose its energy to be zero.
+A stable scalar particle of mass \(M>0\) has exact states satisfying
+\begin{equation}
+ P^\mu\ket{\bm p}=p^\mu\ket{\bm p},\qquad
+ p^0=E_{\bm p}=\sqrt{\bm p^2+M^2},\qquad
+ \braket{\bm p}{\bm q}=2E_{\bm p}(2\pi)^3\delta^{(3)}(\bm p-\bm q).
+ \label{eq:oneparticle}
+\end{equation}
+Here and below \(\braket{a}{b}\) denotes an inner product.
+The mass is the physical mass, not necessarily the parameter \(m(\mu)\)
+in a renormalized Lagrangian. For spin, add a spin label and a Kronecker delta.
+Our conventions remain \(\eta=\diag(1,-1,-1,-1)\), \(\hbar=c=1\).
+
+A local scalar with the correct quantum numbers can have a nonzero overlap
+\begin{equation}
+ \bra{\Omega}\phi(0)\ket{\bm p}=\sqrt{\Zp},\qquad
+ \bra{\Omega}\phi(x)\ket{\bm p}=\sqrt{\Zp}\,e^{-\ii p\cdot x}.
+ \label{eq:overlap}
+\end{equation}
+We choose its phase so that this overlap is real and positive, and subtract
+\(\langle\phi\rangle\) if necessary. Lorentz invariance makes the scalar
+coefficient independent of \(\bm p\). An arbitrary local field may also
+create multiparticle states. Isolating a particle requires a spectral
+projection onto its mass shell, or the asymptotic procedure developed below.
+
+Even the free-field expression \(\phi(x)\phi(y)\vac\) is not a pure
+two-particle state. Wick's identity gives
+\begin{equation}
+ \phi(x)\phi(y)\vac=
+ \langle0|\phi(x)\phi(y)|0\rangle\vac
+ +:\!\phi(x)\phi(y)\!:\vac .
+\end{equation}
+The first term is a vacuum component. In an interacting theory normal
+ordering by itself does not project onto an exact particle-number sector.
+
+\begin{keyidea}[The assumption behind ordinary particle scattering]
+We begin with stable massive particles and isolated mass shells, in a
+local theory with sufficiently short-range interactions. These assumptions
+permit well-separated incoming and outgoing packets. We do not assume
+that every local field creates just one particle, or that particle number
+is conserved during the collision.
+\end{keyidea}
+Stable bound states can also be particle species. Their internal structure
+changes their form factors and interactions, not their status as possible
+external particles. An unstable resonance does not give an exact stable
+one-particle state; its use in decay calculations needs a separate
+approximation, discussed in Lecture 24.
+
+\module{The asymptotic Fock space and its normalization}
+Build an auxiliary space \(\cH_{\rm as}\) from all stable species relevant
+to the scattering experiment. For a scalar species use
+\begin{equation}
+ \dPi_p=\frac{\dd^3p}{(2\pi)^3\,2E_{\bm p}},\qquad
+ [a(\bm p),a^\dagger(\bm q)]=2E_{\bm p}(2\pi)^3\delta^{(3)}(\bm p-\bm q).
+\end{equation}
+The Hamiltonian \(H_{\rm as}\) adds the \emph{physical} single-particle
+energies. It describes independent asymptotic particles, not the bare
+quanta of the quadratic part of an arbitrary Lagrangian split.
+
+For identical bosons define
+\(\ket{p_1,\ldots,p_n}=a^\dagger(p_1)\cdots a^\dagger(p_n)\vac_{\rm as}\).
+Their inner product is
+\begin{equation}
+ \langle q_1,\ldots,q_n|p_1,\ldots,p_n\rangle
+ =\sum_{\pi\in S_n}\prod_{j=1}^n
+ 2E_{p_j}(2\pi)^3\delta^{(3)}(\bm q_{\pi(j)}-\bm p_j).
+ \label{eq:multinorm}
+\end{equation}
+For identical fermions each permutation carries its parity sign.
+Integration over all ordered momenta therefore counts the same physical
+bosonic or fermionic configuration \(n!\) times. The identity is
+\begin{equation}
+ 1_{\rm as}=\sum_{\{n_a\}}\frac{1}{\prod_a n_a!}
+ \sum_{\{s_j\}}\int\prod_j\dPi_{p_j}\,
+ \ket{\{p_j,s_j,a_j\}}\bra{\{p_j,s_j,a_j\}}.
+ \label{eq:complete}
+\end{equation}
+The sum includes the vacuum. There is no factorial between distinguishable
+species. Write \(\cS_f=\prod_a n_a!\) for the final-state counting factor;
+this is distinct from the operator \(S\).
+
+Plane waves are distributional basis vectors. A normalized one-particle
+packet is instead
+\begin{equation}
+ \ket{f}=\int\dPi_p\,f(\bm p)\ket{\bm p},\qquad
+ \int\dPi_p\,|f(\bm p)|^2=1.
+\end{equation}
+A two-boson packet made with normalized functions \(f,g\) has squared norm
+\(1+|(f,g)|^2\), where \((f,g)=\int\dPi_p f^*g\). When their momentum
+supports are disjoint this norm is one. Exchange symmetry is already in
+the state; we do not add a second exchange amplitude after symmetrizing.
+
+\begin{remarkbox}[Why the factorial matters]
+Act with the \(n=2\) term of \eqref{eq:complete} on \(\ket{p,q}\).
+The direct and exchanged delta functions each reproduce \(\ket{p,q}\).
+The factor \(1/2!\) makes their sum the identity. The same factor will
+appear in a rate integrated over the full labeled two-particle phase space.
+\end{remarkbox}
+
+\module{Spectral decomposition of a two-point function}
+The exact two-point function shows whether a chosen field detects a
+particle. Take a Hermitian scalar with \(\langle\phi\rangle=0\).
+Insert a complete set of exact energy-momentum states into the Wightman
+function (there is no time ordering yet):
+\begin{equation}
+ W_2(x)=\bra{\Omega}\phi(x)\phi(0)\ket{\Omega}
+ =\sum_n\int\dd\mu(n)\,e^{-\ii p_n\cdot x}
+ |\bra{\Omega}\phi(0)\ket{n}|^2.
+ \label{eq:wightman}
+\end{equation}
+The measure \(\dd\mu(n)\) includes continuum integrations and degeneracies.
+This spectral insertion does not require a prior assumption of asymptotic
+completeness. Translation invariance gave the exponential; positivity of
+the Hilbert-space inner product gives nonnegative weights.
+
+Define the scalar spectral measure by
+\begin{equation}
+ \sum_n\int\dd\mu(n)\,(2\pi)^4\delta^{(4)}(q-p_n)
+ |\bra{\Omega}\phi(0)\ket{n}|^2
+ =2\pi\theta(q^0)\rho(q^2).
+ \label{eq:rhodef}
+\end{equation}
+The spectrum condition and Lorentz invariance then imply
+\begin{align}
+ W_2(x)&=\int_0^\infty\dd\mu^2\,\rho(\mu^2)\Delta_+(x;\mu^2),\\
+ \Delta_+(x;\mu^2)&=\int\frac{\dd^3q}{(2\pi)^3\,2\sqrt{\bm q^2+\mu^2}}
+ e^{-\ii q\cdot x},\qquad q^0=\sqrt{\bm q^2+\mu^2}.
+\end{align}
+Time ordering replaces each positive-frequency function by a Feynman
+propagator of the same mass. Thus the K\"all\'en--Lehmann representation is
+\begin{equation}
+ \boxed{\quad \widetilde G_2(p)=\int_0^\infty\dd\mu^2\,
+ \rho(\mu^2)\frac{\ii}{p^2-\mu^2+\ii0},\qquad \rho\geq0.\quad}
+ \label{eq:KL}
+\end{equation}
+Here \(G_2(x)=\intp e^{-\ii p\cdot x}\widetilde G_2(p)\).
+If ultraviolet subtractions are needed, local contact terms can be added
+to the momentum-space dispersion representation; they do not change its
+isolated particle poles or spectral discontinuities.
+
+\begin{keyidea}[A weighted spectral measure]
+\(\rho\) measures spectral weight seen by \(\phi\), not merely the number
+of states at a given invariant mass. A state with zero field overlap is
+absent from this spectral function even if it exists in the theory.
+Different operators can therefore reveal different thresholds and poles.
+\end{keyidea}
+
+\module{Reading particles and thresholds from the spectrum}
+Insert just the one-particle states of \eqref{eq:oneparticle} into
+\eqref{eq:rhodef}. Their contribution is
+\begin{equation}
+ \rho(\mu^2)=\Zp\delta(\mu^2-M^2)+\rho_{\rm cont}(\mu^2),\qquad
+ \widetilde G_2(p)=\frac{\ii\Zp}{p^2-M^2+\ii0}
+ +\hbox{terms regular near }M^2.
+ \label{eq:pole}
+\end{equation}
+This is the pole-residue statement used in Lecture 22. With the convention
+\(\widetilde G_2=\ii/[p^2-m^2-\Sigma_R(p^2)+\ii0]\), a simple stable pole gives
+\begin{equation}
+ M^2-m^2-\Sigma_R(M^2)=0,\qquad
+ \Zp=\frac{1}{1-\Sigma_R'(M^2)}.
+\end{equation}
+Additional stable particles give additional delta functions if their
+quantum numbers and field overlaps permit them.
+
+Thresholds depend on those quantum numbers. In weakly coupled massive
+\(\lambda\phi^4\) theory with unbroken \(\phi\mapsto-\phi\), the vacuum is
+even and \(\phi\) is odd. Its overlap with a two-\(\phi\) state vanishes.
+Assuming no additional lighter states or bound states, the first continuum
+in the \(\phi\) two-point function begins at \(\mu^2=9M^2\). It comes from
+three particles and first contributes at order \(\lambda^2\).
+The even operator \(\phi^2-\langle\phi^2\rangle\), by contrast, can see a
+two-particle continuum starting at \(4M^2\).
+
+\begin{center}
+\begin{tikzpicture}[x=0.62cm,y=0.65cm,>=stealth]
+ \draw[->] (0,0)--(10.7,0) node[right] {$\mu^2$};
+ \draw[->] (0,0)--(0,2.55) node[above] {$\rho_\phi$};
+ \draw[->,very thick,qftblue] (1,0)--(1,2.1);
+ \node[above] at (2.2,2.1) {$\Zp\delta(\mu^2-M^2)$};
+ \draw[qftgreen,thick] (9,0) .. controls (9.4,0.05) and (10,0.65) .. (10.5,1.0);
+ \node[below] at (1,0) {$M^2$};\node[below] at (9,0) {$9M^2$};
+ \node[above] at (8.1,1.35) {odd-sector continuum};
+\end{tikzpicture}
+\end{center}
+\smallskip
+The two-particle cut of the \emph{four-point} bubble in Lecture 22 still
+starts at \(s=4M^2\). It probes a different channel; there is no conflict.
+
+\begin{remarkbox}[Residue is normalization dependent]
+For \(\phi'=c\phi\), with real \(c\ne0\), \(\rho'=c^2\rho\) and
+\(Z'_{\rm pole}=c^2\Zp\), while particle masses and scattering probabilities
+are unchanged. Positivity implies \(\Zp>0\) for a nonzero overlap.
+An upper bound \(\Zp\leq1\) needs an additional canonical spectral sum rule;
+it is not a universal statement about an arbitrarily normalized field.
+\end{remarkbox}
+
+\module{Incoming and outgoing states: a comparison of dynamics}
+Prepare smooth packets with distinct velocities. Far in the past their
+centers are widely separated and move toward the collision region; far
+in the future the outgoing packets separate again. The interaction
+between different packets becomes negligible in these limits. Each
+particle remains the same fully interacting, dressed stable excitation.
+
+Denote the maps from the asymptotic particle space to the physical space by
+\begin{equation}
+ \Omega_{\rm in},\Omega_{\rm out}:\cH_{\rm as}\longrightarrow\cH,
+ \qquad
+ \ket{\alpha,\mathrm{in/out}}=\Omega_{\rm in/out}\ket{\alpha}_{\rm as}.
+\end{equation}
+A useful comparison-dynamics notation is
+\begin{equation}
+ \Omega_{\rm in/out}=\mathop{\mathrm{s\!-!lim}}_{t\to\mp\infty}
+ e^{\ii Ht}J e^{-\ii H_{\rm as}t}.
+ \label{eq:waveops}
+\end{equation}
+Here \(J\) identifies separated channel packets with physical states, and
+``s-lim'' means convergence in norm on the packet states in its domain.
+Equivalently, for such a packet \(f\),
+\begin{equation}
+ \lim_{t\to\mp\infty}
+ \big\|e^{-\ii Ht}\Omega_{\rm in/out}f
+       -J e^{-\ii H_{\rm as}t}f\big\|=0.
+ \label{eq:comparison}
+\end{equation}
+It is the \emph{difference} that tends to zero. Neither evolving vector
+usually has a limit separately. Nor is \(J\) an identification of the
+interacting local field with a bare free field at every time.
+
+In local massive QFT a precise implementation uses mass-shell-filtered
+local operators, smeared with packets of disjoint velocity support.
+Haag--Ruelle theory constructs the incoming and outgoing limits and their
+Fock inner products under appropriate spectral and locality assumptions.
+Equation \eqref{eq:waveops} records the comparison principle; an arbitrary
+choice of \(J\) is not a proof that these limits exist. We assume the
+appropriate construction for the stable channels under study.
+
+\begin{keyidea}[Past and future labels]
+Incoming means \(t\to-\infty\); outgoing means \(t\to+\infty\).
+The maps obey \(\Omega_{\rm in/out}^\dagger\Omega_{\rm in/out}=1_{\rm as}\)
+and intertwine translations, in particular
+\(H\Omega_{\rm in/out}=\Omega_{\rm in/out}H_{\rm as}\).
+Thus an exact generalized in-state has energy \(\sum_j E_{p_j}\), even
+though the state has complicated local correlations during the collision.
+\end{keyidea}
+Particle separation is not the operation of physically switching the
+coupling off. Adiabatic switching is a regulator used in a perturbative
+construction; it must not replace the definition of asymptotic particles.
+
+\module{Defining the S-matrix and identifying its Hilbert space}
+The amplitude for an incoming configuration \(\alpha\) to be detected as
+an outgoing configuration \(\beta\) is
+\begin{equation}
+ \boxed{\quad S_{\beta\alpha}=\langle\beta,\mathrm{out}|\alpha,\mathrm{in}\rangle,
+ \qquad S=\Omega_{\rm out}^\dagger\Omega_{\rm in}.\quad}
+ \label{eq:S}
+\end{equation}
+Both states in the inner product belong to the interacting theory at a
+common reference time. The operator \(S\) acts on \(\cH_{\rm as}\): it maps
+incoming particle coefficients to outgoing coefficients. If \(f\) and
+\(g\) are normalized packet configurations, \(|\langle g|S|f\rangle|^2\)
+is an ordinary transition probability for that outgoing packet projection.
+
+Let the ranges of the two wave maps agree and call their common range
+\(\cH_{\rm scatt}\), with projector \(P_{\rm scatt}\). Then
+\begin{align}
+ \Omega_{\rm out}\Omega_{\rm out}^\dagger
+ &=\Omega_{\rm in}\Omega_{\rm in}^\dagger=P_{\rm scatt},\\
+ S^\dagger S
+ &=\Omega_{\rm in}^\dagger P_{\rm scatt}\Omega_{\rm in}=1_{\rm as},
+ \qquad SS^\dagger=1_{\rm as}.
+ \label{eq:unitarity}
+\end{align}
+Thus unitarity follows from isometry and equality of the incoming and
+outgoing scattering ranges. The stronger assertion
+\(\cH_{\rm scatt}=\cH\) is \emph{asymptotic completeness}; it is not a
+consequence of writing an overlap or of perturbative diagram rules.
+
+A stable bound state must be included as a species whenever it belongs
+to an accessible channel. Omitting it, or omitting particle-production
+channels, discards possible outcomes. For an elastic-channel projector
+\(P\) on \(\cH_{\rm as}\), set \(S_{\rm el}=PSP\). Then
+\begin{equation}
+ S_{\rm el}^\dagger S_{\rm el}
+ =P-PS^\dagger(1-P)SP.
+\end{equation}
+The second term is positive. The elastic block need not be unitary even
+when the complete S-matrix is unitary: probability can leave that block.
+
+\begin{remarkbox}[Why raw time evolution is not the S-matrix]
+Even without interactions, \(e^{-\ii H_{\rm as}(t_f-t_i)}\) contains free
+propagation phases. Sending its endpoints to infinity does not give the
+identity as an ordinary operator limit. The wave operators remove those
+comparison phases. In a genuinely free theory the two wave maps coincide
+and \(S=1\), as a scattering experiment requires.
+\end{remarkbox}
+
+\module{Symmetry, connected amplitudes, and perturbative calculations}
+The wave maps intertwine the Poincar\'e representations. Consequently
+\(S\) commutes with the asymptotic total four-momentum. For momentum
+configurations with totals \(P_i,P_f\), translation invariance gives
+\begin{equation}
+ \langle f|S|i\rangle=e^{\ii(P_f-P_i)\cdot a}\langle f|S|i\rangle
+ \quad\hbox{for every }a.
+\end{equation}
+An interacting connected amplitude therefore contains a momentum-conserving
+four-dimensional delta function. We define
+\begin{equation}
+ S=1+\ii T,\qquad
+ \langle f|\ii T|i\rangle_c
+ =\ii(2\pi)^4\delta^{(4)}(P_f-P_i)\cM_{fi}.
+ \label{eq:M}
+\end{equation}
+The subscript \(c\) excludes spectator overlaps and products of independent
+collisions. For an ordinary connected \(2\to2\) process it is usually left
+implicit. The identity term is essential: it describes unchanged particles.
+
+For scalar scattering \(\cM\) is Lorentz invariant and depends on invariant
+kinematic variables. For \(p_1+p_2\to p_3+p_4\),
+\begin{equation}
+ s=(p_1+p_2)^2,\quad t=(p_1-p_3)^2,\quad u=(p_1-p_4)^2,
+ \qquad s+t+u=\sum_{j=1}^4m_j^2.
+\end{equation}
+With spin labels, amplitudes transform covariantly with the corresponding
+little-group rotations; a single spin component need not be an invariant
+scalar. Summed or appropriately averaged probabilities have the expected
+Lorentz-invariant description.
+
+The definitions above do not assume small coupling. Perturbation theory
+is a method for calculating them. With a regulator and an interaction-picture
+split, time evolution is represented by
+\begin{equation}
+ U_I(t_f,t_i)=\Tord\exp\left[-\ii\int_{t_i}^{t_f}\dd t\,H_I(t)\right].
+\end{equation}
+Vacuum normalization, physical external poles, and their residues are
+needed to extract the physical amplitude from the resulting correlators.
+The path-integral ratio in Lecture 21 removes vacuum bubbles; it does not
+remove disconnected external pairings. Lecture 25 supplies the precise
+LSZ reduction instead of treating the Dyson exponential as a definition
+that bypasses these issues.
+
+\begin{keyidea}[Three distinct objects]
+A correlator may be off shell and contain external propagators.
+An amputated connected kernel has those propagators removed.
+The physical amplitude additionally uses on-shell external momenta and
+the correct pole-residue normalization. At tree level in our scalar
+quartic theory, these steps give \(\ii\cM=-\ii\lambda\), hence
+\(\cM=-\lambda\).
+\end{keyidea}
+
+\module{Unitarity as a sum over physical outcomes}
+Insert \(S=1+\ii T\) into \(S^\dagger S=1\). The result is
+\begin{equation}
+ -\ii(T-T^\dagger)=T^\dagger T.
+ \label{eq:Tunitarity}
+\end{equation}
+For any normalized incoming packet, the diagonal matrix element is a sum
+of nonnegative transition probabilities. In a plane-wave basis, insert
+\eqref{eq:complete}, factor out the common momentum delta function, and
+obtain the forward optical theorem
+\begin{equation}
+ 2\operatorname{Im}\cM_{ii}
+ =\sum_X\frac{1}{\cS_X}\sum_{\rm spins}
+ \int\dd\Phi_X(P_i)\,|\cM_{Xi}|^2,
+ \label{eq:optical}
+\end{equation}
+\begin{equation}
+ \dd\Phi_n(P)=(2\pi)^4\delta^{(4)}\!\left(P-\sum_{j=1}^np_j\right)
+ \prod_{j=1}^n\frac{\dd^3p_j}{(2\pi)^3\,2E_j}.
+ \label{eq:phase}
+\end{equation}
+For two incoming stable particles in a massive theory, the amplitudes on
+the right describe all open scattering channels. Initial spin labels are
+fixed unless we explicitly average. A fully general multiparticle matrix
+identity retains spectator and disconnected terms as well.
+
+Why does a real tree amplitude not violate \eqref{eq:optical}? If
+\(\cM^{(1)}\) is first order in a coupling, the right side starts at second
+order. At that order,
+\begin{equation}
+ 2\operatorname{Im}\cM^{(2)}_{ii}
+ =\sum_X\frac1{\cS_X}\int\dd\Phi_X\,
+ |\cM^{(1)}_{Xi}|^2.
+\end{equation}
+A loop imaginary part supplies the probability required by the tree
+transition. This explains the two-particle cut encountered in Lecture 22
+without redoing its loop integral. Lecture 24 turns the same identity into
+a relation involving the measurable total cross section.
+
+\begin{remarkbox}[Where the construction needs modification]
+Stable massive particles with isolated poles are the clean setting of
+these lectures. Long-range forces and soft massless radiation can obstruct
+the ordinary Fock-space limits; charged states in QED require additional
+infrared care. An unstable particle has no exact real-axis one-particle
+pole suitable for an external LSZ state. Neither complication means that
+experiments lack predictions; it means the asymptotic description must be
+adapted to the observable.
+\end{remarkbox}
+\textbf{Checks before moving on.} Explain why \(\phi\ket{\Omega}\) need
+not be a one-particle state, why both \(\Omega\) maps are needed, and why
+unitarity requires a sum over all accessible channels. These are the
+physical inputs behind the rate formulas in the next lecture.
+\end{document}

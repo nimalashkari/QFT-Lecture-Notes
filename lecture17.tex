@@ -1,0 +1,455 @@
+\documentclass[11pt]{article}
+\usepackage[letterpaper,margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern,microtype}
+\usepackage{amsmath,amssymb,mathtools,bm,slashed}
+\usepackage{xcolor,enumitem,booktabs,array,needspace}
+\usepackage[most]{tcolorbox}
+\usepackage{fancyhdr,titlesec,parskip,hyperref}
+\definecolor{qftblue}{HTML}{245A8D}
+\definecolor{qftgreen}{HTML}{2F6B4F}
+\definecolor{qftgray}{HTML}{F4F6F8}
+\hypersetup{colorlinks=true,linkcolor=qftblue,urlcolor=qftblue,pdfauthor={Nima Lashkari}}
+\pagestyle{fancy}\fancyhf{}
+\lhead{PHYS 662: Quantum Field Theory I}\cfoot{\thepage}
+\setlength{\headheight}{14pt}
+\titleformat{\section}{\Large\bfseries\color{qftblue}}{\thesection.}{0.6em}{}
+\titleformat{\subsection}{\large\bfseries\color{qftgreen}}{\thesubsection}{0.6em}{}
+\setlist[enumerate]{leftmargin=2em,itemsep=0.25em,topsep=0.35em}
+\setlist[itemize]{leftmargin=2em,itemsep=0.2em,topsep=0.35em}
+\newcommand{\dd}{\mathrm d}
+\newcommand{\ii}{\mathrm i}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\tr}{\operatorname{tr}}
+\newcommand{\Tr}{\operatorname{Tr}}
+\newcommand{\diag}{\operatorname{diag}}
+\newcommand{\Lag}{\mathcal L}
+\newcommand{\D}{\mathcal D}
+\newcommand{\vac}{\lvert0\rangle}
+\newcommand{\vbra}{\langle0\rvert}
+\newcommand{\Tord}{\mathrm T}
+\newcommand{\ket}[1]{\lvert#1\rangle}
+\newcommand{\bra}[1]{\langle#1\rvert}
+\newtcolorbox{keyidea}[1][]{enhanced,breakable,colback=qftgray,colframe=qftblue,
+ boxrule=0.7pt,arc=1.5mm,title={#1},fonttitle=\bfseries,coltitle=white}
+\newtcolorbox{remarkbox}[1][]{enhanced,breakable,colback=white,colframe=qftgreen,
+ boxrule=0.6pt,arc=1.5mm,title={#1},fonttitle=\bfseries,coltitle=white}
+\newcommand{\module}[1]{\clearpage\section{#1}}
+\newcommand{\lecturefront}[4]{%
+\rhead{Lecture #1}\hypersetup{pdftitle={PHYS 662 Lecture #1: #2}}
+\begin{document}\pagenumbering{gobble}
+\begin{titlepage}\centering\vspace*{1.05in}
+{\scshape\Large PHYS 662 --- Quantum Field Theory I\par}
+\vspace{0.35in}{\Huge\bfseries\color{qftblue}Lecture #1\par}
+\vspace{0.2in}{\LARGE\bfseries #2\par}
+\vspace{0.2in}{\large\color{qftgreen}#3\par}
+\vspace{0.6in}{\large Nima Lashkari\par}{\large Fall 2026\par}
+\vfill\begin{minipage}{0.86\textwidth}\small #4\par\medskip
+Course page: \url{https://nimalashkari.com/quantum-field-theory-2026-part-i/}
+\end{minipage}\vspace{0.5in}\end{titlepage}
+\pagenumbering{roman}\setcounter{tocdepth}{1}\tableofcontents
+\vfill\begin{remarkbox}[Place in the course]
+Lectures 17--18 develop the quantum-mechanical construction. Lecture 19
+extends Gaussian integration and source methods to scalar fields.
+Lecture 20 introduces Grassmann integration and fermionic fields.
+Problem Set 6 brings these four steps together.
+\end{remarkbox}\clearpage\pagenumbering{arabic}}
+\lecturefront{17}{Path Integrals in Quantum Mechanics I}
+{From unitary evolution to a sum over histories}
+{We derive the path integral from the operator formulation, fix its measure,
+and recover the Schr\"odinger equation. Insertions and contact terms explain
+how a description using ordinary paths remembers quantum operator ordering.}
+
+\section{The evolution kernel and composition}
+Lectures 15--16 described quantum fields by operators. Before changing
+languages in field theory, we make the change for a single particle.
+The path integral will represent the same evolution operator; it is not
+an additional quantization postulate. In this lecture we keep \(\hbar\)
+explicit and begin with one Cartesian coordinate.
+
+For a time-independent, self-adjoint Hamiltonian, define
+\begin{equation}
+ K(q_f,t_f;q_i,t_i)=\bra{q_f}e^{-\ii H(t_f-t_i)/\hbar}\ket{q_i},
+ \qquad \langle q|q'\rangle=\delta(q-q').                 \label{eq:kernel}
+\end{equation}
+If \(\psi_i(q_i)\) is the initial wavefunction, its later value is
+\begin{equation}
+ \psi_f(q_f)=\int\dd q_i\,K(q_f,t_f;q_i,t_i)\psi_i(q_i).
+\end{equation}
+Thus \(K\) is an amplitude density, of dimension inverse length. Its
+absolute square at sharply specified endpoints is not, by itself, a
+normalized transition probability. Probabilities are obtained from
+normalized initial states and final measurements.
+
+Insert the identity at an intermediate time \(t\). The group property
+of evolution gives the exact composition law
+\begin{equation}
+ K(q_f,t_f;q_i,t_i)=\int\dd q\,
+ K(q_f,t_f;q,t)K(q,t;q_i,t_i).                       \label{eq:composition}
+\end{equation}
+Iterating this identity expresses a finite-time amplitude in terms of
+many short-time amplitudes. The sum over intermediate positions is the
+origin of the sum over paths. No measurement of these intermediate
+positions is performed: the alternatives are added as amplitudes.
+
+\begin{keyidea}[Initial data and unitarity]
+At coincident times, \(K(q_f,t_i;q_i,t_i)=\delta(q_f-q_i)\). Also,
+\[
+ \int\dd q_f\,K(q_f,t_f;q_i,t_i)^*K(q_f,t_f;q_j,t_i)
+ =\delta(q_i-q_j).
+\]
+Any proposed path-integral normalization must satisfy these identities.
+\end{keyidea}
+
+For a time-dependent Hamiltonian, replace the exponential by the
+time-ordered evolution operator. Composition still holds. We assume a
+Hamiltonian bounded below when using the imaginary-time continuation
+in Lecture 18; the real-time group law itself requires self-adjointness.
+
+\module{Time slicing and the Hamiltonian symbol}
+Set \(T=t_f-t_i>0\), \(\epsilon=T/N\), and
+\(q_0=q_i,\ q_N=q_f\). Use the Fourier normalization
+\begin{equation}
+ \langle q|p\rangle=e^{\ii pq/\hbar},\qquad
+ \langle p|p'\rangle=2\pi\hbar\,\delta(p-p'),\qquad
+ 1=\int\frac{\dd p}{2\pi\hbar}\ket p\bra p.
+\end{equation}
+For \(H=\hat p^2/(2m)+V(\hat q)\), the Trotter product gives
+\begin{align}
+ e^{-\ii H\epsilon/\hbar}
+ &=e^{-\ii V(\hat q)\epsilon/\hbar}
+   e^{-\ii\hat p^2\epsilon/(2m\hbar)}+O(\epsilon^2),\\
+ \langle q_{j+1}|e^{-\ii H\epsilon/\hbar}|q_j\rangle
+ &=\int\frac{\dd p_j}{2\pi\hbar}
+ \exp\!\left\{\frac{\ii}{\hbar}
+ [p_j(q_{j+1}-q_j)-\epsilon H(q_{j+1},p_j)]\right\}
+ +O(\epsilon^2).
+\end{align}
+The limit is understood in the operator sense appropriate to the
+Hamiltonian, or with a convergence regulator. Combining the short steps,
+\begin{equation}
+ K=\lim_{N\to\infty}\int\prod_{j=1}^{N-1}\dd q_j
+       \prod_{j=0}^{N-1}\frac{\dd p_j}{2\pi\hbar}\,
+ e^{\frac{\ii}{\hbar}\sum_{j=0}^{N-1}
+ [p_j(q_{j+1}-q_j)-\epsilon H(q_{j+1},p_j)]}.       \label{eq:phase}
+\end{equation}
+There are \(N\) momentum integrals and \(N-1\) position integrals.
+The endpoints are fixed, so integrating them would calculate a different
+matrix element. The compact notation is
+\(K=\int\D p\,\D q\,e^{\ii\int(p\dot q-H)\dd t/\hbar}\).
+
+\subsection{Why ordering survives the continuum limit}
+For a general Hamiltonian containing mixed products, the ordinary
+function in \eqref{eq:phase} is an \emph{operator symbol}. Putting all
+\(\hat q\)'s to the left of all \(\hat p\)'s gives the displayed endpoint
+prescription. Weyl ordering instead uses a midpoint symbol.
+For example,
+\begin{equation}
+ \frac12(\hat q\hat p+\hat p\hat q)
+ =\hat q\hat p-\frac{\ii\hbar}{2}.
+\end{equation}
+Its \(qp\)-ordered symbol is \(qp-\ii\hbar/2\), whereas its Weyl
+symbol is \(qp\). The difference per time slice is proportional to
+\(\epsilon\); after \(N\) slices it need not disappear.
+\begin{remarkbox}[A consistent prescription]
+Choose the operator ordering, its symbol, and the time discretization
+together. For \(p^2/(2m)+V(q)\) the usual endpoint and midpoint
+constructions give the same continuum Hamiltonian under the standard
+regularity assumptions. This special case does not eliminate ordering
+issues for arbitrary mixed Hamiltonians.
+\end{remarkbox}
+
+\module{Integrating momentum: the configuration measure}
+Complete the square in each momentum integral:
+\begin{align}
+ p\Delta q-\epsilon\frac{p^2}{2m}
+ &=-\frac{\epsilon}{2m}\left(p-\frac{m\Delta q}{\epsilon}\right)^2
+   +\frac{m(\Delta q)^2}{2\epsilon},\\
+ \int\frac{\dd p}{2\pi\hbar}
+ e^{\frac{\ii}{\hbar}(p\Delta q-\epsilon p^2/2m)}
+ &=\left(\frac{m}{2\pi\ii\hbar\epsilon}\right)^{1/2}
+ e^{\frac{\ii m(\Delta q)^2}{2\hbar\epsilon}}.       \label{eq:gaussian}
+\end{align}
+The oscillatory Gaussian is defined by continuation from
+\(\epsilon\to\epsilon-\ii0\). This choice also fixes the square-root
+branch. It is not a positive real Gaussian before continuation.
+
+Consequently,
+\begin{equation}
+ K=\lim_{N\to\infty}\left(\frac{m}{2\pi\ii\hbar\epsilon}\right)^{N/2}
+ \int\prod_{j=1}^{N-1}\dd q_j\,
+ e^{\frac{\ii}{\hbar}\sum_j
+ [\frac{m(q_{j+1}-q_j)^2}{2\epsilon}-\epsilon V(q_{j+1})]}.
+                                                        \label{eq:config}
+\end{equation}
+We abbreviate this regulated limit as
+\begin{equation}
+ K(q_f,t_f;q_i,t_i)=\int_{q_i}^{q_f}\D q\,
+ e^{\ii S[q]/\hbar},\qquad
+ S[q]=\int_{t_i}^{t_f}\dd t\left(\frac m2\dot q^2-V(q)\right).
+\end{equation}
+The symbol \(\D q\) includes the prefactor in \eqref{eq:config}.
+Dropping it loses the short-time delta function and the composition law.
+For \(d\) independent Cartesian coordinates its power becomes \(Nd/2\).
+
+\subsection{What is a path in this expression?}
+The finite-dimensional integral, together with its limiting prescription,
+defines the notation. It does not assume that every contributing path
+has an ordinary derivative. After continuation to Euclidean time, a
+typical short increment has size \(\Delta q\sim\sqrt{\hbar\epsilon/m}\),
+so \(\Delta q/\epsilon\) grows as the slicing is refined. Smooth paths
+are useful saddle points, not representative integration histories.
+
+\begin{keyidea}[The measure is part of the physics]
+An action written without a measure and a time-slicing prescription is
+incomplete. In particular, transforming to curvilinear coordinates
+requires transforming the measure and the regulated kinetic operator.
+Simply replacing \(\dot q^2\) by a coordinate-dependent metric can miss
+ordering terms.
+\end{keyidea}
+The continuum limit in this lecture is controlled by a specified quantum
+Hamiltonian. In field theory an additional spatial regulator is needed;
+removing it while holding physical parameters fixed is a separate issue.
+
+\module{An exact test: the free particle}
+For \(V=0\), separate the straight path and its endpoint-fixed fluctuations:
+\begin{equation}
+ q_j=q_i+\frac jN(q_f-q_i)+\xi_j,\qquad\xi_0=\xi_N=0.
+\end{equation}
+The cross term telescopes, leaving
+\begin{equation}
+ \sum_{j=0}^{N-1}(q_{j+1}-q_j)^2
+ =\frac{(q_f-q_i)^2}{N}+\bm\xi^{\mathsf T}A_{N-1}\bm\xi,
+ \quad
+ A_n=\begin{pmatrix}
+ 2&-1&0&\cdots\\-1&2&-1&\cdots\\0&-1&2&\ddots\\
+ \vdots&\vdots&\ddots&\ddots
+ \end{pmatrix}.
+\end{equation}
+Expanding the determinant along its first row gives
+\(d_n=2d_{n-1}-d_{n-2}\), with \(d_0=1,d_1=2\).
+Thus \(\det A_{N-1}=N\). The \(N-1\) Gaussian integrations contribute
+\((2\pi\ii\hbar\epsilon/m)^{(N-1)/2}/\sqrt N\).
+Multiplying by the measure in \eqref{eq:config} gives
+\begin{keyidea}[Free kernel in \(d\) spatial dimensions]
+\begin{equation}
+ K_0(\bm q_f,\bm q_i;T)=
+ \left(\frac{m}{2\pi\ii\hbar T}\right)^{d/2}
+ \exp\!\left[\frac{\ii m|\bm q_f-\bm q_i|^2}{2\hbar T}\right],
+ \qquad T>0.                                         \label{eq:free}
+\end{equation}
+The exponent is the classical action. The prefactor is the exact
+contribution of fluctuations about that path.
+\end{keyidea}
+
+An independent derivation inserts a momentum identity:
+\begin{equation}
+ K_0=\int\frac{\dd^d p}{(2\pi\hbar)^d}
+ e^{\frac{\ii}{\hbar}[\bm p\cdot(\bm q_f-\bm q_i)-\bm p^2T/(2m)]}.
+                                                        \label{eq:freefourier}
+\end{equation}
+This form immediately proves the delta-function initial condition.
+It also proves composition: integrating an intermediate position sets
+the two momenta equal, and their evolution phases multiply.
+
+For fixed \(T\), \(K_0\) is nonzero at arbitrarily large spatial
+separation. This is nonrelativistic quantum mechanics, with no finite
+limiting speed built into \(H_0\). Later, relativistic field locality
+will be a statement about commutators. It does not require the Feynman
+two-point function to vanish outside the light cone.
+
+\module{The Schr\"odinger equation and its Green function}
+The operator definition already implies
+\begin{equation}
+ (\ii\hbar\partial_{t_f}-H_{q_f})K(q_f,t_f;q_i,t_i)=0,
+ \qquad H_q=-\frac{\hbar^2}{2m}\partial_q^2+V(q).       \label{eq:schrod}
+\end{equation}
+The path integral supplies a useful local check. Set
+\(q_i=q-\xi\) over a short interval. Acting on a smooth test
+wavefunction, the regulated Gaussian moments are
+\begin{equation}
+ \langle1\rangle_\epsilon=1,\qquad
+ \langle\xi\rangle_\epsilon=0,\qquad
+ \langle\xi^2\rangle_\epsilon=\frac{\ii\hbar\epsilon}{m}.
+\end{equation}
+Expanding the potential phase and the wavefunction therefore gives
+\begin{align}
+ \psi(q,t+\epsilon)
+ &=\int\dd\xi\,K(q,t+\epsilon;q-\xi,t)\psi(q-\xi,t)\\
+ &=\psi(q,t)+\frac{\ii\hbar\epsilon}{2m}\partial_q^2\psi(q,t)
+   -\frac{\ii\epsilon}{\hbar}V(q)\psi(q,t)+O(\epsilon^2).
+\end{align}
+Multiplying by \(\ii\hbar/\epsilon\) recovers the usual equation.
+The Gaussian second moment is essential: setting every short path equal
+to a classical path would miss the kinetic differential operator.
+
+\subsection{Where the delta-function source belongs}
+Evolution is defined for either sign of \(T\). To construct a retarded
+inverse of the differential operator, introduce instead
+\begin{equation}
+ K_R=\theta(T)K,\qquad G_R=\frac{1}{\ii\hbar}\theta(T)K.
+\end{equation}
+Differentiating the step function yields
+\begin{align}
+ (\ii\hbar\partial_{t_f}-H_{q_f})K_R
+ &=\ii\hbar\,\delta(T)\delta(q_f-q_i),\\
+ (\ii\hbar\partial_{t_f}-H_{q_f})G_R
+ &=\delta(T)\delta(q_f-q_i).                          \label{eq:green}
+\end{align}
+These formulas have different normalizations because they define
+different objects. A delta-function initial condition for \(K\) does
+not mean that its homogeneous evolution equation has a source.
+
+\begin{remarkbox}[Notation to carry forward]
+\(K\) denotes the evolution kernel; \(G_R\) denotes its unit-source
+retarded Green function. In field theory, \(D_F\) will retain the
+Lecture 16 convention \(D_F=\langle0|\Tord\phi\phi|0\rangle\),
+including its factor of \(\ii\) in momentum space.
+\end{remarkbox}
+
+\module{Insertions and time ordering}
+Choose \(t_i<t_1<t_2<t_f\). Inserting position resolutions on the
+two specified slices gives
+\begin{align}
+ &\int_{q_i}^{q_f}\D q\,q(t_2)q(t_1)e^{\ii S[q]/\hbar}\nonumber\\
+ &\quad=\bra{q_f}U(t_f,t_2)\hat q\,U(t_2,t_1)\hat q\,
+ U(t_1,t_i)\ket{q_i}.                              \label{eq:insert}
+\end{align}
+Taking the Heisenberg reference time to be \(t_i\), this equals
+\(\bra{q_f}U(t_f,t_i)\hat q_H(t_2)\hat q_H(t_1)\ket{q_i}\).
+For either ordering of the times, the path integral represents the
+\emph{time-ordered} operator product. The later operator is nearer
+the final bra. This follows from composition, rather than from a
+new rule imposed on the integral.
+
+The path values are ordinary commuting numbers, but the quantum
+operators do not commute. The apparent tension disappears because
+the map from histories to operators already includes time ordering.
+An unordered or out-of-time-order correlator generally needs a
+different arrangement of evolution segments.
+
+\subsection{A source collects all insertions}
+Introduce an ordinary function \(J(t)\) supported away from the endpoints:
+\begin{equation}
+ K[J]=\int_{q_i}^{q_f}\D q\,
+ \exp\!\left\{\frac{\ii}{\hbar}\left[S[q]+\int\dd t\,J(t)q(t)\right]\right\}.
+\end{equation}
+Then
+\begin{equation}
+ \left.\left(\frac{\hbar}{\ii}\right)^n
+ \frac{\delta^n K[J]}{\delta J(t_1)\cdots\delta J(t_n)}\right|_{J=0}
+ =\int_{q_i}^{q_f}\D q\,q(t_1)\cdots q(t_n)e^{\ii S/\hbar}.
+\end{equation}
+These are endpoint matrix elements. They become vacuum expectation
+values only after a vacuum projection or an appropriate vacuum boundary
+wavefunction is supplied. Lecture 18 explains this step.
+
+Momentum insertions can be handled directly in the phase-space
+integral. Composite insertions such as \(pq\), or fields at exactly
+coincident times, retain the ordering prescription from the time
+slices. Replacing \(p\) by \(m\dot q\) inside every correlation function
+without tracking contact terms is not generally justified.
+
+\begin{keyidea}[A useful distinction]
+Endpoint conditions select the states. The arrangement of insertions
+selects the operator ordering. The action alone specifies neither.
+\end{keyidea}
+
+\module{Schwinger--Dyson identities and contact terms}
+On a finite lattice, the integral of a total derivative vanishes when
+the regulated integrand has suitable boundary behavior. Vary an
+interior path value while keeping both endpoints fixed. In continuum
+notation the resulting identity is
+\begin{align}
+ 0&=\int\D q\,\frac{\delta}{\delta q(t)}
+       \left(F[q]e^{\ii S[q]/\hbar}\right),\\
+ \int\D q\,F[q]\frac{\delta S}{\delta q(t)}e^{\ii S/\hbar}
+ &=\ii\hbar\int\D q\,\frac{\delta F}{\delta q(t)}e^{\ii S/\hbar}.
+                                                        \label{eq:sd}
+\end{align}
+The sign is \(+\ii\hbar\), since \(-\hbar/\ii=\ii\hbar\).
+For our action,
+\begin{equation}
+ \frac{\delta S}{\delta q(t)}=-m\ddot q(t)-V'(q(t)).
+\end{equation}
+With \(F=1\), the classical equation holds in the corresponding
+matrix element. With \(F=q(t')\), however,
+\begin{equation}
+ \int\D q\,[m\ddot q(t)+V'(q(t))]q(t')e^{\ii S/\hbar}
+ =-\ii\hbar\delta(t-t')K[0].                         \label{eq:contact}
+\end{equation}
+One must keep the contact term when differentiating a time-ordered
+correlator. Away from \(t=t'\), it reduces to the equation of motion.
+
+\subsection{Operator check of the contact sign}
+For the harmonic oscillator, let
+\(C(t,t')=\langle0|\Tord q(t)q(t')|0\rangle\).
+The first derivative of time ordering has no contact term because
+\([q,q]=0\). The second derivative produces
+\([\dot q(t),q(t)]=-[q,p]/m=-\ii\hbar/m\). Hence
+\begin{equation}
+ m(\partial_t^2+\omega^2)C(t,t')=-\ii\hbar\delta(t-t').
+\end{equation}
+Indeed \(C=\hbar e^{-\ii\omega|t-t'|}/(2m\omega)\) has precisely
+the required derivative jump. Thus integration by parts in the path
+integral remembers the canonical commutator.
+
+For several insertions, \(\delta F/\delta q(t)\) is a sum of delta
+functions, one for every insertion containing the varied coordinate.
+This hierarchy is the Schwinger--Dyson hierarchy. It organizes exact
+relations among correlation functions even when the integral cannot
+be evaluated explicitly. In interacting theories it does not usually
+close on a finite number of correlators.
+
+\module{Stationary phase and the classical limit}
+The phase changes rapidly when the action is large compared with
+\(\hbar\). Around a smooth stationary path write \(q=q_{\rm cl}+\xi\),
+with \(\xi(t_i)=\xi(t_f)=0\). The first variation is
+\begin{equation}
+ \delta S=[m\dot q\,\xi]_{t_i}^{t_f}
+ -\int\dd t\,[m\ddot q+V'(q)]\xi.
+\end{equation}
+It vanishes for a classical solution satisfying the endpoint conditions.
+The next terms are
+\begin{equation}
+ S[q]=S[q_{\rm cl}]+\frac12\int\dd t\,
+ \xi\left[-m\frac{\dd^2}{\dd t^2}-V''(q_{\rm cl})\right]\xi
+ +O(\xi^3).                                           \label{eq:saddle}
+\end{equation}
+The quadratic functional integral supplies a fluctuation determinant.
+For the free particle it is exact; for a general potential it is the
+leading semiclassical correction. If several classical paths connect
+the endpoints, their amplitudes must be summed, including their
+relative phases. Near a zero eigenvalue of the fluctuation operator,
+the simplest Gaussian approximation fails and needs refinement.
+
+\begin{remarkbox}[Stationary action, not always minimum action]
+Real-time classical paths are stationary points of the action.
+The quadratic form may have negative directions, and destructive
+interference is the relevant mechanism. A positive Euclidean weight,
+introduced next lecture, supports a different saddle-point intuition.
+\end{remarkbox}
+
+The derivation explains the classical equations without claiming that
+all paths are classical or that the quantum measure becomes an ordinary
+uniform measure on smooth trajectories. It also explains why a
+semiclassical approximation and an expansion in a weak interaction are
+different approximations: the first organizes powers of \(\hbar\),
+whereas the second organizes powers of a coupling.
+
+\subsection*{Questions to check understanding}
+\begin{enumerate}
+\item Why does a discretized kernel have one more momentum integral
+than position integral?
+\item Which factor in the free kernel would be missed by evaluating
+only the classical action?
+\item How can two Hamiltonian symbols differing by \(O(\hbar)\)
+describe the same operator under different ordering prescriptions?
+\item What distinguishes \(K\), \(\theta(T)K\), and \(G_R\)?
+\item Why do commuting path values generate time-ordered quantum operators?
+\item Derive the contact term in \eqref{eq:contact} in both languages.
+\end{enumerate}
+Next lecture uses the same construction for perturbations, scattering,
+vacuum projection, and imaginary-time evolution.
+\end{document}

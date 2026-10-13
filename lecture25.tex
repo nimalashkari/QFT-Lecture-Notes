@@ -1,0 +1,497 @@
+\documentclass[11pt]{article}
+\usepackage[letterpaper,margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern,microtype}
+\usepackage{amsmath,amssymb,mathtools,bm,slashed}
+\usepackage{xcolor,enumitem,booktabs,array,needspace}
+\usepackage[most]{tcolorbox}
+\usepackage{fancyhdr,titlesec,parskip,hyperref}
+\definecolor{qftblue}{HTML}{245A8D}
+\definecolor{qftgreen}{HTML}{2F6B4F}
+\definecolor{qftgray}{HTML}{F4F6F8}
+\hypersetup{colorlinks=true,linkcolor=qftblue,urlcolor=qftblue,pdfauthor={Nima Lashkari}}
+\pagestyle{fancy}\fancyhf{}
+\lhead{PHYS 662: Quantum Field Theory I}\cfoot{\thepage}
+\setlength{\headheight}{14pt}
+\titleformat{\section}{\Large\bfseries\color{qftblue}}{\thesection.}{0.6em}{}
+\titleformat{\subsection}{\large\bfseries\color{qftgreen}}{\thesubsection}{0.6em}{}
+\setlist[enumerate]{leftmargin=2em,itemsep=0.25em,topsep=0.35em}
+\setlist[itemize]{leftmargin=2em,itemsep=0.2em,topsep=0.35em}
+\newcommand{\dd}{\mathrm d}
+\newcommand{\ii}{\mathrm i}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\tr}{\operatorname{tr}}
+\newcommand{\Tr}{\operatorname{Tr}}
+\newcommand{\diag}{\operatorname{diag}}
+\newcommand{\Lag}{\mathcal L}
+\newcommand{\D}{\mathcal D}
+\newcommand{\vac}{\lvert0\rangle}
+\newcommand{\vbra}{\langle0\rvert}
+\newcommand{\Tord}{\mathrm T}
+\newcommand{\ket}[1]{\lvert#1\rangle}
+\newcommand{\bra}[1]{\langle#1\rvert}
+\newtcolorbox{keyidea}[1][]{enhanced,breakable,colback=qftgray,colframe=qftblue,
+ boxrule=0.7pt,arc=1.5mm,title={#1},fonttitle=\bfseries,coltitle=white}
+\newtcolorbox{remarkbox}[1][]{enhanced,breakable,colback=white,colframe=qftgreen,
+ boxrule=0.6pt,arc=1.5mm,title={#1},fonttitle=\bfseries,coltitle=white}
+\newcommand{\intp}{\int\!\frac{\dd^4p}{(2\pi)^4}}
+\newcommand{\MSbar}{\overline{\mathrm{MS}}}
+\newcommand{\module}[1]{\clearpage\section{#1}}
+\newcommand{\braket}[2]{\langle#1\mid#2\rangle}
+\newcommand{\dPi}{\dd\Pi}
+\newcommand{\cM}{\mathcal M}
+\newcommand{\cH}{\mathcal H}
+\newcommand{\cS}{\mathcal S}
+\newcommand{\Zp}{Z_{\rm pole}}
+\newcommand{\Kallen}{\mathcal K}
+\newcommand{\lecturefront}[4]{%
+\rhead{Lecture #1}\hypersetup{pdftitle={PHYS 662 Lecture #1: #2}}
+\begin{document}\pagenumbering{gobble}
+\begin{titlepage}\centering\vspace*{1.05in}
+{\scshape\Large PHYS 662 --- Quantum Field Theory I\par}
+\vspace{0.35in}{\Huge\bfseries\color{qftblue}Lecture #1\par}
+\vspace{0.2in}{\LARGE\bfseries #2\par}
+\vspace{0.2in}{\large\color{qftgreen}#3\par}
+\vspace{0.6in}{\large Nima Lashkari\par}{\large Fall 2026\par}
+\vfill\begin{minipage}{0.86\textwidth}\small #4\par\medskip
+Course page: \url{https://nimalashkari.com/quantum-field-theory-2026-part-i/}
+\end{minipage}\vspace{0.5in}\end{titlepage}
+\pagenumbering{roman}\setcounter{tocdepth}{1}\tableofcontents
+\vfill\begin{remarkbox}[Place in the course]
+Lectures 21--22 developed interacting correlators and scalar loops.
+Lecture 23 defines the scattering states and the S-matrix.
+Lecture 24 converts amplitudes into rates and cross sections.
+Lecture 25 derives the reduction formula connecting these subjects.
+Homework 8 covers this three-lecture sequence.
+\end{remarkbox}
+\small\textbf{Reading and conventions.} These notes use the course slides and
+D.~Harlow, \href{https://www.mit.edu/~harlow/HarlowQFT1.pdf}{\textit{QFT I}},
+Sections 8--9, with our covariant state normalization and mostly-minus metric.
+Useful online companions are D.~Tong,
+\href{https://www.damtp.cam.ac.uk/user/tong/qft/qfthtml/S3.html}{\textit{QFT}, Sections 3.6--3.7},
+and D.~Buchholz and W.~Dybalski,
+\href{https://arxiv.org/abs/math-ph/0509047}{\textit{Scattering in relativistic quantum field theory}},
+Sections 1--3, for the scope of the asymptotic construction.
+For textbook study, see Weinberg, \textit{The Quantum Theory of Fields},
+Vol.~I, Chapter 3, and Peskin--Schroeder, \textit{An Introduction to QFT},
+Chapters 4 and 7. The accompanying editorial memo records the online
+sources consulted and the corrections to the slides.
+\normalsize\clearpage\pagenumbering{arabic}}
+\lecturefront{25}{Scattering Matrices from Correlation Functions}
+{LSZ reduction, pole residues, and external particle states}
+{Path integrals compute local correlation functions, whereas experiments
+prepare and detect asymptotic particles. We derive the bridge between
+them using wave packets and one-particle poles, keep the normalization
+explicit, and test the result on scalar and fermion amplitudes.}
+
+\section{The question answered by reduction}
+In Lectures 21--22 we computed normalized time-ordered functions
+\begin{equation}
+ G_N(x_1,\ldots,x_N)
+ =\bra{\Omega}\Tord\phi(x_1)\cdots\phi(x_N)\ket{\Omega}.
+\end{equation}
+Their external momenta may be off shell. A scattering amplitude instead
+has physical incoming and outgoing particles with positive energies and
+\(p^2=M^2\). The Lehmann--Symanzik--Zimmermann (LSZ) reduction formula
+extracts the part of a correlator that propagates these particles to
+arbitrarily early or late times.
+
+Assume a stable scalar mass shell, an interpolating field with zero vacuum
+expectation value, and a nonzero overlap
+\begin{equation}
+ \bra{\Omega}\phi(0)\ket{p}=\sqrt{\Zp},\qquad
+ \widetilde G_2(p)\sim\frac{\ii\Zp}{p^2-M^2+\ii0},\qquad
+ \langle p|q\rangle=2E_p(2\pi)^3\delta^{(3)}(\bm p-\bm q).
+ \label{eq:pole}
+\end{equation}
+These are exact interacting quantities. \(M\) is the physical pole mass,
+and \(\Zp\) is the residue for the field actually used in the correlator.
+If that field has no overlap with the particle, it cannot reduce that
+external particle, even if a different operator could.
+
+Why do poles help? A field insertion very far from the collision can
+connect to it through a stable one-particle intermediate state. The long
+time integral of that state's phase produces an energy denominator.
+Doing this for every external insertion isolates the simultaneous
+one-particle poles. Contributions regular at an external mass shell have
+no such long-lived external particle and disappear in that pole extraction.
+
+\begin{keyidea}[The expected answer, with our factors of \(\ii\)]
+For each scalar external leg, multiply the Fourier-transformed connected
+correlator by
+\[
+ \frac{p^2-M^2}{\ii\sqrt{\Zp}}
+\]
+and extract its on-shell pole residue. The result is the connected
+S-matrix element \(\ii(2\pi)^4\delta^{(4)}(P_f-P_i)\cM\).
+The following sections derive this rule and specify its meaning.
+\end{keyidea}
+The on-shell instruction is not ``put \(p^2=M^2\) before canceling the
+pole.'' It is a residue limit with the Feynman boundary prescription,
+understood after smearing in external momenta. Unstable resonances and
+infrared-sensitive charged states require the qualifications discussed
+in the preceding lectures.
+
+\module{Particle projection and the Klein--Gordon product}
+Let \(f\) be a smooth positive-frequency solution of the free equation with
+\emph{physical} mass \(M\):
+\begin{equation}
+ f(x)=\int\dPi_p f(\bm p)e^{-\ii p\cdot x},\qquad
+ (\Box+M^2)f=0,\qquad
+ \dPi_p=\frac{\dd^3p}{(2\pi)^3\,2E_p}.
+\end{equation}
+The Klein--Gordon product on such solutions is
+\begin{equation}
+ (f,g)_{\rm KG}=\ii\int_{x^0=t}\dd^3x\,
+ f^*\overleftrightarrow{\partial_t}g
+ =\int\dPi_p f(\bm p)^*g(\bm p),
+ \label{eq:KGproduct}
+\end{equation}
+where \(u\overleftrightarrow\partial v=u\partial v-(\partial u)v\).
+It is independent of \(t\). Substituting the free mode expansion shows
+that this product extracts the annihilation operator of the packet.
+
+For the interacting Heisenberg field define the finite-time projection
+\begin{equation}
+ a_f(t)=\frac{\ii}{\sqrt{\Zp}}\int\dd^3x\,
+ f^*(x)\overleftrightarrow{\partial_t}\phi(x).
+ \label{eq:projection}
+\end{equation}
+It is not generally time independent. Differentiate, use the equation
+for \(f\), and integrate its spatial derivatives by parts. Packet decay
+removes the spatial boundary term, leaving the exact finite-time identity
+\begin{equation}
+ \frac{\dd a_f(t)}{\dd t}
+ =\frac{\ii}{\sqrt{\Zp}}\int\dd^3x\,f^*(x)(\Box+M^2)\phi(x).
+\end{equation}
+With the asymptotic limits understood on scattering-state matrix elements,
+\begin{equation}
+ \boxed{\quad a_{\rm out}(f)-a_{\rm in}(f)
+ =\frac{\ii}{\sqrt{\Zp}}\int\dd^4x\,
+ f^*(x)(\Box+M^2)\phi(x).\quad}
+ \label{eq:adifference}
+\end{equation}
+The time integral carries the same smearing and limiting prescription as
+the boundary expression from which it was derived.
+
+\begin{remarkbox}[A limit of matrix elements, not a pointwise free field]
+The assertion \(\phi\sim\sqrt{\Zp}\phi_{\rm in/out}\) is an asymptotic
+statement after appropriate smearing and mass-shell isolation. It is not
+pointwise operator convergence. A rigorous construction uses energy
+filtering and, where appropriate, time averaging. The unaveraged LSZ
+projection above is used in its weak, scattering-matrix-element sense;
+we do not claim norm convergence of arbitrary unsmeared field operators.
+\end{remarkbox}
+
+\module{Reducing one particle and understanding the boundary terms}
+Take an outgoing packet \(f\) in addition to the outgoing configuration
+\(\beta\). Equation \eqref{eq:adifference} gives
+\begin{align}
+ \langle\beta,\mathrm{out}|a_{\rm out}(f)|\alpha,\mathrm{in}\rangle
+ &=\langle\beta,\mathrm{out}|a_{\rm in}(f)|\alpha,\mathrm{in}\rangle\notag\\
+ &\quad+\frac{\ii}{\sqrt{\Zp}}\int\dd^4x\,f^*(x)
+ (\Box_x+M^2)\langle\beta,\mathrm{out}|\phi(x)|\alpha,\mathrm{in}\rangle.
+ \label{eq:oneleg}
+\end{align}
+The first term annihilates one incoming particle. Its packet overlaps are
+the unchanged-particle or spectator contributions. The second term is the
+reduced interacting part with one external particle replaced by a local
+field insertion.
+
+For an incoming packet, Hermitian conjugation of \eqref{eq:adifference}
+and rearrangement give
+\begin{equation}
+ a_{\rm in}^\dagger(f)=a_{\rm out}^\dagger(f)
+ +\frac{\ii}{\sqrt{\Zp}}\int\dd^4x\,f(x)(\Box+M^2)\phi(x).
+\end{equation}
+Both incoming and outgoing reductions therefore contribute \(+\ii/\sqrt{\Zp}\).
+The difference is the wave: \(e^{-\ii k\cdot x}\) for an incoming particle
+and \(e^{+\ii p\cdot x}\) for an outgoing one.
+
+Repeated reduction orders the late annihilation operators to the left
+and the early creation operators to the right. Interpolating between these
+time boundaries produces a time-ordered vacuum correlator. Derivatives of
+its step functions must be kept. For example, with a canonically normalized
+scalar at the regulator level,
+\begin{align}
+ \partial_{x^0}^2\Tord\phi(x)\phi(y)
+ &=\Tord\partial_{x^0}^2\phi(x)\phi(y)
+ +\delta(x^0-y^0)[\dot\phi(x),\phi(y)],\\
+ [\dot\phi(t,\bm x),\phi(t,\bm y)]&=-\ii\delta^{(3)}(\bm x-\bm y).
+\end{align}
+In the free case this yields
+\((\Box_x+M^2)D_F(x-y)=-\ii\delta^{(4)}(x-y)\), even though the
+operator field solves the homogeneous equation. A rescaled field has the
+correspondingly rescaled contact coefficient.
+
+\begin{keyidea}[Do not discard the identity process]
+The overlap terms generated during reduction reconstruct unchanged
+particles and products of independent processes. We use \(G_{N,c}\) to
+extract the connected collision amplitude and add the identity and other
+disconnected S-matrix contributions separately. In a free Gaussian theory
+\(G_{N,c}=0\) for \(N>2\), so the collision amplitudes vanish while \(S=1\).
+\end{keyidea}
+
+\module{The scalar LSZ formula in position and momentum space}
+Let \(k_1,\ldots,k_r\) be incoming momenta and \(p_1,\ldots,p_s\) outgoing
+momenta, all future directed with mass \(M\), and set \(N=r+s\).
+Iteration of the preceding reduction gives
+\begin{align}
+ \langle p_1\cdots p_s|S-1|k_1\cdots k_r\rangle_c
+ &=\left(\frac{\ii}{\sqrt{\Zp}}\right)^N
+ \int\prod_{a=1}^s\dd^4x_a\prod_{b=1}^r\dd^4y_b\,
+ e^{\ii\sum_a p_a x_a-\ii\sum_b k_b y_b}\notag\\
+ &\quad\times\prod_a(\Box_{x_a}+M^2)
+ \prod_b(\Box_{y_b}+M^2)\,
+ G_{N,c}(x_1,\ldots,x_s,y_1,\ldots,y_r).
+ \label{eq:positionLSZ}
+\end{align}
+The plane-wave expression is shorthand for the packet version followed by
+its distributional limit. Distinct stable species use their own masses,
+fields, and residues on each external leg.
+
+To avoid a momentum-sign ambiguity, define Fourier labels explicitly:
+\begin{equation}
+ \begin{gathered}
+ \widehat G_{N,c}(q_1,\ldots,q_N)
+ =\int\prod_j\dd^4z_j\,e^{\ii\sum_j q_j z_j}G_{N,c}(z_1,\ldots,z_N),\\
+ (q_1,\ldots,q_N)=(p_1,\ldots,p_s,-k_1,\ldots,-k_r).
+ \end{gathered}
+\end{equation}
+These are \emph{all-outgoing} Fourier labels; the physical incoming
+momenta \(k_b\) still have positive energies. Integration by parts replaces
+\(\Box+M^2\) by \(-(q^2-M^2)\), hence
+\begin{equation}
+ \boxed{\quad
+ \ii(2\pi)^4\delta^{(4)}\!\left(\sum_jq_j\right)\cM
+ =\left.\prod_{j=1}^N\frac{q_j^2-M^2}{\ii\sqrt{\Zp}}\,
+ \widehat G_{N,c}(q_1,\ldots,q_N)\right|_{\text{external poles}}.\quad}
+ \label{eq:momentumLSZ}
+\end{equation}
+One first extracts the pole coefficient, then evaluates it on the chosen
+physical energy branches. Terms lacking at least one of the simultaneous
+external poles do not contribute to this residue.
+
+Equivalently, the leading multiple-pole part has the form
+\begin{equation}
+ \widehat G_{N,c}\sim (2\pi)^4\delta^{(4)}\!\left(\sum_jq_j\right)
+ \left[\prod_j\frac{\ii\sqrt{\Zp}}{q_j^2-M^2+\ii0}\right]\ii\cM.
+ \label{eq:factorization}
+\end{equation}
+Each local insertion overlaps with the external particle by \(\sqrt{\Zp}\).
+This is why there is one square root per leg rather than one full residue
+per leg in \eqref{eq:momentumLSZ}.
+
+\begin{remarkbox}[The inverse operator is not the propagator]
+\(\Box+M^2\) is the Klein--Gordon kinetic operator. Its Feynman inverse is
+related to \(D_F\) by \((\Box+M^2)D_F=-\ii\delta\).
+Calling both objects a ``free propagator'' hides precisely the inverse
+operation that reduction performs.
+\end{remarkbox}
+
+\module{Amputated kernels, residue factors, and field choices}
+Remove the overall momentum delta function and call the remainder of the
+connected correlator \(\mathcal G_{N,c}\). Define a full-propagator-amputated
+connected kernel \(\ii\mathcal V_N\) by
+\begin{equation}
+ \mathcal G_{N,c}(q_1,\ldots,q_N)
+ =\left[\prod_j\widetilde G_2(q_j)\right]\ii\mathcal V_N(q_1,\ldots,q_N).
+\end{equation}
+Use the pole form \eqref{eq:pole} in \eqref{eq:momentumLSZ}. Each leg gives
+\((q^2-M^2)\widetilde G_2/(\ii\sqrt{\Zp})\to\sqrt{\Zp}\), so
+\begin{equation}
+ \boxed{\quad\cM=\Zp^{N/2}\,\mathcal V_N\big|_{\rm on\ shell}.\quad}
+ \label{eq:kernelLSZ}
+\end{equation}
+For four identical scalar external legs this is \(\cM=\Zp^2\mathcal V_4\),
+consistent with Lecture 22. If the renormalized field is chosen to have
+unit pole residue, these external factors are one.
+
+Amputation with full propagators already removes their entire chains of
+self-energy insertions. Adding those same chains again as external-leg
+corrections double counts them. Internal propagators and subdiagrams are
+still part of \(\mathcal V_N\). The connected amputated kernel is generally
+\emph{not} identical to a 1PI vertex: a tree with two interaction vertices
+joined by an internal line is connected but one-particle reducible.
+
+A simple field rescaling checks the normalization. If \(\phi'=c\phi\)
+with \(c>0\), then
+\begin{equation}
+ G'_{N,c}=c^NG_{N,c},\qquad Z'_{\rm pole}=c^2\Zp.
+\end{equation}
+Every factor of \(c\) cancels in \eqref{eq:momentumLSZ}. Negative or complex
+phase choices merely require a consistent phase convention for the
+particle states and field overlaps; observables remain unchanged.
+
+More generally, take a local operator
+\begin{equation}
+ O=(1+\alpha\Box)\phi,\qquad [\alpha]=({\rm mass})^{-2}.
+\end{equation}
+Its one-particle overlap is \((1-\alpha M^2)\sqrt{\Zp}\). It interpolates
+the same particle if that coefficient is nonzero, with the corresponding
+residue and phase. Derivatives in time-ordered correlators can generate
+contact terms, but they do not alter the simultaneous external particle
+pole coefficient. If \(\alpha=M^{-2}\), this particular operator loses the
+pole and cannot serve as an interpolating field for that particle.
+
+\begin{keyidea}[Particles need not be elementary fields]
+A renormalized composite operator with a nonzero stable-particle overlap
+can also be used in reduction. The asymptotic particle and its amplitude
+are physical; the interpolating operator is a choice of probe. Composite
+operator renormalization and contact terms must be handled consistently.
+\end{keyidea}
+
+\module{A direct tree-level test, followed by the loop prescription}
+Use the interaction \(-\lambda\phi^4/4!\) and its leading connected
+four-point function from Lecture 21:
+\begin{equation}
+ G_{4,c}^{(1)}(x_1,x_2,x_3,x_4)
+ =-\ii\lambda\int\dd^4z\,\prod_{j=1}^4D_F(x_j-z).
+ \label{eq:treeG}
+\end{equation}
+At this order \(\Zp=1\), and the free mass agrees with the physical mass
+to the accuracy needed for the tree amplitude. Apply the four operators
+\(K_j=\Box_{x_j}+M^2\):
+\begin{equation}
+ \prod_jK_jG_{4,c}^{(1)}
+ =(-\ii\lambda)(-\ii)^4\int\dd^4z\,
+ \prod_j\delta^{(4)}(x_j-z).
+\end{equation}
+The four LSZ factors contribute \(\ii^4\). For two incoming and two
+outgoing waves, the remaining integral is
+\begin{equation}
+ -\ii\lambda\int\dd^4z\,e^{\ii(p_3+p_4-k_1-k_2)\cdot z}
+ =-\ii\lambda(2\pi)^4\delta^{(4)}(p_3+p_4-k_1-k_2).
+\end{equation}
+Thus \(\ii\cM=-\ii\lambda\), with no extra external \(2E\) factors and no
+external propagators. The \(2E\)'s instead enter the state measure used
+when converting this amplitude to a cross section.
+
+At loop order the logic is unchanged, but each ingredient must be
+calculated consistently:
+\begin{enumerate}
+ \item Locate the stable pole using \(M^2-m^2-\Sigma_R(M^2)=0\).
+ \item Determine \(\Zp=[1-\Sigma_R'(M^2)]^{-1}\) for the chosen field.
+ \item Compute the connected amputated kernel, including internal loops
+ and counterterms to the requested order.
+ \item Multiply by the external square roots of the residues and evaluate
+ the external momenta on their physical mass shells.
+\end{enumerate}
+For massive \(\lambda\phi^4\) in the symmetric vacuum, the one-loop tadpole
+is momentum independent. It shifts the mass but produces no derivative
+\(\Sigma_R'\) at that order in a scheme with no finite field rescaling.
+Hence \(\Zp=1+O(\lambda^2)\); its effect on the tree four-point amplitude
+first appears at \(O(\lambda^3)\), beyond the one-loop four-point result.
+
+\begin{remarkbox}[Vacuum normalization is a separate operation]
+The ratio \(Z[J]/Z[0]\) removes vacuum components, taking connected
+functions removes disconnected external components, and LSZ removes
+external propagation and field overlaps. These operations solve different
+problems. None is a substitute for the other two.
+\end{remarkbox}
+
+\module{External fermions: spinor overlaps and ordered amplitudes}
+The particle-pole argument extends to spin. For a stable Dirac particle
+of mass \(m\), choose conventions
+\begin{align}
+ \bra{\Omega}\psi_\alpha(0)\ket{p,s}&=\sqrt{Z_\psi}\,u_\alpha(p,s),\\
+ \bra{\Omega}\bar\psi_\alpha(0)\ket{\bar p,s}
+ &=\sqrt{Z_\psi}\,\bar v_\alpha(p,s),
+\end{align}
+where \(\ket{\bar p,s}\) denotes an antiparticle state of positive-energy
+momentum \(p\). Near the pole,
+\begin{equation}
+ \widetilde S_F(p)\sim\frac{\ii Z_\psi(\slashed p+m)}{p^2-m^2+\ii0},\qquad
+ \sum_su(p,s)\bar u(p,s)=\slashed p+m,\quad
+ \sum_sv(p,s)\bar v(p,s)=\slashed p-m.
+\end{equation}
+Amputate the full external fermion propagators before imposing the
+on-shell Dirac equation; then attach the appropriate spinor and one
+\(\sqrt{Z_\psi}\) per external leg to the resulting kernel.
+At tree level, or in a unit-pole-residue scheme, those square roots are one.
+
+\begin{center}
+\begin{tabular}{lll}\toprule
+External state & Incoming & Outgoing\\\midrule
+Scalar & \(1\) & \(1\)\\
+Fermion & \(u(p,s)\) & \(\bar u(p,s)\)\\
+Antifermion & \(\bar v(p,s)\) & \(v(p,s)\)\\\bottomrule
+\end{tabular}
+\end{center}
+All entries refer to physical positive-energy momenta. Incoming spacetime
+waves are \(e^{-\ii p\cdot x}\) and outgoing waves are \(e^{+\ii p\cdot x}\).
+Grassmann differentiation and the chosen ordering of external Fock states
+fix the signs. Exchanging two identical external fermions changes the
+amplitude's sign; a closed fermion loop contributes its separate minus sign.
+
+For example, in \(\Lag_{\rm int}=-y\phi\bar\psi\psi\), exchange of a scalar
+between a fermion \(p_1\to p_3\) and another fermion \(p_2\to p_4\) gives
+\begin{equation}
+ \ii\cM_t=\big[\bar u(p_3)(-\ii y)u(p_1)\big]
+ \frac{\ii}{(p_1-p_3)^2-m_\phi^2+\ii0}
+ \big[\bar u(p_4)(-\ii y)u(p_2)\big].
+\end{equation}
+For identical fermions the full amplitude is this term minus the term
+with \(p_3,s_3\leftrightarrow p_4,s_4\), for a fixed ordering of the states.
+Assume stable external fermions; no external scalar is required here.
+
+After constructing the amplitude, use the spin sums to compute
+\(\overline{|\cM|^2}\), averaging over four incoming spin choices for two
+unpolarized Dirac fermions. The flux and final-state phase-space formulas
+of Lecture 24 then apply, including identical final-state counting.
+
+\module{What reduction establishes, and what unitarity adds}
+LSZ turns the singular part of a local correlator into an observable
+amplitude. It does not say that every internal line is an on-shell particle.
+Internal propagators carry momenta fixed by the diagram's conservation laws
+and loop integrations; they are generally off shell. Real final particles
+instead enter the phase-space sum with positive energies and their exact
+mass shells.
+
+Unitarity then constrains the amplitude extracted by reduction:
+\begin{equation}
+ -\ii\big(\cM_{fi}-\cM_{if}^*\big)
+ =\sum_X\frac1{\cS_X}\int\dd\Phi_X\,
+ \cM_{Xf}^*\cM_{Xi}.
+ \label{eq:generalunitarity}
+\end{equation}
+Spin sums and the appropriate common total momentum are implicit.
+For connected two-particle initial and final channels, this is the usual
+amplitude form. In general multiparticle channels, retain the disconnected
+and spectator pieces required by the operator identity. Only on the
+diagonal \(f=i\) does the left side immediately become
+\(2\operatorname{Im}\cM_{ii}\), giving the forward optical theorem.
+
+When an amplitude is real analytic across a physical channel in the
+appropriate sense, its boundary values obey
+\begin{equation}
+ \operatorname{Disc}_s\cM
+ =\cM(s+\ii0)-\cM(s-\ii0)=2\ii\operatorname{Im}\cM(s+\ii0).
+\end{equation}
+For more general spin or channel amplitudes, Hermitian analyticity relates
+the conjugate to the reversed process; it is not safe to assert the last
+equality for every component without qualification. A discontinuity is
+also not the same object as an imaginary part: they differ by \(2\ii\)
+when that relation applies.
+
+The same analytic correlator can yield different physical channels by
+assigning different external energy branches and particle/antiparticle
+labels. This motivates crossing. It is an analytic continuation between
+physical regions, not a claim that a negative-energy particle is prepared
+in the laboratory. Its general proof requires more than the elementary
+pole reduction used here.
+
+\begin{keyidea}[The completed chain of reasoning]
+A stable mass shell and a nonzero field overlap identify an external
+particle. Asymptotic packets define the S-matrix. Normalized path integrals
+compute correlators, and LSZ extracts their physical pole amplitudes.
+Phase space and flux turn those amplitudes into rates. Unitarity checks
+that the resulting outcomes account for all probability.
+\end{keyidea}
+\textbf{Self-check.} Explain why changing the normalization of \(\phi\)
+changes its correlators but not its scattering cross sections, why a
+resonance cannot be reduced as an exact stable external state, and why
+using the operator equation of motion inside a time-ordered product without
+contact terms would fail even in the free theory.
+\end{document}

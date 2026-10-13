@@ -1,0 +1,435 @@
+\documentclass[11pt]{article}
+
+\usepackage[letterpaper,margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb,mathtools,bm}
+\usepackage{xcolor,slashed,needspace}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage[most]{tcolorbox}
+\usepackage{fancyhdr}
+\usepackage{parskip}
+
+\definecolor{qftblue}{HTML}{245A8D}
+\definecolor{qftgray}{HTML}{F4F6F8}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=qftblue,
+  urlcolor=qftblue,
+  pdftitle={PHYS 662 Homework Set 4},
+  pdfauthor={Nima Lashkari}
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{PHYS 662: Quantum Field Theory I}
+\rhead{Homework Set 4}
+\cfoot{\thepage}
+\setlength{\headheight}{14pt}
+
+\setlist[enumerate]{leftmargin=2.2em,itemsep=0.55em,topsep=0.5em}
+\newlist{parts}{enumerate}{1}
+\setlist[parts]{label=\textbf{(\alph*)},leftmargin=2.3em,itemsep=0.65em}
+
+\newcommand{\dd}{\mathrm{d}}
+\newcommand{\ii}{\mathrm{i}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Lag}{\mathcal L}
+\newcommand{\tr}{\operatorname{tr}}
+\newcommand{\Ad}{\operatorname{Ad}}
+
+\newtcolorbox{conventionbox}[1][]{
+  enhanced,breakable,
+  colback=qftgray,colframe=qftblue,
+  boxrule=0.8pt,arc=1.5mm,
+  title={#1},fonttitle=\bfseries,coltitle=white
+}
+\newcommand{\problem}[2]{%
+  \clearpage
+  \section*{\color{qftblue}Problem #1: #2}
+  \addcontentsline{toc}{section}{Problem #1: #2}
+}
+\newcommand{\lectureconnection}[1]{%
+  {\small\textit{Lecture connection: #1.}\par}\medskip
+}
+
+
+\newcommand{\diag}{\operatorname{diag}}
+\newcommand{\SO}{\mathrm{SO}}
+\newcommand{\SU}{\mathrm{SU}}
+\newcommand{\SL}{\mathrm{SL}}
+\newcommand{\ISO}{\mathrm{ISO}}
+\newcommand{\ddPi}{\dd\Pi}
+\newcommand{\vac}{\lvert0\rangle}
+\newcommand{\vbra}{\langle0\rvert}
+\newcommand{\Dc}{\mathcal C}
+\newcommand{\one}{\mathbf1}
+\begin{document}
+\begin{center}
+{\scshape\Large PHYS 662 --- Quantum Field Theory I\par}
+\vspace{0.25em}
+{\Huge\bfseries\color{qftblue} Homework Set 4\par}
+\vspace{0.25em}
+{\large Lectures 11--14 \quad Fall 2026\par}
+\end{center}
+\vspace{0.5em}
+\textbf{Name:} \rule{0.44\textwidth}{0.4pt}\hfill
+\textbf{Due:} \rule{0.24\textwidth}{0.4pt}
+
+\begin{conventionbox}[Instructions and conventions]
+Show the reasoning leading to each result. Use \(\hbar=c=1\),
+\(\eta=\diag(1,-1,-1,-1)\), \(\epsilon_{123}=1\), and
+\(\epsilon^{0123}=1\), so \(\epsilon_{0123}=-1\).
+Unless specified otherwise, representation spaces are complex and
+spacetime has \(3+1\) dimensions.
+
+Use the lecture conventions
+\[
+ J_i=\tfrac12\epsilon_{ijk}M^{jk},\quad K_i=M^{i0},\quad
+ s^\mu=(1,\bm\sigma),\quad\widetilde s^\mu=(1,-\bm\sigma),\quad
+ \gamma^\mu=\begin{pmatrix}0&\widetilde s^\mu\\s^\mu&0\end{pmatrix}.
+\]
+The antisymmetric matrix is
+\(E=i\sigma_2=\left(\begin{smallmatrix}0&1\\-1&0\end{smallmatrix}\right)\).
+Classical fermion fields are Grassmann odd; wavefunction spinors and
+vectors in representation spaces have ordinary complex components.
+Distinguish a matrix acting on field components from a unitary operator
+acting on particle states. State which inner product and momentum are
+being used in every orthogonality claim.
+\end{conventionbox}
+
+Problems 1--6 develop the supplied set. Problems 7 and 8 are new and
+complete the coverage of spinor dynamics and one-particle wavefunctions.
+\begingroup\small\tableofcontents\endgroup
+
+\problem{1}{Deriving the Poincar\'e algebra from the group law}
+\lectureconnection{11, Sections 2--3}
+An affine transformation acts on coordinates as \(x\mapsto\Lambda x+a\).
+Let \(S(\Lambda,a)\) be a differentiable ordinary representation of the
+connected Poincar\'e group, or a local representation of its cover, with
+\begin{equation}
+ S(\Lambda_2,a_2)S(\Lambda_1,a_1)
+ =S(\Lambda_2\Lambda_1,a_2+\Lambda_2a_1).
+ \label{eq:grouplaw}
+\end{equation}
+Near the identity use
+\begin{equation}
+ \Lambda^\mu{}_{\nu}=\delta^\mu{}_{\nu}+\omega^\mu{}_{\nu}+O(\omega^2),
+ \qquad S(\Lambda,a)=1-\frac{i}{2}\omega_{\mu\nu}M^{\mu\nu}
+                       -ia_\mu P^\mu+O(\omega^2,a^2,\omega a).
+ \label{eq:expand}
+\end{equation}
+The generators need not be finite-dimensional or Hermitian unless the
+representation under discussion requires those properties.
+
+\begin{parts}
+\item Derive \(\omega_{\mu\nu}=-\omega_{\nu\mu}\) from
+\(\Lambda^T\eta\Lambda=\eta\). Find the inverse affine transformation and
+count the independent generators in \(D\) spacetime dimensions.
+\item Use the translation subgroup to find \([P^\mu,P^\nu]\).
+Then expand the group conjugation of a translation by a Lorentz
+transformation to derive \([M^{\mu\nu},P^\rho]\). Keep the covariant
+translation parameter \(a_\mu\) distinct from its contravariant components.
+\item Derive \([M^{\mu\nu},M^{\rho\sigma}]\) by comparing products to second
+order. Verify the result using the vector-representation matrices
+\[
+ (M^{\mu\nu})^\rho{}_{\sigma}
+ =i(\eta^{\mu\rho}\delta^\nu{}_{\sigma}
+       -\eta^{\nu\rho}\delta^\mu{}_{\sigma}).
+\]
+Explain why an expansion to first order in each separate transformation
+is sufficient to expose a second-order commutator.
+\item Write the full algebra among \(H=P^0\), \(p_i=P^i\), \(J_i\), and
+\(K_i\). Check explicitly the sign of \([K_1,K_2]\) and the brackets
+\([K_i,H]\), \([K_i,p_j]\). Which of these signs changes if the boost
+parameter and every \(K_i\) are reversed together?
+\item Explain which assumptions in \eqref{eq:grouplaw} exclude a
+projective phase at this stage. Why does a half-integer-spin
+representation of the cover not require a central term in the local
+Poincar\'e Lie algebra?
+\end{parts}
+
+\problem{2}{Euclidean rotations and translations}
+\lectureconnection{11, Sections 2--3; comparison with Lecture 9}
+Consider Euclidean space \(\R^n\), with \(n=d+1\), Cartesian metric
+\(\delta_{ab}\), and orientation-preserving isometries
+\(x\mapsto Rx+a\), \(R\in\SO(n)\). The full connected isometry group is
+\(\ISO(n)=\SO(n)\ltimes\R^n\).
+
+For scalar functions \(f(x)\), let
+\begin{equation}
+ (U(R,a)f)(x)=f(R^{-1}(x-a)),\qquad
+ P_a=-i\partial_a,\qquad
+ L_{ab}=-i(x_a\partial_b-x_b\partial_a)=-L_{ba}.
+ \label{eq:Euclidean}
+\end{equation}
+Work first on smooth functions of compact support, so differential
+operator products and integrations by parts are unambiguous.
+
+\begin{parts}
+\item Derive the composition law of \((R,a)\), then show that the
+operators \(P_a\) generate translations and \(L_{ab}\) generate rotations
+of the argument. State your rotation-parameter sign convention.
+\item Compute \([P_a,P_b]\), \([L_{ab},P_c]\), and
+\([L_{ab},L_{cd}]\) directly on an arbitrary test function. Separate the
+\(\mathfrak{so}(n)\) subalgebra from the translation ideal and count the
+number of generators in each.
+\item Check \([L_{12},P_1]\), \([L_{12},P_2]\), and
+\([L_{12},L_{23}]\). Explain why translations cannot be obtained merely
+by enumerating generators of \(\SO(n)\).
+\item Show that the Euclidean Laplacian commutes with all these
+operators. For a real scalar field, check invariance of
+\[
+ S_E=\int\dd^nx\left[\frac12\partial_a\phi\partial_a\phi
+                              +\frac12m^2\phi^2\right].
+\]
+Distinguish invariance under the connected group from invariance under
+an orientation-reversing reflection.
+\item Compare rotations in planes involving the \(n\)-th Euclidean
+axis with Lorentz boosts. Identify the metric-sign origin of the
+Lorentz boost--boost bracket. Why is compact \(\SO(4)\) not the Lorentz
+group merely because both groups have six generators?
+\end{parts}
+
+\problem{3}{The invariant norm of a vector in spinor notation}
+\lectureconnection{11, Section 2; 12, Sections 2--3}
+For a real four-vector \(v^\mu\), define the Hermitian bispinor matrix
+\begin{equation}
+ V(v)=v^0I+v^i\sigma_i=v_\mu\widetilde s^\mu
+ =\begin{pmatrix}v^0+v^3&v^1-iv^2\\v^1+iv^2&v^0-v^3\end{pmatrix},
+ \qquad V\mapsto AVA^\dagger,\quad A\in\SL(2,\C).
+ \label{eq:V}
+\end{equation}
+All spinors in this problem have commuting complex components.
+Use \(\varepsilon_{12}=1\), \(\varepsilon^{12}=-1\), and the same numerical
+convention for dotted indices.
+
+\begin{parts}
+\item Calculate \(\det V\) and express it in terms of \(v_\mu v^\mu\).
+Prove its invariance under \(V\mapsto AVA^\dagger\), and recover the four
+components of \(v\) by traces with the Pauli matrices.
+\item Show that
+\[
+ \frac12\varepsilon^{\alpha\beta}
+ \varepsilon^{\dot\alpha\dot\beta}
+ V_{\alpha\dot\alpha}V_{\beta\dot\beta}=\det V.
+\]
+Explain precisely what is invariant: the signed Minkowski squared norm,
+not a positive-definite norm on all Lorentz vectors. State how its sign
+distinguishes timelike, spacelike, and null vectors.
+\item Set \(V=\lambda\lambda^\dagger\). Determine its rank, determinant,
+and time orientation for \(\lambda\neq0\). Work out \(v^\mu\) explicitly
+for \(\lambda=(a,b)^T\). Can every real four-vector be represented by one
+such product?
+\item For two independent spinors consider
+\(V_+=\lambda\lambda^\dagger+\mu\mu^\dagger\) and
+\(V_-=\lambda\lambda^\dagger-\mu\mu^\dagger\).
+Show that their determinants are respectively
+\(+|\lambda^TE\mu|^2\) and \(-|\lambda^TE\mu|^2\).
+Explain which causal types these examples describe.
+\item Relate the matrix transformation to the Lorentz representation
+\((\tfrac12,\tfrac12)\). Why does this label not mean that a general
+vector is a single decomposable tensor product? What reality condition
+selects real vectors from the complexified representation?
+\end{parts}
+
+\problem{4}{The rotation double cover and its Lorentz extension}
+\lectureconnection{11, Sections 2 and 4; 12, Section 1}
+Define a map \(R:\SU(2)\to\SO(3)\) by
+\begin{equation}
+ U(\bm v\cdot\bm\sigma)U^\dagger
+      =(R(U)\bm v)\cdot\bm\sigma,
+ \qquad \bm v\in\R^3.
+ \label{eq:cover}
+\end{equation}
+This revisits the rotation cover briefly and then connects it to the
+Lorentz spin labels used in this block of lectures.
+
+\begin{parts}
+\item Prove that conjugation preserves Hermiticity, tracelessness,
+and \(\frac12\tr[(\bm v\cdot\bm\sigma)^2]\). Deduce that \(R(U)\) is a real
+orthogonal matrix. Use connectedness to show its determinant is \(+1\).
+\item Prove the homomorphism property. For
+\(U=\exp[-i\theta\bm n\cdot\bm\sigma/2]\), derive the corresponding
+axis-angle rotation. Use this result to establish surjectivity.
+\item Determine the kernel by asking which matrices commute with all
+three Pauli matrices. Explain why the map is a two-to-one covering map;
+you may use the local-isomorphism theorem for Lie groups of equal
+dimension. What happens at \(\theta=2\pi\) and \(4\pi\)?
+\item Explain how \(V\mapsto AVA^\dagger\) extends the construction to
+\(\SL(2,\C)\to\SO^+(1,3)\). Show how the polar decomposition
+\(A=UH\), with \(H\) positive Hermitian and \(\det H=1\), separates a
+rotation from a boost. Determine the kernel of this extended map.
+\item In a \((j_L,j_R)\) representation, determine the action of the
+central element \(-I\in\SL(2,\C)\). State the condition for this
+representation to descend to an ordinary representation of
+\(\SO^+(1,3)\). Apply it to a scalar, a vector, either Weyl spinor,
+and a Dirac spinor.
+\end{parts}
+
+\problem{5}{Sigma identities and the Clifford algebra}
+\lectureconnection{12, Section 4; 13, Sections 3 and 5}
+Use the two sets \(s^\mu=(I,\bm\sigma)\) and
+\(\widetilde s^\mu=(I,-\bm\sigma)\) fixed on the cover page.
+They are the off-diagonal blocks of \(\gamma^\mu\); neither set by
+itself is a four-dimensional Clifford representation.
+
+\begin{parts}
+\item Starting from
+\(\sigma_i\sigma_j=\delta_{ij}I+i\epsilon_{ijk}\sigma_k\), prove
+\begin{align*}
+ s^\mu\widetilde s^\nu+s^\nu\widetilde s^\mu&=2\eta^{\mu\nu}I_2,\\
+ \widetilde s^\mu s^\nu+\widetilde s^\nu s^\mu&=2\eta^{\mu\nu}I_2.
+\end{align*}
+Check the time--space and space--space cases separately. Explain the
+spinor index maps implicit in these mixed products.
+\item Use block multiplication to prove
+\(\{\gamma^\mu,\gamma^\nu\}=2\eta^{\mu\nu}I_4\).
+Derive \((\slashed p)^2=p^2I_4\) and
+\((i\slashed\partial-m)(i\slashed\partial+m)=-(\Box+m^2)I_4\).
+\item Define
+\(S^{\mu\nu}=\frac i4[\gamma^\mu,\gamma^\nu]\).
+Compute \([S^{\mu\nu},\gamma^\rho]\) using only the Clifford algebra,
+and show how this identity makes \(\bar\Psi\gamma^\rho\Psi\) transform
+as a vector. State the adjoint used in this bilinear.
+\item Compute \(S^{ij}\) and \(S^{i0}\). Recover the equal rotation
+generators and opposite boost generators in the two Weyl blocks.
+\item With \(\gamma_*=-i\gamma^0\gamma^1\gamma^2\gamma^3\), prove
+\(\gamma_*^2=1\), \(\{\gamma_*,\gamma^\mu\}=0\), and
+\([\gamma_*,S^{\mu\nu}]=0\). Construct the chiral projectors and show
+why a scalar Dirac mass couples opposite chiralities.
+\end{parts}
+
+\problem{6}{Pauli--Lubanski invariants and massless little groups}
+\lectureconnection{11, Section 3; 14, Sections 4--5}
+Define, with the same sign as Lecture 14,
+\begin{equation}
+ W^\mu=-\frac12\epsilon^{\mu\nu\rho\sigma}P_\nu M_{\rho\sigma},
+ \qquad P^2=P_\mu P^\mu,
+ \qquad W^2=W_\mu W^\mu.
+ \label{eq:W}
+\end{equation}
+The overall sign of \(W^\mu\) does not change \(W^2\).
+A Casimir commutes with all generators. \(P^2\) has degree two in the
+Poincar\'e generators; \(W^2\) has degree four, although it is quadratic
+in the composite vector \(W^\mu\).
+
+\begin{parts}
+\item Prove \([P^2,P^\rho]=[P^2,M^{\rho\sigma}]=0\),
+\([W^\mu,P^\nu]=0\), and \(P_\mu W^\mu=0\).
+Show that \(W^\mu\) transforms as a vector and conclude that \(W^2\) is
+a Casimir. Track operator ordering when moving momenta through \(M\).
+\item Contract the two epsilon tensors to establish
+\begin{equation}
+ W^2=-\frac12 P^2 M^{\mu\nu}M_{\mu\nu}
+       +P_\mu P_\nu M^{\mu\rho}M^\nu{}_{\rho}.
+ \label{eq:Widentity}
+\end{equation}
+All momenta in the second term have been moved to the left; justify any
+commutator terms that cancel in reaching this form.
+\item In a massive rest frame \(P^\mu=(m,0,0,0)\), derive
+\(W^\mu=(0,m\bm J)\) and \(W^2=-m^2j(j+1)\).
+What representation-theoretic information do these invariants contain?
+\item For a massless reference momentum \(k=(\kappa,0,0,\kappa)\),
+\(\kappa>0\), set
+\[
+ J=J_3,\qquad N_1=K_1+J_2,\qquad N_2=K_2-J_1.
+\]
+Verify their little-group algebra. Express all four components of
+\(W^\mu\) and \(W^2\) in terms of \(\kappa,J,N_1,N_2\).
+\item Explain why a finite-dimensional unitary polarization space
+forces \(N_1=N_2=0\). Deduce \(W^\mu=hP^\mu\) and explain why
+\(P^2=W^2=0\) does not distinguish different helicities.
+What assumption is relaxed in continuous-spin representations?
+\end{parts}
+
+\problem{7}{Weyl masses and a conserved Dirac charge}
+\lectureconnection{12, Sections 2 and 5; 13, Sections 1--4}
+\textit{New problem.}
+For Grassmann-odd two-component fields define
+\(B(\xi,\chi)=\xi^TE\chi\). Consider first one Weyl field with
+\begin{equation}
+ \Lag_\xi=i\xi^\dagger s^\mu\partial_\mu\xi
+   -\frac12\left[m B(\xi,\xi)+m^*B(\xi,\xi)^\dagger\right].
+ \label{eq:Weylaction}
+\end{equation}
+Treat \(\xi\) and \(\xi^\dagger\) as independent when varying the action;
+place odd variations consistently on the left. Assume boundary terms
+vanish in the action.
+
+\begin{parts}
+\item Show \(B(\xi,\chi)=B(\chi,\xi)\) and evaluate \(B(\xi,\xi)\) in
+components. Contrast with commuting spinors. Verify that the kinetic
+term is Hermitian up to a total derivative.
+\item For \(m=|m|e^{i\alpha}\), find the field redefinition making the
+mass real and nonnegative. Why is a half-angle required? Vary
+\eqref{eq:Weylaction} and its conjugate, then derive the second-order
+Klein--Gordon equation. Explain what information the squared equation loses.
+\item Take two independent Weyl fields \(\xi_1,\xi_2\), each with the
+same real mass \(m\). Show that their free action has a real \(O(2)\)
+flavor symmetry. Set
+\[
+ \chi=\frac{\xi_1+i\xi_2}{\sqrt2},\qquad
+ \zeta=\frac{\xi_1-i\xi_2}{\sqrt2}.
+\]
+Diagonalize its connected \(SO(2)\) action and rewrite the mass term.
+Are \(\chi\) and \(\zeta\) complex conjugates of one another?
+\item Define \(\Psi=(\chi,-E\zeta^*)^T\). Derive the Dirac action and
+its conserved current, including the integration by parts needed for
+the lower block. Express the current in terms of \(\chi,\zeta\).
+\item Add a small Majorana mass for \(\chi\) alone. Does the continuous
+Dirac charge survive? More generally, for a symmetric Weyl mass matrix
+\(M\) and phase-charge matrix \(Q\), derive the condition
+\(Q^TM+MQ=0\). Explain why mass degeneracy alone is insufficient if
+interactions violate the flavor symmetry.
+\end{parts}
+
+\problem{8}{Free spinors, spin sums, and the one-particle inner product}
+\lectureconnection{14, Sections 6--8}
+\textit{New problem.}
+Let \(m>0\), \(p=(E_{\bm p},\bm p)\), and choose orthonormal two-component
+bases \(\xi_s\), \(\eta_s\). Define
+\begin{equation}
+ A_p=\frac{(E_{\bm p}+m)I+\bm p\cdot\bm\sigma}{\sqrt{2(E_{\bm p}+m)}},
+ \qquad B_p=\frac{(E_{\bm p}+m)I-\bm p\cdot\bm\sigma}{\sqrt{2(E_{\bm p}+m)}},
+ \label{eq:AB}
+\end{equation}
+\[
+ u_s(p)=\begin{pmatrix}A_p\xi_s\\B_p\xi_s\end{pmatrix},\qquad
+ v_s(p)=\begin{pmatrix}A_p\eta_s\\-B_p\eta_s\end{pmatrix}.
+\]
+Use \(\bar u=u^\dagger\gamma^0\), and similarly for \(v\).
+
+\begin{parts}
+\item Prove \(A_p^2=E_{\bm p}I+\bm p\cdot\bm\sigma\),
+\(B_p^2=E_{\bm p}I-\bm p\cdot\bm\sigma\), and \(A_pB_p=mI\).
+Verify both Dirac equations for \(u_s\) and \(v_s\).
+\item Compute \(\bar u_su_t\), \(\bar v_sv_t\), \(\bar u_sv_t\),
+\(u_s^\dagger u_t\), and \(v_s^\dagger v_t\).
+Evaluate \(u_s^\dagger(\bm p)v_t(\bm p)\) and
+\(u_s^\dagger(\bm p)v_t(-\bm p)\). Explain which one is required by
+Hermiticity of the fixed-spatial-momentum Dirac Hamiltonian.
+\item Derive \(\sum_su_s\bar u_s=\slashed p+m\) and
+\(\sum_sv_s\bar v_s=\slashed p-m\). Construct the projectors onto the
+\(\slashed p\) eigenvalues \(\pm m\) and compare them with the Hermitian
+energy projectors \(\frac12(1\pm h_D(\bm p)/E_{\bm p})\).
+\item For states normalized by
+\(\langle\bm q,t|\bm p,s\rangle=(2\pi)^3 2E_{\bm p}
+\delta_{st}\delta^{(3)}(\bm p-\bm q)\), write the identity operator in the
+one-particle sector and the norm of a spinor wave packet.
+Explain why this positive Hilbert-space norm is different from
+\(\bar u u\).
+\item With fixed standard boosts \(L(p)\), derive
+\[
+ \mathcal S(\Lambda)u_s(p)=\sum_tu_t(\Lambda p)
+ D_{ts}^{(1/2)}\!\left(L(\Lambda p)^{-1}\Lambda L(p)\right).
+\]
+Explain how this relation reconciles the nonunitary Lorentz matrix
+\(\mathcal S\) with a unitary transformation on one-particle states.
+\end{parts}
+\end{document}
