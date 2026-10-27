@@ -1,0 +1,98 @@
+name: Publish lecture PDFs
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Check out lecture sources
+        uses: actions/checkout@v6
+
+      - name: Install LaTeX
+        run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y \
+            latexmk texlive-latex-extra texlive-fonts-recommended \
+            texlive-pictures texlive-science lmodern
+
+      - name: Compile lectures and create index
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p _site _build
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          import shutil
+          import subprocess
+
+          lectures = []
+          for source in Path(".").glob("*.tex"):
+              match = re.fullmatch(r"lecture(\d+)\.tex", source.name, re.I)
+              if match:
+                  lectures.append((int(match.group(1)), source))
+
+          if not lectures:
+              raise SystemExit("No lecture files found.")
+
+          links = []
+          for number, source in sorted(lectures):
+              output = Path("_build") / source.stem
+              output.mkdir(parents=True, exist_ok=True)
+              subprocess.run([
+                  "latexmk", "-norc", "-pdf", "-no-shell-escape",
+                  "-interaction=nonstopmode", "-halt-on-error",
+                  "-file-line-error", f"-outdir={output}", str(source)
+              ], check=True)
+              filename = f"lecture{number}.pdf"
+              shutil.copyfile(
+                  output / f"{source.stem}.pdf",
+                  Path("_site") / filename
+              )
+              links.append(
+                  f'<li><a href="{filename}">Lecture {number} (PDF)</a></li>'
+              )
+
+          Path("_site/index.html").write_text(
+              '<!doctype html><html lang="en"><head>'
+              '<meta charset="utf-8">'
+              '<meta name="viewport" content="width=device-width, initial-scale=1">'
+              '<title>QFT Lecture Notes</title></head><body>'
+              '<h1>Quantum Field Theory I</h1>'
+              '<p>Lecture notes by Nima Lashkari</p><ol>'
+              + "\n".join(links)
+              + '</ol></body></html>',
+              encoding="utf-8"
+          )
+          Path("_site/.nojekyll").touch()
+          PY
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload PDFs
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: _site
+
+      - name: Publish PDFs
+        id: deployment
+        uses: actions/deploy-pages@v4
