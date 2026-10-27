@@ -150,7 +150,7 @@ Course page: \url{https://nimalashkari.com/quantum-field-theory-2026-part-i/}
 
 \section*{Roadmap}
 \addcontentsline{toc}{section}{Roadmap}
-Lectures 11--14 supplied the particle representations and classical wavefunctions.
+Lectures 11-14 supplied the particle representations and classical wavefunctions.
 We now quantize both scalar and Dirac fields. The common steps are to fix
 canonical data, normalize the modes, choose a vacuum, and derive energy and
 charge. Their different oscillator algebras produce Bose symmetry and Fermi
@@ -173,6 +173,7 @@ changed together if another normalization is used.
 
 \Needspace{7\baselineskip}
 \section{From a lattice of oscillators to a field}
+
 \subsection{What survives the continuum limit?}
 The harmonic chain gives a regulated example of the construction. Let
 \(q_j\) be the displacement of an atom of mass \(M\), with lattice
@@ -202,10 +203,11 @@ microscopic parameters scale with \(\ell\). Merely sending \(\ell\) to
 zero at fixed \(M,\kappa\) would also send the wave speed to zero.
 
 \subsection{Canonical data for the Klein--Gordon field}
+
 The relativistic theory in \(d+1\) dimensions is
 \begin{equation}
  \Lag=\frac12\partial_\mu\phi\partial^\mu\phi-\frac12m^2\phi^2,
- \quad \pi=\dot\phi,\quad
+ \quad \pi=\frac{\partial\Lag}{\partial \dot\phi}=\dot\phi,\quad
  H=\frac12\int\dd^d x\,[\pi^2+(\bm\nabla\phi)^2+m^2\phi^2].
  \label{s-eq:realaction}
 \end{equation}
@@ -217,11 +219,12 @@ Canonical quantization promotes the field and its momentum to operators:
  \label{s-eq:CCR}
 \end{equation}
 These are initial-data relations at equal time. They do not say that
-fields commute at arbitrary spacetime separation. Hats will be omitted.
+fields commute at arbitrary spacetime separation. To simplify notation, hats will be omitted.
 
 \Needspace{7\baselineskip}
 \section{Mode expansion and oscillator algebra}
 \subsection{Deriving the normalization}
+
 At \(t=0\), use spatial Fourier transforms with
 \(\widetilde\phi(\bm p)=\int\dd^d x\,e^{-i\bm p\cdot\bm x}\phi(\bm x)\),
 and similarly for \(\pi\). Reality implies
@@ -263,7 +266,7 @@ Then the mode measure is
 \(\dd^d p/[(2\pi)^d\sqrt{2E_{\bm p}}]\).
 Both conventions describe the same field. A factor \(1/(2E)\) in the
 expansion together with the \(c\)-commutator would not reproduce the
-canonical relation.
+canonical relation. The advantage of the notation $a(\bm p)$ is its Lorentz covariance, as we will see $U(\Lambda)a^\dagger(\bm p) U(\Lambda)^{-1}=a^\dagger(\Lambda \bm p)$. The advantage of the notation $c(\bm p)$ is that it is normalized similar to simple harmonic oscillators, so it is more convenient to use in constructing the occupation number basis in finite volume that breaks Lorentz invariance, as we see below.
 \end{remarkbox}
 
 \subsection{The Hamiltonian and the sign of the frequency}

@@ -183,7 +183,7 @@ Then \(C^T=-C\), \(C^{-1}=-C\). Its overall phase is conventional.
 The field transformation is
 \begin{equation}
  \Dc\Psi(x)\Dc^{-1}=\Psi^c(x)=C\bar\Psi(x)^T
-   =B_C(\Psi^\dagger(x))^T,\qquad B_C=C\gamma^0=-i\gamma^2.
+   =B_C(\Psi^\dagger(x))^T,\qquad B_C=C\gamma^0=-i\gamma^2=\begin{pmatrix}0&E\\-E&0\end{pmatrix}.
  \label{f-eq:Cfield}
 \end{equation}
 The transpose is on spinor indices. On a classical coefficient column
@@ -218,9 +218,10 @@ Let \(x_P=(t,-\bm x)\). A parity symmetry of the free massive theory can act as
  \Dp\Psi(x)\Dp^{-1}=\eta_P\gamma^0\Psi(x_P),\qquad |\eta_P|=1.
  \label{f-eq:Pfield}
 \end{equation}
+Recall that the current is $j^\mu=\bar{\Psi}\gamma^\mu\Psi$.
 The conditions \((\gamma^0)^\dagger\gamma^0=1\) and
-\(\gamma^0\gamma^i\gamma^0=-\gamma^i\) make \(j^0\) even and \(j^i\) odd,
-at the reflected point. They also establish invariance of the action.
+\(\gamma^0\gamma^i\gamma^0=-\gamma^i\) implies that the probability/charge density \(j^0\) is even under parity whereas the spatial current \(j^i\) is odd,
+at the reflected point, as expected from parity transform. They also establish invariance of the action.
 Taking \(\eta_P=1\), the canonical-spin wavefunctions satisfy
 \[
  \gamma^0u_s(p)=u_s(p_-),\qquad \gamma^0v_s(p)=-v_s(p_-),
@@ -252,7 +253,7 @@ is incompatible with a nontrivial spectrum bounded below and unbounded
 above. Instead time reversal is antiunitary:
 \begin{equation}
  \Dt i\Dt^{-1}=-i,\qquad \Dt H\Dt^{-1}=H,\qquad
- \Dt\bm P\Dt^{-1}=-\bm P,\qquad \Dt\bm J\Dt^{-1}=-\bm J.
+ \Dt\bm P\Dt^{-1}=-\bm P.
  \label{f-eq:Tcharges}
 \end{equation}
 Energy is preserved. The sign of \(i\), not a sign reversal of physical
@@ -263,7 +264,7 @@ conjugation rule used for the connected Lorentz group.
 \subsection{The spinor transformation and its phases}
 For \(x_T=(-t,\bm x)\), one convenient choice in our basis is
 \begin{equation}
- \Dt\Psi(x)\Dt^{-1}=B_T\Psi(x_T),\qquad B_T=i\gamma^1\gamma^3.
+ \Dt\Psi(x)\Dt^{-1}=B_T\Psi(x_T),\qquad B_T=i\gamma^1\gamma^3= \begin{pmatrix}i E&0\\0&i E\end{pmatrix}= \begin{pmatrix}-\sigma_2&0\\0&-\sigma_2\end{pmatrix}.
  \label{f-eq:Tfield}
 \end{equation}
 The useful matrix tests are
@@ -294,7 +295,7 @@ and the successive field maps give
  \Theta\Psi(x)\Theta^{-1}
    =B_T\gamma^0B_C(\Psi^\dagger(-x))^T
    =-i\gamma_* (\Psi^\dagger(-x))^T,
- \quad \gamma_*=\diag(-1,1)=-i\gamma^0\gamma^1\gamma^2\gamma^3.
+ \quad \gamma_*= \begin{pmatrix}-\mathbb{I}&0\\0&\mathbb{I}\end{pmatrix} =-i\gamma^0\gamma^1\gamma^2\gamma^3.
  \label{f-eq:CPT}
 \end{equation}
 The phase and the sign used to name \(\gamma_*\) are conventional.
@@ -372,7 +373,12 @@ or from \([\dot\phi(0,\bm x),\phi(0,\bm y)]=-i\delta^{(3)}(\bm x-\bm y)\).
 These initial data will determine the delta-function sources of the
 retarded and advanced Green functions without an ambiguous contour sign.
 
-For the complex scalar,
+For the complex scalar, we had the mode expansion
+\begin{align}
+	\Phi(x)=\int d\Pi_p(a(p)e^{-i p\cdot x}+b^\dagger(p) e^{i p\cdot x})
+\end{align}
+with $a(p)$ and $b(p)$ the annihilation modes for, respectively, the particle and the anti-particle.
+Then, the commutator becomes
 \begin{equation}
  [\Phi(x),\Phi^\dagger(y)]=\mathcal K(x-y),\qquad
  [\Phi(x),\Phi(y)]=0.
@@ -394,19 +400,17 @@ so
  D^+(-z)=D^+(z)^*.
  \label{k-eq:Wightman}
 \end{equation}
+This is called a Wightman function.
 For a complex scalar this is
 \(\vbra\Phi(x)\Phi^\dagger(y)\vac\); the charge-violating correlators
 \(\vbra\Phi(x)\Phi(y)\vac\) and its adjoint vanish in the charge-invariant
-free vacuum. Those zeros are not statements about a real scalar, for
-which the first correlator in \eqref{k-eq:Wightman} is nonzero.
+free vacuum. 
 
-The integral is an oscillatory distribution. Its positive-frequency
-boundary value is defined by \(t\mapsto t-i\epsilon\), \(\epsilon>0\),
-which inserts \(e^{-\epsilon E_{\bm p}}\), followed by
-\(\epsilon\downarrow0\). Lorentz invariance means invariance under the
+The integral is an oscillatory distribution. The term $e^{-i p z}$ oscillates endlessly at large energies and the integral does not strictly converge. To fix this, since $E_p>0$ we introduce a real damping term $e^{-E_p}$, by shifting time slightly into the complex plane by letting $t\to t-i \epsilon$ with $\epsilon>0$. The answer we find following this prescription and sending $\epsilon\to 0^+$ is called the  positive-frequency ($E_p>0$)
+boundary value $(\epsilon\to 0^+)$. Lorentz invariance means invariance under the
 proper orthochronous group, preserving the future mass shell. At timelike
-separation the sign of \(t\) remains relevant; writing a function of
-\(z^2\) without a boundary prescription loses information.
+separation the sign of \(t\) remains relevant because restricted Lorentz transformations cannot change the sign of $t$. Therefore, writing a function of
+\(z^2\) without a boundary prescription loses information. We need an $i\epsilon$-prescription.
 
 \subsection{Spacelike evaluation and the Compton scale}
 For spacelike separation choose \(t=0\) and let \(r=\sqrt{-z^2}>0\).
@@ -417,20 +421,24 @@ Angular integration gives
               =\frac{m}{4\pi^2r}K_1(mr).
  \label{k-eq:Bessel}
 \end{equation}
-Here \(K_1\) is the modified Bessel function of the second kind, not a
-Lorentz boost generator. One way to verify the coefficient is to use
+Here \(K_1\) is the modified Bessel function of the second kind (do not confused it with a
+Lorentz boost generator). One way to verify the coefficient is to use
 \[
  \frac{1}{2\sqrt{p^2+m^2}}
  =\frac{1}{2\sqrt\pi}\int_0^\infty\dd\alpha\,\alpha^{-1/2}
                          e^{-\alpha(p^2+m^2)}.
 \]
-The Gaussian momentum integral yields
+The Gaussian momentum integral yields (work it out)
+\begin{align}
+	\int_0^\infty dp \:p\sin(p r)e^{-\alpha p^2}&=\frac{1}{2}\Im\int_{-\infty}^\infty dp\: p e^{-\alpha p^2+i p r}\nonumber\\
+	&=\frac{r \sqrt{\pi}}{4\alpha^{3/2}}e^{-r^2/(4\alpha)}
+\end{align}
+which plugged back into \eqref{k-eq:Bessel} gives an integral representation of the Wightman function:
 \begin{equation}
  D^+(0,\bm r)=\frac{1}{16\pi^2}\int_0^\infty\dd\alpha\,
  \alpha^{-2}e^{-m^2\alpha-r^2/(4\alpha)},
  \label{k-eq:Schwinger}
 \end{equation}
-which is the integral representation of \eqref{k-eq:Bessel}.
 This also makes positivity at nonzero spacelike distance manifest.
 
 For \(mr\gg1\), \(K_1(mr)\sim\sqrt{\pi/(2mr)}e^{-mr}\), so
@@ -448,7 +456,7 @@ limit \(r\to0\).
 For timelike separation choose \(\bm r=0\). In three spatial dimensions,
 \begin{equation}
  D^+(t,0)=\frac{1}{4\pi^2}\int_m^\infty\dd E\,
-               \sqrt{E^2-m^2}\,e^{-iE(t-i0)}.
+               \sqrt{E^2-m^2}\,e^{-iE(t-i0^+)}.
  \label{k-eq:timelike}
 \end{equation}
 For \(mt\gg1\), \(t>0\), the stationary region is \(|\bm p|\ll m\).
@@ -459,7 +467,7 @@ Using \(E_{\bm p}=m+\bm p^2/(2m)+\cdots\) in the mode integral gives
  \label{k-eq:timelikeasymptotic}
 \end{equation}
 It oscillates with a \(t^{-3/2}\) envelope; it does not decay as
-\(e^{-m|t|}\). For \(t<0\), use complex conjugation. A compact formula
+\(e^{-m|t|}\). For \(t<0\), it follows from \eqref{k-eq:Wightman} that we only to need to take the complex conjugate of \(t>0\). A compact formula
 containing both regimes is
 \begin{equation}
  D^+(t,\bm r)=\lim_{\epsilon\downarrow0}
@@ -550,7 +558,7 @@ In spatial Fourier space these facts are especially transparent:
 Both have a unit jump in their first derivative across \(t=0\).
 
 \subsection{Response to a local source}
-Add \(J\phi\) to the Lagrangian, so \(L\phi=J\). With no incoming change
+Add \(J\phi\) to the Lagrangian, so that the equation of motion becomes \(L\phi=J\). With no incoming change
 in the initial data, the induced field is
 \begin{equation}
  \delta\phi(x)=\int\dd^4y\,G_R(x-y)J(y).
@@ -648,6 +656,13 @@ used in scattering and path-integral perturbation theory.
 
 \Needspace{7\baselineskip}
 \section{The Dirac Feynman propagator}
+
+For a Dirac field $\Psi$, inserting the mode expansion into the Wightman functions we find
+\begin{align}
+&	\vbra\Psi_\alpha(x)\bar{\Psi}_\beta(y)\vac=\int d\Pi_p (\sum_s u_s(p)\bar{u}_s(p))_{\alpha\beta}e^{-i p(x-y)}=\int d\Pi_p(\slashed p+m)_{\alpha\beta} e^{-i p(x-y)}\nonumber\\
+	&	\vbra\bar{\Psi}_\alpha(x)\Psi_\beta(y)\vac=\int d\Pi_p (\sum_s v_s(p)\bar{v}_s(p))_{\beta\alpha}e^{-i p(x-y)}=\int d\Pi_p(\slashed p-m)_{\beta\alpha} e^{-i p(x-y)}
+\end{align}
+
 Fermionic time ordering includes the exchange sign:
 \begin{equation}
  S_F(x-y)_{\alpha\beta}=\vbra T\Psi_\alpha(x)\bar\Psi_\beta(y)\vac
@@ -661,7 +676,7 @@ antiparticle spin sum. The result is
 \begin{equation}
  S_F(z)=(i\gamma^\mu\partial_\mu+m)D_F(z)
  =\int\frac{\dd^4p}{(2\pi)^4}
-       \frac{i(\slashed p+m)e^{-ipz}}{p^2-m^2+i0}.
+       \frac{i(\slashed p+m)e^{-ipz}}{p^2-m^2+i0^+}.
  \label{k-eq:SF}
 \end{equation}
 Since

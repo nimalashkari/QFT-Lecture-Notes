@@ -124,10 +124,10 @@ For \(H=\hat p^2/(2m)+V(\hat q)\), the Trotter product gives
  &=\int\frac{\dd p_j}{2\pi\hbar}
  \exp\!\left\{\frac{\ii}{\hbar}
  [p_j(q_{j+1}-q_j)-\epsilon H(q_{j+1},p_j)]\right\}
- +O(\epsilon^2).
+ +O(\epsilon^2)
 \end{align}
-The limit is understood in the operator sense appropriate to the
-Hamiltonian, or with a convergence regulator. Combining the short steps,
+where we have inserted the resolution of identity in $\ket{p}$ basis.
+Combining the short steps, as in ~\eqref{eq:composition}
 \begin{equation}
  K=\lim_{N\to\infty}\int\prod_{j=1}^{N-1}\dd q_j
        \prod_{j=0}^{N-1}\frac{\dd p_j}{2\pi\hbar}\,
@@ -140,11 +140,8 @@ matrix element. The compact notation is
 \(K=\int\D p\,\D q\,e^{\ii\int(p\dot q-H)\dd t/\hbar}\).
 
 \subsection{Why ordering survives the continuum limit}
-For a general Hamiltonian containing mixed products, the ordinary
-function in \eqref{eq:phase} is an \emph{operator symbol}. Putting all
-\(\hat q\)'s to the left of all \(\hat p\)'s gives the displayed endpoint
-prescription. Weyl ordering instead uses a midpoint symbol.
-For example,
+For a classical Hamiltonian containing mixed products of $p$ and $q$, one needs to decide an ordering to define a quantum operator. In the discussion above, we implicitly used the prescription that puts all
+\(\hat q\)'s to the left of all \(\hat p\)'s ($qp$-ordering). Another choice is Weyl ordering which uses 
 \begin{equation}
  \frac12(\hat q\hat p+\hat p\hat q)
  =\hat q\hat p-\frac{\ii\hbar}{2}.
@@ -154,8 +151,7 @@ symbol is \(qp\). The difference per time slice is proportional to
 \(\epsilon\); after \(N\) slices it need not disappear.
 \begin{remarkbox}[A consistent prescription]
 Choose the operator ordering, its symbol, and the time discretization
-together. For \(p^2/(2m)+V(q)\) the usual endpoint and midpoint
-constructions give the same continuum Hamiltonian under the standard
+together. For \(p^2/(2m)+V(q)\) the usual $qp$-ordering or Weyl ordering give the same continuum Hamiltonian under the standard
 regularity assumptions. This special case does not eliminate ordering
 issues for arbitrary mixed Hamiltonians.
 \end{remarkbox}
@@ -195,8 +191,8 @@ For \(d\) independent Cartesian coordinates its power becomes \(Nd/2\).
 
 \subsection{What is a path in this expression?}
 The finite-dimensional integral, together with its limiting prescription,
-defines the notation. It does not assume that every contributing path
-has an ordinary derivative. After continuation to Euclidean time, a
+defines the notation. However, it is mathematically tricky to make sense of the continuum limit $\epsilon\to 0$ ($N\to \infty$). To point out one subtlety, in the continuum limit, it is not clear that we are path-integrating over smooth functions. To see this, first analytically continuation to Euclidean time, so that the path-integral measure is real Gaussian. Then, we can estimate the variance of the position step $\langle (\Delta q)^2\rangle=\sim \hbar \epsilon/m$. Therefore, 
+a
 typical short increment has size \(\Delta q\sim\sqrt{\hbar\epsilon/m}\),
 so \(\Delta q/\epsilon\) grows as the slicing is refined. Smooth paths
 are useful saddle points, not representative integration histories.
@@ -368,7 +364,6 @@ notation the resulting identity is
  &=\ii\hbar\int\D q\,\frac{\delta F}{\delta q(t)}e^{\ii S/\hbar}.
                                                         \label{eq:sd}
 \end{align}
-The sign is \(+\ii\hbar\), since \(-\hbar/\ii=\ii\hbar\).
 For our action,
 \begin{equation}
  \frac{\delta S}{\delta q(t)}=-m\ddot q(t)-V'(q(t)).

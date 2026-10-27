@@ -148,7 +148,7 @@ separates the off-shell principal value from the on-shell part.
 The intermediate momentum is integrated freely; it is not constrained
 to satisfy \(E=\bm p^2/(2m)\) at every insertion.
 
-The inverse-operator identity yields
+We can now organize the perturbation theory in $V$ for the resolvent using the operator identity $(R^+)^{-1}-(R^+_0)^{-1}=(R^+_0)^{-1}(R^+_0-R^+)(R^+)^{-1}$. Iterating this by substituting $R^+$ into the right-hand-side gives
 \begin{align}
  R^+&=R_0^++R_0^+VR^+\\
  &=R_0^++R_0^+VR_0^++R_0^+VR_0^+VR_0^++\cdots.
@@ -157,6 +157,7 @@ The inverse-operator identity yields
 This is the energy-space version of the ordered kernel expansion.
 Each integration over an intermediate time has become another
 resolvent, and the interaction insertions remain in their operator order.
+Note that in the time domain, the total elapsed time $T$ is shared among all the propagation segments: $T=(t_f-t_n)+\cdots+(t_2-t_1)+(t_1-t_i)$ which is a convolution in time. By the convolution theorem, the convolution in time becomes multiplication in Fourier (energy) space.
 
 \begin{keyidea}[Boundary conditions are part of an inverse]
 \((E-H)R=1\) has several distributional solutions on the continuous
@@ -274,7 +275,11 @@ Euclidean time circle is \(\beta\hbar\). Periodic Fourier modes have
 \(\omega_n=2\pi n/(\beta\hbar)\).
 
 \subsection{An oscillator checks both the measure and the trace}
-For \(V(q)=m\omega^2q^2/2\), the Euclidean classical path with fixed
+For \(V(q)=m\omega^2q^2/2\), the classical equation of motion is
+\begin{align}
+q''-\omega^2 q=0
+\end{align}
+whose solutions are $\sinh$ and $\cosh$. The Euclidean classical path with fixed
 endpoints is
 \begin{equation}
  q_{\rm cl}(s)=
@@ -315,8 +320,7 @@ including the ground-state energy. A normal-ordered Hamiltonian
 A regulated Euclidean path integral resembles a statistical sum with
 local couplings between neighboring time slices. In field theory this
 adds one Euclidean coordinate to the spatial lattice. At finite
-temperature that coordinate is compact; its circumference determines
-the temperature. This analogy does not identify real-time dynamics
+temperature that coordinate is a circle with circumference $\beta$. This analogy does not identify real-time dynamics
 with a classical equilibrium process.
 \end{keyidea}
 
@@ -328,7 +332,7 @@ For a trial state with \(c_0=\langle0|\chi\rangle\neq0\),
  =e^{-E_0\tau/\hbar}
  \left[c_0\ket0+\sum_{n>0}c_ne^{-(E_n-E_0)\tau/\hbar}\ket n\right].
 \end{equation}
-Dividing by the appropriate normalization projects onto the vacuum.
+Taking the limit $\tau\to \infty$ and dividing by the appropriate normalization projects onto the vacuum.
 If the vacuum is degenerate, it projects onto the ground-state
 subspace, and the surviving state depends on the boundary data.
 
@@ -441,14 +445,15 @@ action. Such Euclidean saddles are called instantons and anti-instantons.
 They provide a controlled starting point for weak tunneling when
 \(S_I/\hbar\gg1\).
 
-For the quartic double well \(V(q)=\lambda(q^2-a^2)^2\), ordinary
+For the quartic double well \(V(q)=\lambda(q^2-a^2)^2\) which has degenerate vacua at $q=\pm a$ and the potential barrier $V(0)=\lambda a^4$, ordinary
 perturbation theory about one minimum describes local oscillations.
+Classically, a particle at zero energy sits at either vacuum, and never learns that the other well exists. However, quantum mechanically, there is an amplitude for tunneling. When the particle in one well has energy $E<V(q)$, it still cannot go over the barrier, however, tunneling describes going through the potential barrier, using the language of instantons.
 Paths connecting the wells add contributions proportional to
 \(e^{-S_I/\hbar}\). The prefactor requires a fluctuation determinant.
 Translations of the instanton center are a zero mode; its integration
 must replace a naive zero eigenvalue in that determinant.
 
-In a dilute-instanton regime the leading splitting has the form
+Over a long Euclidean time, the particle does not tunnel just once, it can tunnel back and forth many times. In a dilute-instanton regime, since the probability for tunneling is exponentially suppressed, the events are rare, and independent (well-separated compared to the width of a single instanton). In this limit, the leading splitting has the form
 \begin{equation}
  \Delta E\simeq2\hbar\kappa e^{-S_I/\hbar},
 \end{equation}
